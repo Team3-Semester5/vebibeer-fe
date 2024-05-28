@@ -1,0 +1,105 @@
+.subscribe {
+    position: relative;
+    padding: 120px 0;
+    background: url(../assets/images/home/subscribe-banner.jpg)no-repeat center fixed;
+    background-size: cover;
+    z-index: 1;
+}
+
+/*subscribe-title*/
+.subscribe .subscribe-title {
+    margin-bottom: 45px;
+}
+.subscribe-title h2{
+    color:#fff;
+    font-size:38px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    line-height: 1.4;
+    
+}
+.subscribe-title p{
+    color:#fff;
+    font-size:20px;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.4;
+    margin-top: 10px;
+}/*subscribe-title*/
+
+
+/*custom-input-group*/
+.custom-input-group {
+    position: relative;
+    left: 50%;
+}
+.custom-input-group i{
+    position: absolute;
+    color: #aaa;
+    font-size:16px;
+    top: 25px;
+    left: 40px;
+}
+.custom-input-group .form-control {
+    position: absolute;
+    height: 100%;
+    left: 0;
+    top: 0;
+    padding-left: 63px;
+    padding-right: 155px;
+    font-size: 16px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    border-color: #eee;
+}
+.custom-input-group .subscribe-btn {
+    float: right;
+    position: relative;
+    z-index: 1;
+    margin: 5px 5px;
+}
+/*custom-input-group*/
+
+/*appsLand-btn*/
+.appsLand-btn {
+    background: #00d8ff;
+    display: inline-block;
+    padding: 17px 54px;
+    text-decoration: none;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 1px 5px rgba(2, 3, 3, 0.15);
+    letter-spacing: 0.7px;
+    border: 0;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-transition: all 0.5s ease-in-out 0s;
+    -moz-transition: all 0.5s ease-in-out 0s;
+    -o-transition: all 0.5s ease-in-out 0s;
+    transition: all 0.5s ease-in-out 0s;
+}
+.appsLand-btn:hover, .appsLand-btn:focus, .appsLand-btn:active {
+    text-decoration: none;
+    outline: none;
+}
+.appsLand-btn:hover {
+    box-shadow: 0 3px 25px rgba(2, 3, 3, 0.25);
+    background: #00d8ff;
+}
+
+.appsLand-btn.appsLand-btn-larg {
+    padding: 20px 40px;
+}
+
+.appsLand-btn.appsLand-btn-larg i {
+    margin-right: 9px;
+    font-size: 24px;
+    vertical-align: sub;
+}/*appsLand-btn*/
