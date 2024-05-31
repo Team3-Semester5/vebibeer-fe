@@ -32,13 +32,13 @@
     z-index: 1;
 }
 .single-special-offer-bg img {
-    height: 807px;
+    height: 70%;
 }
 
 .single-special-shape-txt {
     position: absolute;
     top: 60px;
-    left:900px;
+    left:70%;
 }
 .single-special-shape-txt h3,.single-special-shape-txt h4{
     color: #fff;

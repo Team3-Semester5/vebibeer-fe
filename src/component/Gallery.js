@@ -24,7 +24,7 @@ const Gallery = () => {
                 <div className="row">
                   <div className="col-md-6">
                     <div className="filtr-item">
-                      <img src={img1} alt="portfolio image"/>
+                      <img src={img1} alt="portfolio image" />
                       <div className="item-title">
                         <a href="#">china</a>
                         <p><span>20 tours</span> <span>15 places</span></p>
@@ -33,49 +33,57 @@ const Gallery = () => {
                   </div>
                   <div className="col-md-6">
                     <div className="filtr-item">
-                      <img src={img2} alt="portfolio image"/>
+                      <img src={img2} alt="portfolio image" />
                       <div className="item-title">
                         <a href="#">venuzuala</a>
                         <p><span>12 tours</span> <span>9 places</span></p>
                       </div>
                     </div>
                   </div>
+                </div>
+                <div className='row'>
                   <div className="col-md-4">
                     <div className="filtr-item">
-                      <img src={img3} alt="portfolio image"/>
+                      <img src={img3} alt="portfolio image" />
                       <div className="item-title">
                         <a href="#">brazil</a>
                         <p><span>25 tours</span> <span>10 places</span></p>
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4">
-                    <div className="filtr-item">
-                      <img src={img4} alt="portfolio image"/>
-                      <div className="item-title">
-                        <a href="#">australia</a>
-                        <p><span>18 tours</span> <span>9 places</span></p>
+                  <div className='col-md-8'>
+                    <div className='row'>
+                      <div className="col-md-6">
+                        <div className="filtr-item">
+                          <img src={img4} alt="portfolio image" />
+                          <div className="item-title">
+                            <a href="#">australia</a>
+                            <p><span>18 tours</span> <span>9 places</span></p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <div className="filtr-item">
+                          <img src={img5} alt="portfolio image" />
+                          <div className="item-title">
+                            <a href="#">netharland</a>
+                            <p><span>14 tours</span> <span>12 places</span></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-md-12">
+                      <div className="filtr-item">
+                        <img src={img6} alt="portfolio image" />
+                        <div className="item-title">
+                          <a href="#">turkey</a>
+                          <p><span>14 tours</span> <span>6 places</span></p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4">
-                    <div className="filtr-item">
-                      <img src={img5} alt="portfolio image"/>
-                      <div className="item-title">
-                        <a href="#">netharland</a>
-                        <p><span>14 tours</span> <span>12 places</span></p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-8">
-                    <div className="filtr-item">
-                      <img src={img6} alt="portfolio image"/>
-                      <div className="item-title">
-                        <a href="#">turkey</a>
-                        <p><span>14 tours</span> <span>6 places</span></p>
-                      </div>
-                    </div>
-                  </div>
+
+
                 </div>
               </div>
             </div>

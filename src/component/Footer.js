@@ -11,7 +11,7 @@ const Footer = () => {
                         <div className="col-sm-3">
                             <div className="single-footer-item">
                                 <div className="footer-logo">
-                                    <a href="index.html">tour<span>Nest</span></a>
+                                    <a href="index.html">Ve<span>bibeer</span></a>
                                     <p>best travel agency</p>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@ const Footer = () => {
                 </div>
                 <hr />
                 <div className="foot-icons">
-                    <ul className="footer-social-links" style={{display: 'flex', left: '50%'}}>
+                    <ul className="footer-social-links" style={{display: 'flex', marginLeft: '36%'}}>
                         <li><a href="#" target="_blank" className="foot-icon-bg-1"><FaFacebook/></a></li>
                         <li><a href="#" target="_blank" className="foot-icon-bg-2"><FaLinkedin/></a></li>
                         <li><a href="#" target="_blank" className="foot-icon-bg-3"><FaInstagram/></a></li>
