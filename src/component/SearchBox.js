@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SearchBox.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsAltH } from '@fortawesome/free-solid-svg-icons';
 
 const SearchBox = () => {
+    const navigate = useNavigate();
     const [departure, setDeparture] = useState('Đà Nẵng');
     const [destination, setDestination] = useState('Hà Nội');
     const [date, setDate] = useState('2024-06-06');
@@ -13,6 +15,13 @@ const SearchBox = () => {
         setDeparture(destination);
         setDestination(temp);
     };
+
+    const handleSearch = () => {
+        // let startPoint = document.getElementById("").value;
+        // let endPoint = document.getElementById("").value;
+        // let dateStart = document.getElementById("").value;
+        navigate('/routeGuest')
+    }
 
     return (
         <div className="container my-4">
@@ -33,7 +42,7 @@ const SearchBox = () => {
                         <input type="date" className="form-control" value={date} onChange={(e) => setDate(e.target.value)} />
                     </div>
                     <div className="col-md-auto">
-                        <button className="btn btn-primary">Tìm kiếm</button>
+                        <button className="btn btn-primary" onClick={handleSearch}>Tìm kiếm</button>
                     </div>
                 </div>
             </div>

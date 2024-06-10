@@ -7,7 +7,8 @@ const RouteList = () => {
   const [error, setError] = useState(null);
   const [filteredRoutes, setFilteredRoutes] = useState([]);
   const [filterBy, setFilterBy] = useState('All');
-
+  const [sortMethod, setSortMethod] = useState('default');
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
 
   useEffect(() => {
@@ -28,6 +29,45 @@ const RouteList = () => {
     fetchRouterList();
   }, []);
 
+  useEffect(() => {
+    let sortedRoutes = [...routes];
+
+    const compare = (a, b, isAscending) => {
+      const factor = isAscending ? 1 : -1;
+      switch (sortMethod) {
+        case 'earliest':
+          return factor * (new Date(a.route_startTime) - new Date(b.route_startTime));
+        case 'latest':
+          return factor * (new Date(b.route_startTime) - new Date(a.route_startTime));
+        case 'highestRated':
+          return factor * ((b.amount_star || 0) - (a.amount_star || 0));
+        case 'priceLowToHigh':
+          return factor * ((a.ticket_price || 0) - (b.ticket_price || 0));
+        case 'priceHighToLow':
+          return factor * ((b.ticket_price || 0) - (a.ticket_price || 0));
+        default:
+          return factor * (a.route_id - b.route_id);
+      }
+    };
+
+    sortedRoutes.sort((a, b) => compare(a, b, sortOrder === 'asc'));
+
+    setFilteredRoutes(sortedRoutes);
+  }, [sortMethod, sortOrder, routes]);
+
+  const handleSortChange = (method) => {
+    setSortMethod(method);
+  };
+
+  const handleSortOrderChange = (order) => {
+    setSortOrder(order);
+  };
+
+  const clearFilters = () => {
+    setFilteredRoutes(routes);
+    setSortMethod('default');
+    setSortOrder('asc');
+  };
 
   return (
     <div className='container'>
@@ -38,28 +78,28 @@ const RouteList = () => {
               <h4 className="mb-3">Sắp xếp</h4>
               <div className="form-check">
                 <label className="form-check-label">
-                  <input className="form-check-input" type="radio" name="sort" defaultChecked /> Mặc định
+                  <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('default')} defaultChecked /> Mặc định
                 </label>
                 <label className="form-check-label">
-                  <input className="form-check-input" type="radio" name="sort" /> Giờ đi sớm nhất
+                  <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('earliest')} /> Giờ đi sớm nhất
                 </label>
                 <label className="form-check-label">
-                  <input className="form-check-input" type="radio" name="sort" /> Giờ đi muộn nhất
+                  <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('latest')} />Giờ đi muộn nhất
                 </label>
                 <label className="form-validate-label">
-                  <input className="form-check-input" type="radio" name="sort" /> Đánh giá cao nhất
+                  <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('highestRated')} />  Đánh giá cao nhất
                 </label>
                 <label className="form-check-label">
-                  <input className="form-check-input" type="radio" name="sort" /> Giá tăng dần
+                  <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('priceLowToHigh')} />  Giá tăng dần
                 </label>
                 <label className="form-check-label">
-                  <input className="form-check-input" type="radio" name="sort" /> Giá giảm dần
+                  <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('priceLowToLow')} /> Giá giảm dần
                 </label>
               </div>
             </div>
             <div className="section">
               <h4 className="mb-3">Lọc</h4>
-              <button className="btn btn-primary">Xóa lọc</button>
+              <button className="btn btn-primary" onClick={clearFilters}>Xóa lọc</button>
               <details className="mt-3">
                 <summary>Giờ đi</summary>
                 <p>Time options...</p>
@@ -104,12 +144,13 @@ const RouteList = () => {
           </aside>
         </div>
         <div className='col-md-9'>
-          {routes.map(route => (
+          {error ? <p>Error fetching routes: {error}</p> : filteredRoutes.map(route => (
             <RouteItem key={route.route_id} route={route} />
           ))}
         </div>
       </div>
     </div>
+
   );
 }
 

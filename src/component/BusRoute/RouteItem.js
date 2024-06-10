@@ -5,27 +5,6 @@ import BusCarousel from './BusCarousel';
 import ReviewCard from './ReviewCard';
 import SeatMap from './SeatMap';
 
-const Modal = ({ onClose, children }) => {
-    return (
-        <div style={{
-            position: 'fixed',
-            top: '2%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '60%',
-            height: '100%',
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #ccc',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-            zIndex: 1000
-        }}>
-            <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '10px', padding: '5px 10px' }}>Close</button>
-            {children}
-        </div>
-    );
-};
-
 const RouteItem = ({ route }) => {
     // State to manage the visibility of the collapsible content
     const [isOpen, setIsOpen] = useState(false);
@@ -34,15 +13,16 @@ const RouteItem = ({ route }) => {
     const [error, setError] = useState(null);
     const toggleCollapse = () => setIsOpen(!isOpen);
     const [activeTab, setActiveTab] = useState('discount');
-    const [showModal, setShowModal] = useState(false);
 
     const handleBookNowClick = () => {
-        setShowModal(true);
+        toggleCollapse();
+        if (activeTab != 'seat') {
+            setActiveTab('seat');
+            return;
+        }
+        setActiveTab('discount')
     };
 
-    const closeModal = () => {
-        setShowModal(false);
-    };
 
     useEffect(() => {
         const fetchVoucherList = async () => {
@@ -198,6 +178,13 @@ const RouteItem = ({ route }) => {
 
                     </div>
                 );
+            case 'seat':
+                return (
+                    <div>
+                        <SeatMap route={props} />
+                    </div>
+                )
+
             default:
                 return <p>Hello</p>;
         }
@@ -213,37 +200,46 @@ const RouteItem = ({ route }) => {
                         <p><b>{route.route_startTime}</b> • {route.startLocation.location_name}</p>
                         <p>|</p>
                         <p><b>{route.route_endTime}</b> • {route.endLocation.location_name}</p>
-                        <button onClick={toggleCollapse} style={{ backgroundColor: '#4CAF50', color: 'white', padding: '5px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                            {isOpen ? 'Hide Details' : 'Show Details'}
-                        </button>
+                        {activeTab !== 'seat' && (
+                            <button
+                                onClick={toggleCollapse}
+                                style={{
+                                    backgroundColor: '#4CAF50',
+                                    color: 'white',
+                                    padding: '5px',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                {isOpen ? 'Hide Details' : 'Show Details'}
+                            </button>
+                        )}
+
                     </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                     <h3>400$</h3>
                     <p>{route.car.amount_seat} seats left</p>
                     <button onClick={handleBookNowClick} style={{ backgroundColor: '#4CAF50', color: 'white', padding: '10px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                        Book Now
+                        Book now
                     </button>
-
-                    {showModal && (
-                        <Modal onClose={closeModal}>
-                            <h2>Seat Map</h2>
-                            <SeatMap route={route} />
-                        </Modal>
-                    )}
                 </div>
             </div>
             {isOpen && (
                 <div style={{ marginTop: '10px' }}>
                     <div className="container">
-                        <div className="tabs">
-                            <button className={`tab ${activeTab === 'discount' ? 'active' : ''}`} onClick={() => setActiveTab('discount')}>Giảm giá</button>
-                            <button className={`tab ${activeTab === 'images' ? 'active' : ''}`} onClick={() => setActiveTab('images')}>Hình ảnh</button>
-                            <button className={`tab ${activeTab === 'services' ? 'active' : ''}`} onClick={() => setActiveTab('services')}>Tiện ích</button>
-                            <button className={`tab ${activeTab === 'pickup' ? 'active' : ''}`} onClick={() => setActiveTab('pickup')}>Điểm đón, trả</button>
-                            <button className={`tab ${activeTab === 'direction' ? 'active' : ''}`} onClick={() => setActiveTab('direction')}>Chỉ dẫn</button>
-                            <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Đánh giá</button>
-                        </div>
+                        {activeTab !== 'seat' && (
+                            <div className="tabs">
+                                <button className={`tab ${activeTab === 'discount' ? 'active' : ''}`} onClick={() => setActiveTab('discount')}>Giảm giá</button>
+                                <button className={`tab ${activeTab === 'images' ? 'active' : ''}`} onClick={() => setActiveTab('images')}>Hình ảnh</button>
+                                <button className={`tab ${activeTab === 'services' ? 'active' : ''}`} onClick={() => setActiveTab('services')}>Tiện ích</button>
+                                <button className={`tab ${activeTab === 'pickup' ? 'active' : ''}`} onClick={() => setActiveTab('pickup')}>Điểm đón, trả</button>
+                                <button className={`tab ${activeTab === 'direction' ? 'active' : ''}`} onClick={() => setActiveTab('direction')}>Chỉ dẫn</button>
+                                <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Đánh giá</button>
+                            </div>
+                        )}
+
                         <div className="content">
                             {renderContent(route)}
                         </div>

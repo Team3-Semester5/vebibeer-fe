@@ -1,4 +1,5 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import AboutUs from '../component/AboutUs';
 import Features from '../component/Features';
 import Gallery from '../component/Gallery';
@@ -8,10 +9,13 @@ import Testimonial from '../component/Testimonial';
 import SpecialOffer from '../component/SpecialOffer';
 import Blog from '../component/Blog';
 import Subscribe from '../component/Subscribe';
+import Footer from '../component/Footer';
+import Menu from "../component/Menu";
 
 const Home = () => {
   return (
     <div>
+      <Menu/>
       <AboutUs/>
       <Features/>
       <Gallery/>
@@ -21,6 +25,7 @@ const Home = () => {
       <SpecialOffer/>
       <Blog/>
       <Subscribe/>
+      <Footer/>
     </div>
   )
 }

@@ -1,20 +1,24 @@
 import './App.css';
-import Menu from './component/Menu';
-import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js.map'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Footer from './component/Footer';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './page/Home';
 import RouteGuestList from './page/RouteGuestList';
+import Cart from './page/Cart';
+import PaymentMethod from './page/PaymentMethod';
+import All from './page/LoginRegister';
 
 
 function App() {
   return (
-    <>
-        <Menu />
-        <RouteGuestList />
+    <Router>
+      <Routes>
+        <Route path="/routeGuest" element={<RouteGuestList />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/payment" element={<PaymentMethod />} />
+        <Route path="/login" element={<All/>} />
+      </Routes>
+    </Router>
 
-      <Footer />
-    </>
   );
 }
 

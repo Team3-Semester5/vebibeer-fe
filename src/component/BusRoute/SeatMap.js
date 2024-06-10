@@ -1,28 +1,69 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import './SeatMap.css'; // Ensure your CSS is updated accordingly
+import { useNavigate } from 'react-router-dom';
+import './SeatMap.css';
 
 function SeatMap({ route }) {
+    const navigate = useNavigate();
     const [seats, setSeats] = useState([]);
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [totalMoney, setTotalMoney] = useState(0);
 
-    const toggleSeatSelection = (seatId) => {
-        const updatedSelection = selectedSeats.includes(seatId)
+    const toggleSeatSelection = async (seatId) => {
+        const isSelected = selectedSeats.includes(seatId);
+        updateSelectedSeats(seatId, isSelected);
+        await updateSeatInCart(seatId, isSelected);
+    };
+
+    const loadCartData = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/cart', { credentials: 'include' });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const cartData = await response.json();
+            const cartSeats = cartData.map(item => item.ticket_seat);
+            setSelectedSeats(cartSeats);
+            const total = cartData.reduce((acc, item) => acc + item.ticket_price, 0);
+            setTotalMoney(total);
+        } catch (error) {
+            console.error('Error loading cart data:', error);
+        }
+    };
+    
+    const updateSelectedSeats = (seatId, isSelected) => {
+        const updatedSelection = isSelected
             ? selectedSeats.filter(id => id !== seatId)
             : [...selectedSeats, seatId];
         setSelectedSeats(updatedSelection);
+    
         const seat = seats.find(seat => seat.ticket_seat === seatId);
         if (seat) {
-            const priceChange = selectedSeats.includes(seatId) ? -seat.ticket_price : seat.ticket_price;
+            const priceChange = isSelected ? -seat.ticket_price : seat.ticket_price;
             setTotalMoney(currentTotal => currentTotal + priceChange);
+        }
+    };
+    
+    const updateSeatInCart = async (seatId, isSelected) => {
+        const seat = seats.find(seat => seat.ticket_seat === seatId);
+        if (!seat) return;
+    
+        const url = `http://localhost:8080/cart/${seat.ticket_id}`;
+        try {
+            const response = await fetch(url, { method: isSelected ? 'DELETE' : 'POST', credentials: 'include' });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            console.log(data.toLocaleString())
+            // Optionally handle response data
+        } catch (error) {
+            console.error('Error adding/removing tickets:', error);
         }
     };
 
     useEffect(() => {
         const fetchSeatList = async () => {
             try {
-                const response = await fetch('http://localhost:8080/tickets/' + route.route_id);
+                const response = await fetch(`http://localhost:8080/tickets/${route.route_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -32,88 +73,69 @@ function SeatMap({ route }) {
                 console.error('Error fetching tickets:', error);
             }
         };
-
         fetchSeatList();
+        loadCartData();
     }, [route.route_id]);
 
-    const formatSeats = (deck) => {
-        return seats.filter(seat => seat.ticket_seat.startsWith(deck))
-            .reduce((rows, seat) => {
-                const row = seat.ticket_seat.slice(1);
-                rows[row] = rows[row] || [];
-                rows[row].push(seat);
-                return rows;
-            }, {});
-    };
-
-    const renderDeck = (deckSeats, deckName, isLowerDeck) => {
-        const seatRows = Object.keys(deckSeats).map(row => {
-            // Create sub-arrays each with up to 3 seats
-            const seatsInRow = [];
-            for (let i = 0; i < deckSeats[row].length; i += 3) {
-                seatsInRow.push(deckSeats[row].slice(i, i + 3));
-            }
-            return { row, seats: seatsInRow };
-        });
-
+    const renderDeck = (deckName, isLowerDeck) => {
+        const deckSeats = seats.filter(seat => seat.ticket_seat.startsWith(deckName));
         return (
-            <Card className="mb-3">
-                <Card.Header className="text-center">{deckName}</Card.Header>
+            <Card className="deck-card">
+                <Card.Header className="deck-header">{deckName} {isLowerDeck && <span className="icon-steering-wheel"></span>}</Card.Header>
                 <Card.Body>
-                    {isLowerDeck && <div className="steering-wheel mb-2"></div>}
-                    {seatRows.map(({ row, seats }) => (
-                        <div key={row} className="d-flex flex-column">
-                            {seats.map((group, index) => (
-                                <div key={index} className="d-flex">
-                                    {group.map(seat => (
-                                        <Button
-                                            key={seat.ticket_seat}
-                                            variant={selectedSeats.includes(seat.ticket_seat) ? 'success' : 'secondary'}
-                                            disabled={seat.ticket_status !== 'Empty'}
-                                            className="seat"
-                                            onClick={() => toggleSeatSelection(seat.ticket_seat)}
-                                        >
-                                            {seat.ticket_seat}
-                                        </Button>
-                                    ))}
-                                </div>
-                            ))}
-                        </div>
+                    {deckSeats.map(seat => (
+                        <Button
+                            key={seat.ticket_seat}
+                            variant={selectedSeats.includes(seat.ticket_seat) ? 'success' : 'secondary'}
+                            disabled={seat.ticket_status !== 'Empty'}
+                            className="seat-button"
+                            onClick={() => toggleSeatSelection(seat.ticket_seat)}
+                        >
+                            {seat.ticket_seat}
+                        </Button>
                     ))}
                 </Card.Body>
             </Card>
         );
     };
 
-    const lowerDeckSeats = formatSeats('A');
-    const upperDeckSeats = formatSeats('B');
+    const handleContinue = () => {
+        navigate('/cart'); // Adjust the path as needed
+    };
 
     return (
-        <Container>
+        <Container className="seat-map-container">
             <Row>
-                <Col md={4}>
-                    <Card>
+                <Col sm={12} md={4}>
+                    <Card className="info-card">
                         <Card.Body>
-                            <h3>Chú thích</h3>
-                            <p><span className="seat not-available"></span> Ghế không bán</p>
-                            <p><span className="seat selected"></span> Đang chọn</p>
-                            <p>CABIN ĐƠN (1 Khách)</p>
-                            <p>{seats.length > 0 && `${seats[0].ticket_price}đ <del>${seats[0].ticket_price * 1.21}đ</del>`}</p>
+                            <div>Chú thích</div>
+                            <div className="legend-item">
+                                <button className="legend-button disabled"><i className="fa fa-cancel"></i></button>
+                                <span>Ghế không bán</span>
+                            </div>
+                            <div className="legend-item">
+                                <button className="legend-button selected"><i className="icon-check"></i></button>
+                                <span>Đang chọn</span>
+                            </div>
+                            <div className="legend-item">
+                                <button className="legend-button available"><i className="icon-square"></i></button>
+                                <span>Còn trống</span>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col md={4}>
-                    {renderDeck(lowerDeckSeats, "Tầng dưới", true)}
-
+                <Col sm={12} md={4}>
+                    {renderDeck('A', true)}
                 </Col>
-                <Col md={4}>
-                    {renderDeck(upperDeckSeats, "Tầng trên", false)}
+                <Col sm={12} md={4}>
+                    {renderDeck('B', false)}
                 </Col>
             </Row>
             <Row className="mt-3">
                 <Col className="text-right">
-                    <p>Tổng cộng: {totalMoney}đ</p>
-                    <Button variant="primary" className="float-right">Tiếp tục</Button>
+                    <div className="total-price">Tổng cộng: {totalMoney}đ</div>
+                    <Button className="continue-button" onClick={handleContinue}>Tiếp tục</Button>
                 </Col>
             </Row>
         </Container>
