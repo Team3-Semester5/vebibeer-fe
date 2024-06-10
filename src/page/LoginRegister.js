@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 import bannerSignup from "../assets/images/banner.jpg";
 import bannerLogin from "../assets/images/banner.jpg";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFacebook,
@@ -277,12 +278,39 @@ const SignupForm = ({ onSwitch }) => {
 };
 
 const LoginForm = ({ onSwitch }) => {
+    let navigate = useNavigate();
     const [username, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Login data:", { username, password });
+
+        const userData = {
+            username,
+            password,
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (!response.ok) {
+                alert('Login fail!!!');
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log(result);
+            alert('Login Success');
+            navigate('/')
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
     };
 
     return (
