@@ -1,18 +1,62 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Badge, Button, Card, Form, Navbar, Nav, Container, Row, Col } from "react-bootstrap";
 
-import {
-  Badge,
-  Button,
-  Card,
-  Form,
-  Navbar,
-  Nav,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+function BusPr({ onAdd, onHide }) {
+  const [busCompany, setBusCompany] = useState({
+    username: "",
+    password: "",
+    busCompany_status: "",
+    busCompany_fullname: "",
+    busCompany_dob: "",
+    busCompany_imgUrl: "",
+    busCompany_description: "",
+    busCompany_nationally: "",
+    busCompany_name: "",
+    busCompany_contract: "",
+    busCompany_location: "",
+  });
+  const [error, setError] = useState(null);
 
-function BusPr() {
+  useEffect(() => {
+    // Fetch bus company data here if needed
+    fetch("http://localhost:8080/api/buscompanies/1") // Replace 1 with the actual ID
+      .then(response => response.json())
+      .then(data => {
+        setBusCompany(data);
+      })
+      .catch(error => {
+        setError(error.message);
+        console.error('Error fetching bus company:', error);
+      });
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBusCompany({ ...busCompany, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/api/buscompanies/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(busCompany)
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const newBusCompany = await response.json();
+      onAdd(newBusCompany);
+      onHide();
+    } catch (error) {
+      setError(error.message);
+      console.error('Error adding bus company:', error);
+    }
+  };
+
   return (
     <>
       <Container fluid>
@@ -23,7 +67,7 @@ function BusPr() {
                 <Card.Title as="h4">Edit Profile</Card.Title>
               </Card.Header>
               <Card.Body>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                   <Row>
                     <Col className="pr-1" md="4">
                       <Form.Group>
@@ -33,84 +77,94 @@ function BusPr() {
                           disabled
                           placeholder="Company"
                           type="text"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                     <Col className="px-1" md="3">
                       <Form.Group>
                         <label>Username</label>
                         <Form.Control
-                          defaultValue="Hạnh Luyến"
+                          name="username"
+                          value={busCompany.username}
+                          onChange={handleChange}
                           placeholder="Username"
                           type="text"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                     <Col className="pl-1" md="5">
                       <Form.Group>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
+                        <label htmlFor="exampleInputEmail1">Email address</label>
                         <Form.Control
                           placeholder="Email"
                           type="email"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
                   <Row>
                     <Col className="pr-1" md="6">
                       <Form.Group>
-                        <label>First Name</label>
+                        <label>Full Name</label>
                         <Form.Control
-                          defaultValue="Nhật "
-                          placeholder="Company"
+                          name="busCompany_fullname"
+                          value={busCompany.busCompany_fullname}
+                          onChange={handleChange}
+                          placeholder="Full Name"
                           type="text"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                     <Col className="pl-1" md="6">
                       <Form.Group>
-                        <label>Last Name</label>
+                        <label>Date of Birth</label>
                         <Form.Control
-                          defaultValue=" Trương"
-                          placeholder="Last Name"
+                          name="busCompany_dob"
+                          value={busCompany.busCompany_dob}
+                          onChange={handleChange}
+                          placeholder="Date of Birth"
                           type="text"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
                   <Row>
                     <Col md="12">
                       <Form.Group>
-                        <label>Address</label>
+                        <label>Location</label>
                         <Form.Control
-                          defaultValue="Quán bi da điểm hẹn"
-                          placeholder="Home Address"
+                          name="busCompany_location"
+                          value={busCompany.busCompany_location}
+                          onChange={handleChange}
+                          placeholder="Location"
                           type="text"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
                   <Row>
                     <Col className="pr-1" md="6">
                       <Form.Group>
-                        <label>City</label>
+                        <label>Nationality</label>
                         <Form.Control
-                          defaultValue="Đà Nẵng"
-                          placeholder="City"
+                          name="busCompany_nationally"
+                          value={busCompany.busCompany_nationally}
+                          onChange={handleChange}
+                          placeholder="Nationality"
                           type="text"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                     <Col className="pl-1" md="6">
                       <Form.Group>
-                        <label>Country</label>
+                        <label>Company Name</label>
                         <Form.Control
-                          defaultValue="Việt Nam"
-                          placeholder="Country"
+                          name="busCompany_name"
+                          value={busCompany.busCompany_name}
+                          onChange={handleChange}
+                          placeholder="Company Name"
                           type="text"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
@@ -119,12 +173,14 @@ function BusPr() {
                       <Form.Group>
                         <label>About Me</label>
                         <Form.Control
+                          name="busCompany_description"
+                          value={busCompany.busCompany_description}
+                          onChange={handleChange}
                           cols="80"
-                          defaultValue="Nhóm này nhận mọi kèo bida đi nhậu chấp trước 5 lon"
                           placeholder="Here can be your description"
                           rows="4"
                           as="textarea"
-                        ></Form.Control>
+                        />
                       </Form.Group>
                     </Col>
                   </Row>
@@ -137,6 +193,7 @@ function BusPr() {
                   </Button>
                   <div className="clearfix"></div>
                 </Form>
+                {error && <p className="text-danger">{error}</p>}
               </Card.Body>
             </Card>
           </Col>
@@ -146,7 +203,7 @@ function BusPr() {
                 <img
                   alt="..."
                   src={require("assets/img/photo-1431578500526-4d9613015464.jpeg")}
-                ></img>
+                />
               </div>
               <Card.Body>
                 <div className="author">
@@ -154,19 +211,17 @@ function BusPr() {
                     <img
                       alt="..."
                       className="avatar border-gray"
-                      src={require("assets/img/faces/avt.jpg")}
-                    ></img>
-                    <h5 className="title">Nhật Trương</h5>
+                      src={busCompany.busCompany_imgUrl || require("assets/img/faces/avt.jpg")}
+                    />
+                    <h5 className="title">{busCompany.busCompany_fullname}</h5>
                   </a>
-                  <p className="description">nhatlo123</p>
+                  <p className="description">{busCompany.username}</p>
                 </div>
                 <p className="description text-center">
-                  nhóm bida phăng lỗ + nhậu <br></br>
-                  kèo chi cũng nhận <br></br>
-                  còn nhận cả kèo aram nữa
+                  {busCompany.busCompany_description}
                 </p>
               </Card.Body>
-              <hr></hr>
+              <hr />
               <div className="button-container mr-auto ml-auto">
                 <Button
                   className="btn-simple btn-icon"

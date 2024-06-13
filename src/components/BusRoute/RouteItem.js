@@ -1,0 +1,250 @@
+import React, { useState, useEffect } from 'react';
+import './RouteItem.css';
+import PromoCard from './PromoCard';
+import BusCarousel from './BusCarousel';
+import ReviewCard from './ReviewCard';
+import SeatMap from './SeatMap';
+
+const RouteItem = ({ route }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [vouchers, setVouchers] = useState([]);
+  const [ratings, setRatings] = useState([]);
+  const [error, setError] = useState(null);
+  const [lowestPrice, setLowestPrice] = useState(null);
+  const [highestPrice, setHighestPrice] = useState(null);
+  const [activeTab, setActiveTab] = useState('discount');
+
+  const toggleCollapse = () => setIsOpen(!isOpen);
+
+  const handleBookNowClick = () => {
+    toggleCollapse();
+    if (activeTab !== 'seat') {
+      setActiveTab('seat');
+      return;
+    }
+    setActiveTab('discount');
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [voucherResponse, ratingResponse, lowestResponse, highestResponse] = await Promise.all([
+          fetch('http://localhost:8080/voucher/'),
+          fetch(`http://localhost:8080/rating/${route.busCompany.busCompany_id}`),
+          fetch('http://localhost:8080/tickets/lowest-price'),
+          fetch('http://localhost:8080/tickets/highest-price')
+        ]);
+
+        if (!voucherResponse.ok) throw new Error(`HTTP error! status: ${voucherResponse.status}`);
+        if (!ratingResponse.ok) throw new Error(`HTTP error! status: ${ratingResponse.status}`);
+        if (!lowestResponse.ok) throw new Error(`HTTP error! status: ${lowestResponse.status}`);
+        if (!highestResponse.ok) throw new Error(`HTTP error! status: ${highestResponse.status}`);
+
+        const [voucherData, ratingData, lowestPrice, highestPrice] = await Promise.all([
+          voucherResponse.json(),
+          ratingResponse.json(),
+          lowestResponse.json(),
+          highestResponse.json()
+        ]);
+
+        console.log('Vouchers:', voucherData); // Log voucher data
+        console.log('Ratings:', ratingData); // Log rating data
+        console.log('Lowest Price:', lowestPrice); // Log lowest price
+        console.log('Highest Price:', highestPrice); // Log highest price
+
+        setVouchers(voucherData);
+        setRatings(ratingData);
+        setLowestPrice(lowestPrice);
+        setHighestPrice(highestPrice);
+      } catch (error) {
+        setError(error.message);
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [route.busCompany.busCompany_id]);
+
+  const renderContent = (props) => {
+    switch (activeTab) {
+      case 'discount':
+        return (
+          <div className='container'>
+            {vouchers.map(voucher => (
+              <PromoCard key={voucher.voucher_code} voucher={voucher} />
+            ))}
+          </div>
+        );
+      case 'images':
+        return (
+          <div>
+            <BusCarousel route={props} />
+          </div>
+        );
+      case 'services':
+        if (!props || props.length === 0) {
+          return <p>No services available.</p>;
+        }
+        return (
+          <div className='container'>
+            {props.services.map(prop => (
+              <div key={prop.service_id} className='row'>
+                <div className='col-md-2'>
+                  <img src={prop.service_logoUrl} style={{ width: '80%', height: '100%', padding: '10px' }} />
+                </div>
+                <div className='col-md-10' style={{ padding: '10px' }}>
+                  <h4>{prop.service_name}</h4>
+                  <p>{prop.service_description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      case 'pickup':
+        return (
+          <div className="schedule-container">
+            <div className="notes">
+              <strong>Lưu ý</strong>
+              <p>Các mốc thời gian đón, trả bên dưới là thời gian dự kiến.</p>
+              <p>Lịch này có thể thay đổi tùy tình hình thực tế.</p>
+            </div>
+            <div className="schedule">
+              <div className="pickup">
+                <h3>Điểm đón</h3>
+                <ul>
+                  <li><span>18:46</span> • Cổng trung chuyển Nội thành Thành phố Đà Nẵng</li>
+                  <li><span>20:16</span> • VP Đà Nẵng</li>
+                </ul>
+              </div>
+              <div className="dropoff">
+                <h3>Điểm trả</h3>
+                <ul>
+                  <li><span>07:16</span> • Bến xe Nước Ngầm</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        );
+      case 'direction':
+        return (
+          <div className="container mt-4">
+            <div className="policy-container">
+              <h1>Chính sách hủy đơn hàng</h1>
+              <div className="timeline-container">
+                <div className="timeline">
+                  <div className="point point-start">
+                    <span className="time">Hôm nay<br />20:16<br />15/06/2024</span>
+                    <div className="fee">Phí hủy 20%</div>
+                  </div>
+                  <div className="point point-end">
+                    <span className="time">08:16<br />16/06/2024</span>
+                    <div className="fee">Phí hủy 100%</div>
+                  </div>
+                </div>
+              </div>
+              <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
+            </div>
+            <div className="mb-3">
+              <h2>Chính sách nhà xe</h2>
+              <ul>
+                <li>Cấm kị tất cả loại vật liệu dễ cháy như xăng, dầu.</li>
+                <li>Khoảng cách an toàn, thời gian di chuyển.</li>
+              </ul>
+            </div>
+            <div className="mb-3">
+              <h2>Hành lý xách tay</h2>
+              <p>Không trọng lượng hạn hẹp không vượt quá 7 kg.</p>
+            </div>
+            <div className="mb-3">
+              <h2>Điều kiện vận chuyển đặc biệt</h2>
+              <p>Đối với hàng hóa đặc biệt, cần có giấy phép vận chuyển riêng.</p>
+            </div>
+            <div className="mb-3">
+              <h2>Quy định về đổi trả</h2>
+              <p>Khách hàng có thể đổi trả hàng trong vòng 24 giờ nếu sản phẩm còn nguyên đai, nguyên kiện.</p>
+            </div>
+          </div>
+        );
+      case 'rating':
+        return (
+          <div>
+            {ratings.map(review => (
+              <ReviewCard key={review.rating_id} review={review} />
+            ))}
+          </div>
+        );
+      case 'seat':
+        return (
+          <div>
+            <SeatMap route={props} />
+          </div>
+        );
+      default:
+        return <p>Hello</p>;
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', margin: '10px', padding: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex' }}>
+          <img src={route.car.car_imgUrl1} alt="Bus" style={{ width: '100px', height: '60px', marginRight: '10px' }} />
+          <div>
+            <h4>{route.busCompany.busCompany_name} <span style={{ fontSize: '0.8rem', color: '#666' }}>{route.rating}</span></h4>
+            <p>{route.route_description}</p>
+            <p><b>{route.route_startTime}</b> • {route.startLocation.location_name}</p>
+            <p>|</p>
+            <p><b>{route.route_endTime}</b> • {route.endLocation.location_name}</p>
+            {activeTab !== 'seat' && (
+              <button
+                onClick={toggleCollapse}
+                style={{
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  padding: '5px',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+              >
+                {isOpen ? 'Hide Details' : 'Show Details'}
+              </button>
+            )}
+          </div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div className="route-summary" onClick={toggleCollapse}>
+            <h3>{route.route_name}</h3>
+            <p>{route.busCompany.name}</p>
+            <p>Giá: {lowestPrice} - {highestPrice} VNĐ</p>
+          </div>
+          <p>{route.car.amount_seat} seats left</p>
+          <button onClick={handleBookNowClick} style={{ backgroundColor: '#4CAF50', color: 'white', padding: '10px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+            Book now
+          </button>
+        </div>
+      </div>
+      {isOpen && (
+        <div style={{ marginTop: '10px' }}>
+          <div className="container">
+            {activeTab !== 'seat' && (
+              <div className="tabs">
+                <button className={`tab ${activeTab === 'discount' ? 'active' : ''}`} onClick={() => setActiveTab('discount')}>Giảm giá</button>
+                <button className={`tab ${activeTab === 'images' ? 'active' : ''}`} onClick={() => setActiveTab('images')}>Hình ảnh</button>
+                <button className={`tab ${activeTab === 'services' ? 'active' : ''}`} onClick={() => setActiveTab('services')}>Tiện ích</button>
+                <button className={`tab ${activeTab === 'pickup' ? 'active' : ''}`} onClick={() => setActiveTab('pickup')}>Điểm đón, trả</button>
+                <button className={`tab ${activeTab === 'direction' ? 'active' : ''}`} onClick={() => setActiveTab('direction')}>Chỉ dẫn</button>
+                <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Đánh giá</button>
+              </div>
+            )}
+            <div className="content">
+              {renderContent(route)}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default RouteItem;

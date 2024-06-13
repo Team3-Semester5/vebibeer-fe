@@ -8,13 +8,13 @@ const AddBusCompanyModal = ({ show, onHide, onAdd }) => {
     busCompany_status: '',
     busCompany_fullname: '',
     busCompany_dob: '',
-    busCompany_imgUrl: '',
     busCompany_description: '',
     busCompany_nationality: '',
     busCompany_name: '',
     busCompany_location: '',
     busCompany_contract: ''
   });
+  const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
 
@@ -28,21 +28,27 @@ const AddBusCompanyModal = ({ show, onHide, onAdd }) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setBusCompany({ ...busCompany, busCompany_imgUrl: reader.result });
         setPreviewImage(reader.result);
       };
       reader.readAsDataURL(file);
+      setFile(file);
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
+      const formData = new FormData();
+      Object.keys(busCompany).forEach(key => {
+        formData.append(key, busCompany[key]);
+      });
+      if (file) {
+        formData.append('busCompany_imgUrl', file);
+      }
+
       const response = await fetch('http://localhost:8080/api/buscompanies/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(busCompany)
+        body: formData
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -62,7 +68,7 @@ const AddBusCompanyModal = ({ show, onHide, onAdd }) => {
         <Modal.Title>Add Bus Company</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formUsername">
             <Form.Label>Username</Form.Label>
             <Form.Control
@@ -115,14 +121,6 @@ const AddBusCompanyModal = ({ show, onHide, onAdd }) => {
               name="busCompany_imgUrl"
               onChange={handleFileChange}
             />
-            <Form.Control
-              type="text"
-              placeholder="Or enter image URL"
-              name="busCompany_imgUrl"
-              value={busCompany.busCompany_imgUrl}
-              onChange={handleChange}
-              style={{ marginTop: '10px' }}
-            />
             {previewImage && (
               <img
                 src={previewImage}
@@ -138,57 +136,57 @@ const AddBusCompanyModal = ({ show, onHide, onAdd }) => {
               name="busCompany_description"
               value={busCompany.busCompany_description}
               onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formNationality">
-              <Form.Label>Nationality</Form.Label>
-              <Form.Control
-                type="text"
-                name="busCompany_nationality"
-                value={busCompany.busCompany_nationality}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formName">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="busCompany_name"
-                value={busCompany.busCompany_name}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formLocation">
-              <Form.Label>Location</Form.Label>
-              <Form.Control
-                type="text"
-                name="busCompany_location"
-                value={busCompany.busCompany_location}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formContract">
-              <Form.Label>Contract</Form.Label>
-              <Form.Control
-                type="text"
-                name="busCompany_contract"
-                value={busCompany.busCompany_contract}
-                onChange={handleChange}
-              />
-            </Form.Group>
-          </Form>
+            />
+          </Form.Group>
+          <Form.Group controlId="formNationality">
+            <Form.Label>Nationality</Form.Label>
+            <Form.Control
+              type="text"
+              name="busCompany_nationality"
+              value={busCompany.busCompany_nationality}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="formName">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="busCompany_name"
+              value={busCompany.busCompany_name}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="formLocation">
+            <Form.Label>Location</Form.Label>
+            <Form.Control
+              type="text"
+              name="busCompany_location"
+              value={busCompany.busCompany_location}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="formContract">
+            <Form.Label>Contract</Form.Label>
+            <Form.Control
+              type="text"
+              name="busCompany_contract"
+              value={busCompany.busCompany_contract}
+              onChange={handleChange}
+            />
+          </Form.Group>
           {error && <p className="text-danger">Error: {error}</p>}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onHide}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Add Bus Company
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-  
-  export default AddBusCompanyModal;
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>
+          Close
+        </Button>
+        <Button variant="primary" type="submit" onClick={handleSubmit}>
+          Add Bus Company
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+export default AddBusCompanyModal;
