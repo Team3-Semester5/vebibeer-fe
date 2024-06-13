@@ -1,0 +1,176 @@
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.card-content h2 {
+    margin: 0;
+    color: #333;
+}
+
+.card-content p {
+    margin: 5px 0 0;
+    color: #666;
+}
+
+.active{
+    color: rgb(8, 144, 229);
+    border-bottom: solid 2px rgb(8, 144, 229);
+    
+}
+
+/* Schedule.css */
+.schedule-container {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    max-width: 600px;
+    margin: 20px;
+  }
+  
+  .schedule-container .notes {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  
+  .schedule-container .schedule {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .schedule-container h3 {
+    color: #000;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .schedule-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .schedule-container li {
+    margin-bottom: 5px;
+  }
+  
+  .schedule-container li span {
+    font-weight: bold;
+  }
+
+  /* CancellationPolicy.css */
+.policy-container {
+    font-family: Arial, sans-serif;
+    width: 80%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.policy-container h1 {
+    margin-bottom: 20px;
+}
+
+.policy-container .timeline-container {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.policy-container .timeline-point {
+    position: relative;
+    text-align: center;
+    width: 100px;
+}
+
+.policy-container .timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.policy-container .point {
+    position: relative;
+    width: 120px; /* Adjust width as necessary */
+}
+
+.policy-container .time {
+    font-size: 14px;
+    color: #666;
+}
+
+
+.policy-container .point::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.policy-container .point-start::before {
+    background-color: blue;
+}
+
+.policy-container .point-end::before {
+    background-color: red;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    height: 4px;
+    width: 100%;
+    top: 20px;
+    background: linear-gradient(to right, blue, red);
+    z-index: 0;
+}
+
+.policy-container .fee {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.policy-container .note {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+    text-align: left;
+    margin-top: 20px;
+}

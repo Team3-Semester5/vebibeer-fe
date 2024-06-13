@@ -1,0 +1,30 @@
+/* SeatMap.css */
+.seat {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2px;
+    border: 1px solid #ccc;
+}
+
+.seat.not-available {
+    background-color: #ccc;
+}
+
+.seat.selected {
+    background-color: #90ee90; /* Light green */
+}
+
+.steering-wheel {
+    width: 100%;
+    height: 30px;
+    background: url('https://t4.ftcdn.net/jpg/02/03/76/59/360_F_203765980_yd2q0amdBcy2NKhAirhtxNVFrZhfC1z1.jpg') center center no-repeat;
+    background-size: contain;
+}
+
+.flex-row-center {
+    display: flex;
+    justify-content: center;
+}
