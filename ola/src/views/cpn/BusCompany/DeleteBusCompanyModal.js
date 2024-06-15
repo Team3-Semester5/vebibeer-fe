@@ -31,8 +31,8 @@ const DeleteBusCompanyModal = ({ show, onHide, busCompany, onDelete }) => {
                 <Modal.Title>Delete Bus Company</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p>Are you sure you want to delete bus company <strong>{busCompany.busCompany_name}</strong>?</p>
                 {error && <p className="text-danger">Error: {error}</p>}
+                <p>Are you sure you want to delete bus company <strong>{busCompany.busCompany_name}</strong>?</p>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>

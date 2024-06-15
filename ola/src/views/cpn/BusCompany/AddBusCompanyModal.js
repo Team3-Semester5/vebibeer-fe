@@ -1,19 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
-  const [updatedBusCompany, setUpdatedBusCompany] = useState(busCompany);
+const AddBusCompanyModal = ({ show, onHide, onAdd }) => {
+  const [busCompany, setBusCompany] = useState({
+    username: '',
+    password: '',
+    busCompany_status: '',
+    busCompany_fullname: '',
+    busCompany_dob: '',
+    busCompany_imgUrl: '',
+    busCompany_description: '',
+    busCompany_nationally: '',
+    busCompany_name: '',
+    busCompany_contract: '',
+    busCompany_location: ''
+  });
   const [error, setError] = useState(null);
-  const [previewImage, setPreviewImage] = useState(busCompany ? busCompany.busCompany_imgUrl : '');
-
-  useEffect(() => {
-    setUpdatedBusCompany(busCompany);
-    setPreviewImage(busCompany ? busCompany.busCompany_imgUrl : '');
-  }, [busCompany]);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedBusCompany({ ...updatedBusCompany, [name]: value });
+    setBusCompany({ ...busCompany, [name]: value });
   };
 
   const handleFileChange = (e) => {
@@ -21,7 +28,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUpdatedBusCompany({ ...updatedBusCompany, busCompany_imgUrl: reader.result });
+        setBusCompany({ ...busCompany, busCompany_imgUrl: reader.result });
         setPreviewImage(reader.result);
       };
       reader.readAsDataURL(file);
@@ -30,31 +37,29 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/buscompanies/${updatedBusCompany.busCompany_id}`, {
-        method: 'PUT',
+      const response = await fetch('http://localhost:8080/api/buscompanies/', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedBusCompany)
+        body: JSON.stringify(busCompany)
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const updatedData = await response.json();
-      onUpdate(updatedData);
+      const newBusCompany = await response.json();
+      onAdd(newBusCompany);
       onHide();
     } catch (error) {
       setError(error.message);
-      console.error('Error updating bus company:', error);
+      console.error('Error adding bus company:', error);
     }
   };
-
-  if (!updatedBusCompany) return null;
 
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Update Bus Company</Modal.Title>
+        <Modal.Title>Add Bus Company</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -63,7 +68,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="text"
               name="username"
-              value={updatedBusCompany.username || ''}
+              value={busCompany.username}
               onChange={handleChange}
             />
           </Form.Group>
@@ -72,7 +77,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="password"
               name="password"
-              value={updatedBusCompany.password || ''}
+              value={busCompany.password}
               onChange={handleChange}
             />
           </Form.Group>
@@ -81,7 +86,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="text"
               name="busCompany_status"
-              value={updatedBusCompany.busCompany_status || ''}
+              value={busCompany.busCompany_status}
               onChange={handleChange}
             />
           </Form.Group>
@@ -90,7 +95,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="text"
               name="busCompany_fullname"
-              value={updatedBusCompany.busCompany_fullname || ''}
+              value={busCompany.busCompany_fullname}
               onChange={handleChange}
             />
           </Form.Group>
@@ -99,7 +104,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="date"
               name="busCompany_dob"
-              value={updatedBusCompany.busCompany_dob || ''}
+              value={busCompany.busCompany_dob}
               onChange={handleChange}
             />
           </Form.Group>
@@ -114,7 +119,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
               type="text"
               placeholder="Or enter image URL"
               name="busCompany_imgUrl"
-              value={updatedBusCompany.busCompany_imgUrl || ''}
+              value={busCompany.busCompany_imgUrl}
               onChange={handleChange}
               style={{ marginTop: '10px' }}
             />
@@ -125,7 +130,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="text"
               name="busCompany_description"
-              value={updatedBusCompany.busCompany_description || ''}
+              value={busCompany.busCompany_description}
               onChange={handleChange}
             />
           </Form.Group>
@@ -133,8 +138,8 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Label>Nationality</Form.Label>
             <Form.Control
               type="text"
-              name="busCompany_nationality"
-              value={updatedBusCompany.busCompany_nationality || ''}
+              name="busCompany_nationally"
+              value={busCompany.busCompany_nationally}
               onChange={handleChange}
             />
           </Form.Group>
@@ -143,16 +148,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="text"
               name="busCompany_name"
-              value={updatedBusCompany.busCompany_name || ''}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="formLocation">
-            <Form.Label>Location</Form.Label>
-            <Form.Control
-              type="text"
-              name="busCompany_location"
-              value={updatedBusCompany.busCompany_location || ''}
+              value={busCompany.busCompany_name}
               onChange={handleChange}
             />
           </Form.Group>
@@ -161,7 +157,16 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
             <Form.Control
               type="text"
               name="busCompany_contract"
-              value={updatedBusCompany.busCompany_contract || ''}
+              value={busCompany.busCompany_contract}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="formLocation">
+            <Form.Label>Location</Form.Label>
+            <Form.Control
+              type="text"
+              name="busCompany_location"
+              value={busCompany.busCompany_location}
               onChange={handleChange}
             />
           </Form.Group>
@@ -173,11 +178,11 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
           Close
         </Button>
         <Button variant="primary" onClick={handleSubmit}>
-          Update Bus Company
+          Add Bus Company
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default UpdateBusCompanyModal;
+export default AddBusCompanyModal;

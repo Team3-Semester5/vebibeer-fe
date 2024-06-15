@@ -115,12 +115,12 @@ const BusCompanyList = () => {
                         <th>Description</th>
                         <th>Nationality</th>
                         <th>Name</th>
-                        <th>Location</th><th>Contract</th>
+                        <th>Location</th>
+                        <th>Contract</th>
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {filteredBusCompanies.map((busCompany) => (
+                <tbody>{filteredBusCompanies.map((busCompany) => (
                         <tr key={busCompany.busCompany_id}>
                             <td>{busCompany.username}</td>
                             <td>{busCompany.password}</td>
@@ -137,9 +137,11 @@ const BusCompanyList = () => {
                                 )}
                             </td>
                             <td>{busCompany.busCompany_description}</td>
-                            <td>{busCompany.busCompany_nationally}</td>
+                            <td>{busCompany.busCompany_nationality}</td>
                             <td>{busCompany.busCompany_name}</td>
-                            <td>{busCompany.busCompany_location}</td>
+                            <td>{busCompany.busCompany_location}
+                                
+                            </td>
                             <td>{busCompany.busCompany_contract}</td>
                             <td>
                                 <button
