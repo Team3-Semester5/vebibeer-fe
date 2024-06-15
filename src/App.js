@@ -5,12 +5,14 @@ import RouteGuestList from './page/RouteGuestList';
 import Cart from './page/Cart';
 import PaymentMethod from './page/PaymentMethod';
 import All from './page/LoginRegister';
+import CustomerProfilePage from './component/Customer/CustomerProfilePage'
 
 
 function App() {
   return (
     <Router>
       <Routes>
+      <Route path="/profile" element={<CustomerProfilePage />} />
         <Route path="/routeGuest" element={<RouteGuestList />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/" element={<Home />} />
