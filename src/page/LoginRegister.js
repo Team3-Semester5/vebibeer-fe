@@ -1,15 +1,9 @@
 import React, { useState } from "react";
 import styled, { keyframes, css } from "styled-components";
 import bannerSignup from "../assets/images/banner.jpg";
-import bannerLogin from "../assets/images/banner.jpg";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faFacebook,
-    faGoogle,
-    faTwitter,
-} from '@fortawesome/free-brands-svg-icons';
 import Menu from "../component/Menu";
+import { GoogleLogin } from 'react-google-login';
 
 // Keyframes for sliding animations
 const slideInFromLeft = keyframes`
@@ -162,6 +156,8 @@ const SocialLoginSection = styled.div`
   }
 `;
 
+
+
 const SignupForm = ({ onSwitch }) => {
     const [customer_fullname, setFirstName] = useState("");
     const [username, setEmail] = useState("");
@@ -182,7 +178,7 @@ const SignupForm = ({ onSwitch }) => {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/customer/save', {
+            const response = await fetch('http://localhost:8080/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -251,22 +247,6 @@ const SignupForm = ({ onSwitch }) => {
                 </FormGroup>
                 <SubmitButton type="submit">Register</SubmitButton>
             </form>
-            <SocialLoginSection>
-                <div>
-                    <button className="btn-facebook">
-                        <FontAwesomeIcon icon={faFacebook} className="mr-2" />
-                        Facebook
-                    </button>
-                    <button className="btn-google">
-                        <FontAwesomeIcon icon={faGoogle} className="mr-2" />
-                        Google
-                    </button>
-                    <button className="btn-twitter">
-                        <FontAwesomeIcon icon={faTwitter} className="mr-2" />
-                        Twitter
-                    </button>
-                </div>
-            </SocialLoginSection>
             <button
                 onClick={onSwitch}
                 style={{ color: "black", marginTop: "20px", fontSize: "15px" }}
@@ -291,7 +271,7 @@ const LoginForm = ({ onSwitch }) => {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/login', {
+            const response = await fetch('http://localhost:8080/api/authenticate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -304,14 +284,26 @@ const LoginForm = ({ onSwitch }) => {
                 throw new Error('Network response was not ok');
             }
 
-            const result = await response.json();
-            console.log(result);
+            const data = await response.json();
+            const access_token = data.jwt;
+            localStorage.setItem('accessToken', access_token);
+            const user = data.user;
+            sessionStorage.setItem("user", user);
+            console.log(data.jwt);
             alert('Login Success');
             navigate('/')
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
     };
+
+    // const responseGoogle = (response) => {
+    //     if (response.error) {
+    //         alert("Login failed: " + response.error)
+    //     } else {
+    //         alert("login success: " + response)
+    //     }
+    // }
 
     return (
         <FormWrapper slideIn reverse>
@@ -322,7 +314,6 @@ const LoginForm = ({ onSwitch }) => {
                     <input
                         type="email"
                         id="username"
-                        value={username}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
@@ -332,30 +323,22 @@ const LoginForm = ({ onSwitch }) => {
                     <input
                         type="password"
                         id="password"
-                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                 </FormGroup>
                 <SubmitButton type="submit">Login</SubmitButton>
             </form>
-            <SocialLoginSection>
+            {/* <SocialLoginSection>
                 <p>Fast Login With Your Favourite Social Profile</p>
-                <div>
-                    <button className="btn-facebook">
-                        <FontAwesomeIcon icon={faFacebook} className="mr-2" />
-                        Facebook
-                    </button>
-                    <button className="btn-google">
-                        <FontAwesomeIcon icon={faGoogle} className="mr-2" />
-                        Google
-                    </button>
-                    <button className="btn-twitter">
-                        <FontAwesomeIcon icon={faTwitter} className="mr-2" />
-                        Twitter
-                    </button>
-                </div>
-            </SocialLoginSection>
+                <GoogleLogin
+                    clientId="173698177497-a6i697njfg5r11d869irhujufpscvpim.apps.googleusercontent.com"
+                    buttonText="Login with Google"
+                    onSuccess={responseGoogle}
+                    onFailure={responseGoogle}
+                    cookiePolicy={'single_host_origin'}
+                />
+            </SocialLoginSection> */}
             <button
                 onClick={onSwitch}
                 style={{
@@ -371,7 +354,7 @@ const LoginForm = ({ onSwitch }) => {
 };
 
 const All = () => {
-    const [isSignup, setIsSignup] = useState(true);
+    const [isSignup, setIsSignup] = useState(false);
     const [slideIn, setSlideIn] = useState(true);
 
     const handleSwitch = () => {

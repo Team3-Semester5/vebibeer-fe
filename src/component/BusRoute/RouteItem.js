@@ -145,8 +145,9 @@ const RouteItem = ({ route }) => {
                                     </div>
                                 </div>
                             </div>
-                            <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
+                            
                         </div>
+                        <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
                         <div className="mb-3">
                             <h2>Chính sách nhà xe</h2>
                             <ul>
