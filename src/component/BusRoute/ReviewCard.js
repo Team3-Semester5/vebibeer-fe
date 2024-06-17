@@ -1,28 +1,29 @@
 import React from 'react';
-import './ReviewCard.css';  // Assume styles are defined here
+import './ReviewCard.css';
 
 const ReviewCard = ({ review }) => {
-  return (
-    <div className="review-card">
-      <div className="review-header container">
-        <div className="review-user row">
-          {/* <div className="user-initials">
-            {review.userInitials}
-          </div> */}
-          <div className='user-initials col-md-4'>
-            <img src={review.customer.customer_img_ava} alt='Hello' width='100%' height='100%' />
-          </div>
-          <div className="user-name col-md-8">{review.customer.username}</div>
+    return (
+        <div className="review-card">
+            <div className="review-header">
+                <div className="user-info">
+                    <img src={review.customer.customer_img_ava} alt="User Avatar" className="user-initials" />
+                    <span className="user-name">{review.customer.username}</span>
+                </div>
+                <div className="review-rating">
+                    {Array.from({ length: 5 }, (_, index) => (
+                        <span key={index} className={`star ${index < review.amount_star ? 'filled' : ''}`}>&#9733;</span>
+                    ))}
+                </div>
+            </div>
+            <div className="review-content">
+                <p>{review.rating_content}</p>
+            </div>
+            <div className="review-footer">
+                <span className="review-date">{new Date(review.date).toLocaleDateString()}</span>
+                {review.customer.verify_purchased && <span className="review-verified">Verified</span>}
+            </div>
         </div>
-        <div className="review-rating">{review.amount_star} ★</div>
-      </div>
-      <div className="review-content">{review.rating_content}</div>
-      <div className="review-footer">
-        <span className="review-date">{review.rating_editTime}</span>
-        {review.customer.verify_purchased && <span className="review-verified">✔ Đã mua vé</span>}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ReviewCard;

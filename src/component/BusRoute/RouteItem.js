@@ -4,6 +4,7 @@ import PromoCard from './PromoCard';
 import BusCarousel from './BusCarousel';
 import ReviewCard from './ReviewCard';
 import SeatMap from './SeatMap';
+import NewReviewCard from './NewReviewCard';
 
 const RouteItem = ({ route }) => {
     // State to manage the visibility of the collapsible content
@@ -16,11 +17,14 @@ const RouteItem = ({ route }) => {
 
     const handleBookNowClick = () => {
         toggleCollapse();
-        if (activeTab != 'seat') {
+        if (activeTab !== 'seat') {
             setActiveTab('seat');
             return;
         }
         setActiveTab('discount')
+    };
+    const handleNewReview = (newReview) => {
+        setRatings([...ratings, newReview]);
     };
 
 
@@ -175,7 +179,11 @@ const RouteItem = ({ route }) => {
                         {ratings.map(review => (
                             <ReviewCard key={review.rating_id} review={review} />
                         ))}
-
+                        <NewReviewCard
+                            review={{ customer: { username: "You", customer_img_ava: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGMvEQPKYQhv8HGhKYOzgvYTRcnWeHw_H0gg&s" } }}
+                            onSubmitReview={handleNewReview}
+                            isEditable
+                        />
                     </div>
                 );
             case 'seat':
