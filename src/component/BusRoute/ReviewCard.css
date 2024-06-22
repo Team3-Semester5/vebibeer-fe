@@ -43,6 +43,9 @@
 }
 
 .review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 14px;
     color: #666;
 }
@@ -87,4 +90,28 @@ textarea {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+}
+
+.review-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.review-actions button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.review-actions button.delete {
+    margin-left: 3px;
+    background-color: #f44336; /* Red */
+    color: white;
+}
+
+.review-actions button.edit {
+    background-color: #4CAF50; /* Green */
+    color: white;
 }

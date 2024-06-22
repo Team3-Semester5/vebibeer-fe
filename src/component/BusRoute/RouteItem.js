@@ -5,15 +5,27 @@ import BusCarousel from './BusCarousel';
 import ReviewCard from './ReviewCard';
 import SeatMap from './SeatMap';
 import NewReviewCard from './NewReviewCard';
+import { useAuth } from './AuthContext';
 
 const RouteItem = ({ route }) => {
-    // State to manage the visibility of the collapsible content
     const [isOpen, setIsOpen] = useState(false);
     const [vouchers, setVouchers] = useState([]);
     const [ratings, setRatings] = useState([]);
     const [error, setError] = useState(null);
-    const toggleCollapse = () => setIsOpen(!isOpen);
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('discount');
+
+    const toggleCollapse = () => setIsOpen(!isOpen);
+
+    const isValidDate = (dateString) => dateString !== null && dateString !== undefined;
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+    };
+
+    const start_time = isValidDate(route.route_startTime) ? formatDate(route.route_startTime) : 'Invalid Date';
+    const end_time = isValidDate(route.route_endTime) ? formatDate(route.route_endTime) : 'Invalid Date';
 
     const handleBookNowClick = () => {
         toggleCollapse();
@@ -21,12 +33,68 @@ const RouteItem = ({ route }) => {
             setActiveTab('seat');
             return;
         }
-        setActiveTab('discount')
-    };
-    const handleNewReview = (newReview) => {
-        setRatings([...ratings, newReview]);
+        setActiveTab('discount');
     };
 
+    // Hàm fetch dữ liệu đánh giá
+    const fetchRatingList = async () => {
+        const id = route.busCompany.busCompany_id;
+        try {
+            const response = await fetch('http://localhost:8080/rating/' + id);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            // Sắp xếp các đánh giá theo thứ tự thời gian gần nhất
+            const sortedRatings = data.sort((a, b) => new Date(b.rating_editTime) - new Date(a.rating_editTime));
+            setRatings(sortedRatings);
+        } catch (error) {
+            setError(error.message);
+            console.error('Error fetching ratings:', error);
+        }
+    };
+
+    const handleNewReview = (newReview) => {
+        // Sau khi submit đánh giá mới thành công, gọi lại fetchRatingList để lấy dữ liệu mới nhất từ server
+        fetchRatingList();
+    };
+
+    const handleDeleteReview = async (reviewId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/rating/delete/${reviewId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                fetchRatingList(); // Refresh the ratings list after successful delete
+            } else {
+                console.error('Failed to delete review');
+            }
+        } catch (error) {
+            console.error('Network or server error:', error);
+        }
+    };
+
+    const handleEditReview = async (reviewId, newContent) => {
+        try {
+            const response = await fetch(`http://localhost:8080/rating/update/${reviewId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rating_content: newContent }),
+                credentials: 'include'
+            });
+            if (response.ok) {
+                fetchRatingList(); // Refresh the ratings list after successful edit
+            } else {
+                console.error('Failed to edit review');
+            }
+        } catch (error) {
+            console.error('Network or server error:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchVoucherList = async () => {
@@ -43,21 +111,7 @@ const RouteItem = ({ route }) => {
             }
         };
 
-        const fetchRatingList = async () => {
-            const id = route.busCompany.busCompany_id;
-            try {
-                const response = await fetch('http://localhost:8080/rating/' + id);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setRatings(data);
-            } catch (error) {
-                setError(error.message);
-                console.error('Error fetching vouchers:', error);
-            }
-        };
-
+        // Gọi fetchRatingList khi activeTab là 'rating'
         if (activeTab === 'rating') {
             fetchRatingList();
         }
@@ -66,8 +120,6 @@ const RouteItem = ({ route }) => {
             fetchVoucherList();
         }
     }, [activeTab]);
-
-
 
     const renderContent = (props) => {
         switch (activeTab) {
@@ -84,7 +136,6 @@ const RouteItem = ({ route }) => {
                     <div>
                         <BusCarousel route={props} />
                     </div>
-
                 );
             case 'services':
                 if (!props || props.length === 0) {
@@ -101,7 +152,6 @@ const RouteItem = ({ route }) => {
                                     <h4>{prop.service_name}</h4>
                                     <p>{prop.service_description}</p>
                                 </div>
-
                             </div>
                         ))}
                     </div>
@@ -134,7 +184,6 @@ const RouteItem = ({ route }) => {
             case 'direction':
                 return (
                     <div className="container mt-4">
-
                         <div className="policy-container">
                             <h1>Chính sách hủy đơn hàng</h1>
                             <div className="timeline-container">
@@ -177,13 +226,14 @@ const RouteItem = ({ route }) => {
                 return (
                     <div>
                         {ratings.map(review => (
-                            <ReviewCard key={review.rating_id} review={review} />
+                            <ReviewCard key={review.rating_id} review={review} onDelete={handleDeleteReview} onEdit={handleEditReview} />
                         ))}
-                        <NewReviewCard
-                            review={{ customer: { username: "You", customer_img_ava: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGMvEQPKYQhv8HGhKYOzgvYTRcnWeHw_H0gg&s" } }}
-                            onSubmitReview={handleNewReview}
-                            isEditable
-                        />
+                        {user && (
+                            <NewReviewCard
+                                onSubmitReview={handleNewReview}
+                                busCompany_id={route.busCompany.busCompany_id}
+                            />
+                        )}
                     </div>
                 );
             case 'seat':
@@ -191,12 +241,12 @@ const RouteItem = ({ route }) => {
                     <div>
                         <SeatMap route={props} />
                     </div>
-                )
-
+                );
             default:
                 return <p>Hello</p>;
         }
     };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', margin: '10px', padding: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -205,9 +255,9 @@ const RouteItem = ({ route }) => {
                     <div>
                         <h4>{route.busCompany.busCompany_name} <span style={{ fontSize: '0.8rem', color: '#666' }}>{route.rating}</span></h4>
                         <p>{route.route_description}</p>
-                        <p><b>{route.route_startTime}</b> • {route.startLocation.location_name}</p>
+                        <p><b>{start_time}</b> • {route.startLocation.location_name}</p>
                         <p>|</p>
-                        <p><b>{route.route_endTime}</b> • {route.endLocation.location_name}</p>
+                        <p><b>{end_time}</b> • {route.endLocation.location_name}</p>
                         {activeTab !== 'seat' && (
                             <button
                                 onClick={toggleCollapse}
@@ -223,7 +273,6 @@ const RouteItem = ({ route }) => {
                                 {isOpen ? 'Hide Details' : 'Show Details'}
                             </button>
                         )}
-
                     </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
@@ -247,7 +296,6 @@ const RouteItem = ({ route }) => {
                                 <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Đánh giá</button>
                             </div>
                         )}
-
                         <div className="content">
                             {renderContent(route)}
                         </div>
@@ -255,7 +303,7 @@ const RouteItem = ({ route }) => {
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default RouteItem;
