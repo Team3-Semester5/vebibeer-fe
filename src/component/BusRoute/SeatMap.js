@@ -12,69 +12,59 @@ function SeatMap({ route }) {
     const toggleSeatSelection = async (seatId) => {
         const isSelected = selectedSeats.includes(seatId);
         updateSelectedSeats(seatId, isSelected);
-        await updateSeatInCart(seatId, isSelected);
     };
 
-    const loadCartData = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/cart', { credentials: 'include' });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const cartData = await response.json();
-            const cartSeats = cartData.map(item => item.ticket_seat);
-            setSelectedSeats(cartSeats);
-            const total = cartData.reduce((acc, item) => acc + item.ticket_price, 0);
-            setTotalMoney(total);
-        } catch (error) {
-            console.error('Error loading cart data:', error);
-        }
-    };
-    
+
+
     const updateSelectedSeats = (seatId, isSelected) => {
         const updatedSelection = isSelected
             ? selectedSeats.filter(id => id !== seatId)
             : [...selectedSeats, seatId];
         setSelectedSeats(updatedSelection);
-    
+
         const seat = seats.find(seat => seat.ticket_seat === seatId);
         if (seat) {
             const priceChange = isSelected ? -seat.ticket_price : seat.ticket_price;
-            setTotalMoney(currentTotal => currentTotal + priceChange);
+            setTotalMoney(currentTotal => {
+                const updatedTotal = currentTotal + priceChange;
+                sessionStorage.setItem("totalMoney", updatedTotal);
+                return updatedTotal;
+            });
+            sessionStorage.setItem("totalMoney", totalMoney);
         }
+        updateSeatInCart(seat, isSelected);
     };
-    
-    const updateSeatInCart = async (seatId, isSelected) => {
-        const seat = seats.find(seat => seat.ticket_seat === seatId);
-        if (!seat) return;
-    
-        const url = `http://localhost:8080/cart/${seat.ticket_id}`;
-        try {
-            const response = await fetch(url, { method: isSelected ? 'DELETE' : 'POST', credentials: 'include' });
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            console.log(data.toLocaleString())
-            // Optionally handle response data
-        } catch (error) {
-            console.error('Error adding/removing tickets:', error);
+
+    const updateSeatInCart = (seat, isSelected) => {
+        let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        if (isSelected) {
+            // Remove from cart
+            cart = cart.filter(item => item.ticket_seat !== seat.ticket_seat);
+        } else {
+            // Add to cart
+            cart.push(seat);
         }
+        sessionStorage.setItem('cart', JSON.stringify(cart));
     };
+
+
 
     useEffect(() => {
         const fetchSeatList = async () => {
-            try {
-                const response = await fetch(`http://localhost:8080/tickets/${route.route_id}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setSeats(data);
-            } catch (error) {
-                console.error('Error fetching tickets:', error);
+            const response = await fetch(`http://localhost:8080/tickets/${route.route_id}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            const data = await response.json();
+            setSeats(data);
         };
-        fetchSeatList();
-        loadCartData();
+
+        fetchSeatList().catch(error => console.error('Error fetching tickets:', error));
+        const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        console.log(savedSeats.toString());
+        const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
+        setSelectedSeats(savedSeats.map(seat => seat.ticket_seat));
+        setTotalMoney(money);
     }, [route.route_id]);
 
     const renderDeck = (deckName, isLowerDeck) => {

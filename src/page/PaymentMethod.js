@@ -23,6 +23,7 @@ const PaymentMethod = () => {
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [order, setOrder] = useState(null);
 
     useEffect(() => {
         const fetchPaymentMethods = async () => {
@@ -57,6 +58,38 @@ const PaymentMethod = () => {
         return <Container>Error: {error}</Container>;
     }
 
+    const handlePayment = () => {
+        const amount = parseInt(sessionStorage.getItem('totalMoney'));
+        alert(amount)
+        const fetchPayment = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/cuong/submitOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    //   body: JSON.stringify(order)
+                    body: JSON.stringify({
+                        "amount": amount,
+                        "orderInfo": "hello"
+                    })
+
+                })
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                }
+            } catch (error) {
+                setError(error.message);
+                console.error('Error adding customer:', error);
+            }
+        }
+        fetchPayment();
+    }
+
     return (
         <Container>
             <h3 className="text-center my-4">Phương thức thanh toán</h3>
@@ -77,7 +110,9 @@ const PaymentMethod = () => {
                     </Card>
                 ))}
             </Accordion>
+            <button onClick={handlePayment}>Thanh toan</button>
         </Container>
+
     );
 }
 

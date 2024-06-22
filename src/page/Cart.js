@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShield, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
-const PersonalInfoForm = ({ formData, setFormData }) => {
+const PersonalInfoForm = ({ formData, setFormData, user }) => {
     let navigate = useNavigate();
     const handleChange = (e) => {
         setFormData({
@@ -13,12 +13,14 @@ const PersonalInfoForm = ({ formData, setFormData }) => {
         });
     };
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
         alert('Form submitted! Implement your submission logic here.');
     };
 
     return (
+
         <Container >
             <Row className="justify-content-md-center">
                 <Col md={8}>
@@ -26,13 +28,16 @@ const PersonalInfoForm = ({ formData, setFormData }) => {
                     <Form onSubmit={handleSubmit}>
                         <h5>Thông tin liên hệ</h5>
                         <Form.Group className="mb-3">
-                            <Alert variant='primary'>
-                                Đăng nhập để tự động điền thông tin khách hàng
-                                <Button variant="primary" style={{ marginLeft: '10%' }} onClick={() => {navigate('/login')}}>
-                                    Đăng nhập
-                                </Button>
+                            {formData.name === '' && (
+                                <Alert variant='primary'>
+                                    Đăng nhập để tự động điền thông tin khách hàng
+                                    <Button variant="primary" style={{ marginLeft: '10%' }} onClick={() => { navigate('/login') }}>
+                                        Đăng nhập
+                                    </Button>
 
-                            </Alert>
+                                </Alert>
+                            )}
+
                             <Form.Label>Tên người dùng <span style={{ color: 'red' }}>*</span></Form.Label>
 
                             <Form.Control
@@ -106,6 +111,7 @@ const TripDetails = () => {
     const [showChange, setShowChange] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
 
+
     const handleShowDetails = (ticket) => {
         setSelectedTicket(ticket);
         setShowDetails(true);
@@ -120,33 +126,12 @@ const TripDetails = () => {
     const handleCloseChange = () => setShowChange(false);
 
     useEffect(() => {
-        const fetchCart = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/cart', {
-                    credentials: 'include'
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setTicket(data);
-            } catch (error) {
-                setError(error.message);
-                console.error('Error fetching cart:', error);
-            }
-        };
-
-        fetchCart();
-        calculateTotal();
+        const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
+        setTicket(savedSeats);
+        setTotalMoney(money);
     }, []);
 
-    let calculateTotal = () => {
-        let hello = 0;
-        tickets.forEach(ticket => {
-            hello = hello + ticket.ticket_price;
-        });
-        setTotalMoney(hello);
-    }
     return (
         <Container className="mt-4">
             <div className="card mb-3">
@@ -157,22 +142,24 @@ const TripDetails = () => {
                     <Card.Body>
                         <div className="d-flex justify-content-between align-items-center mb-2">
                             <div>
-                                <p className="mb-1"><strong>Date:</strong> {ticket.route.route_startTime}</p>
+                                <p className="mb-1">
+                                    <strong>Date:</strong>
+                                    {ticket.route ? ticket.route.route_startTime : 'No date available'}
+                                </p>
                                 <p><strong>Seat:</strong> {ticket.ticket_seat}</p>
                             </div>
                             <Button variant="primary" onClick={() => handleShowDetails(ticket)}>Chi tiết</Button>
                         </div>
                         <div className="mb-4">
-                            <h5 className="card-title">{ticket.route.busCompany_fullname}</h5>
+                            <h5 className="card-title">{ticket.route ? ticket.route.busCompany_fullname : 'No company'}</h5>
                         </div>
                         <div className="mb-4">
-                            <h6 className="card-subtitle mb-2 text-muted">{ticket.route.startLocation.location_name} - {ticket.route.endLocation.location_name}</h6>
-                            <p className="card-text">{ticket.route.busCompany.busCompany_location}</p>
-                            <Button variant="success" onClick={() => handleShowChange(ticket)}>Thay đổi</Button>
-                        </div>
-                        <div>
-                            <h6 className="card-subtitle mb-2 text-muted">{ticket.route.route_startTime} - {ticket.route.startLocation.location_name}</h6>
-                            <p className="card-text">{ticket.route.busCompany.busCompany_location}</p>
+                            <h6 className="card-subtitle mb-2 text-muted">
+                                {ticket.route ? `${ticket.route.startLocation.location_name} - ${ticket.route.endLocation.location_name}` : 'No route info'}
+                            </h6>
+                            <p className="card-text">
+                                {ticket.route ? ticket.route.busCompany.busCompany_location : 'No location'}
+                            </p>
                             <Button variant="success" onClick={() => handleShowChange(ticket)}>Thay đổi</Button>
                         </div>
                     </Card.Body>
@@ -270,17 +257,20 @@ const ContinueComponent = ({ formData }, isCheckout) => {
 
 
 const Cart = () => {
+    const user = JSON.parse(sessionStorage.getItem("user") || '{}');
     const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        email: ''
+        name: user.customer_fullname || '',
+        phone: user.customer_phone || '',
+        email: user.username || ''
     });
+
+    
 
     return (
         <Container>
             <Row>
                 <Col md={8}>
-                    <PersonalInfoForm formData={formData} setFormData={setFormData} />
+                    <PersonalInfoForm formData={formData} setFormData={setFormData}/>
                 </Col>
                 <Col md={4}>
                     <TripDetails />

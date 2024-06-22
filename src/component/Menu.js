@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Ensure this is imported if using <Link>
+import { Link, useNavigate } from 'react-router-dom'; // Ensure this is imported if using <Link>
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './Menu.css';
 
@@ -7,7 +7,8 @@ const Menu = () => {
     const [scrolled, setScrolled] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const accessToken = localStorage.getItem("accessToken");
-    const user = sessionStorage.getItem("user");
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -18,7 +19,7 @@ const Menu = () => {
         };
 
         window.addEventListener('scroll', handleScroll);
-
+        // console.log(user.customer_id);
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
@@ -26,6 +27,12 @@ const Menu = () => {
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
+    }
+
+    const handleLogout = () => {
+        sessionStorage.setItem("user", null);
+        navigate("")
+        alert('success');
     }
 
     return (
@@ -43,11 +50,11 @@ const Menu = () => {
                         ) : (
                             <>
                                 <li onClick={toggleDropdown} className="dropdown-toggle">
-                                    User
+                                    <a>{user.username}</a>
                                     <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
-                                        <a href="#profile">Profile</a>
-                                        <a href="#settings">Settings</a>
-                                        <a href="http://localhost:3000/logout">Logout</a>
+                                        <a href="http://localhost:3000/profile">Profile</a>
+                                        <a href="http://localhost:3000/setting">Settings</a>
+                                        <a onClick={handleLogout}>Logout</a>
                                     </div>
                                 </li>
                                 {user.username === "admin" && (

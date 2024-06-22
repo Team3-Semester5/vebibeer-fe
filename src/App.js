@@ -5,6 +5,8 @@ import RouteGuestList from './page/RouteGuestList';
 import Cart from './page/Cart';
 import PaymentMethod from './page/PaymentMethod';
 import All from './page/LoginRegister';
+import OAuth2RedirectHandler from './utils/OAuth2RedirectHandler';
+import ProfilePage from './page/CustomerProfilePage';
 
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/payment" element={<PaymentMethod />} />
         <Route path="/login" element={<All/>} />
+        <Route path='/oauth2/redirect' element={<OAuth2RedirectHandler/>}/>
+        <Route path='/profile' element={<ProfilePage/>}/>
       </Routes>
     </Router>
 

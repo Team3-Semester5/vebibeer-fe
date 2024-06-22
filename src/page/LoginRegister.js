@@ -3,7 +3,6 @@ import styled, { keyframes, css } from "styled-components";
 import bannerSignup from "../assets/images/banner.jpg";
 import { useNavigate } from "react-router-dom";
 import Menu from "../component/Menu";
-import { GoogleLogin } from 'react-google-login';
 
 // Keyframes for sliding animations
 const slideInFromLeft = keyframes`
@@ -159,7 +158,7 @@ const SocialLoginSection = styled.div`
 
 
 const SignupForm = ({ onSwitch }) => {
-    const [customer_fullname, setFirstName] = useState("");
+    const [fullname, setFirstName] = useState("");
     const [username, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -172,7 +171,7 @@ const SignupForm = ({ onSwitch }) => {
         }
 
         const userData = {
-            customer_fullname,
+            fullname,
             username,
             password,
         };
@@ -206,11 +205,11 @@ const SignupForm = ({ onSwitch }) => {
             <Title className="nameF">Vebibeer Signup Form</Title>
             <form onSubmit={handleSubmit}>
                 <FormGroup>
-                    <label htmlFor="customer_fullname">Full Name</label>
+                    <label htmlFor="fullname">Full Name</label>
                     <input
                         type="text"
-                        id="customer_fullname"
-                        value={customer_fullname}
+                        id="fullname"
+                        value={fullname}
                         onChange={(e) => setFirstName(e.target.value)}
                         required
                     />
@@ -285,25 +284,17 @@ const LoginForm = ({ onSwitch }) => {
             }
 
             const data = await response.json();
-            const access_token = data.jwt;
+            const access_token = data.accessToken;
             localStorage.setItem('accessToken', access_token);
-            const user = data.user;
-            sessionStorage.setItem("user", user);
-            console.log(data.jwt);
+            const user = data.customer;
+            sessionStorage.setItem("user", JSON.stringify(user));
+            console.log(JSON.parse(sessionStorage.getItem("user")));
             alert('Login Success');
             navigate('/')
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
     };
-
-    // const responseGoogle = (response) => {
-    //     if (response.error) {
-    //         alert("Login failed: " + response.error)
-    //     } else {
-    //         alert("login success: " + response)
-    //     }
-    // }
 
     return (
         <FormWrapper slideIn reverse>
@@ -329,16 +320,10 @@ const LoginForm = ({ onSwitch }) => {
                 </FormGroup>
                 <SubmitButton type="submit">Login</SubmitButton>
             </form>
-            {/* <SocialLoginSection>
+            <SocialLoginSection>
                 <p>Fast Login With Your Favourite Social Profile</p>
-                <GoogleLogin
-                    clientId="173698177497-a6i697njfg5r11d869irhujufpscvpim.apps.googleusercontent.com"
-                    buttonText="Login with Google"
-                    onSuccess={responseGoogle}
-                    onFailure={responseGoogle}
-                    cookiePolicy={'single_host_origin'}
-                />
-            </SocialLoginSection> */}
+                <a className="btn btn-outline-primary" href="http://localhost:8080/oauth2/authorize/google?redirect_uri=http://localhost:3000/oauth2/redirect">Login with google</a>
+            </SocialLoginSection>
             <button
                 onClick={onSwitch}
                 style={{
