@@ -1,0 +1,19 @@
+@mixin navbar-color($color) {
+  background-color: $color;
+}
+
+@mixin center-item() {
+  left: 0;
+  right: 0;
+  margin-right: auto;
+  margin-left: auto;
+  position: absolute;
+}
+/* styles.css */
+.input-group .form-control {
+  border-right: 0;
+}
+
+.input-group .input-group-append .btn {
+  border-left: 0;
+}

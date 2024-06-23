@@ -159,12 +159,12 @@ function User() {
                     ></img>
                     <h5 className="title">Nhật Trương</h5>
                   </a>
-                  <p className="description">nhatlo123</p>
+                  <p className="description">nhattv123</p>
                 </div>
                 <p className="description text-center">
-                  nhóm bida phăng lỗ + nhậu <br></br>
-                  kèo chi cũng nhận <br></br>
-                  còn nhận cả kèo aram nữa
+                  nhóm code swp <br></br>
+                  freedom <br></br>
+                  sdt : 0965239234
                 </p>
               </Card.Body>
               <hr></hr>

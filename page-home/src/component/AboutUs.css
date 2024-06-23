@@ -1,0 +1,42 @@
+/* AboutUs.css */
+
+.banner-container {
+    background-image: url('https://ik.imagekit.io/tvlk/blog/2023/07/nyBBvwZY-canh-dep-thien-nhien-Viet-Nam-12.jpg'); /* Add your image URL here */
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    width: 100%;
+    height: 780px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .banner h1 {
+    font-size: 48px;
+    font-weight: 300;
+  margin-bottom: 20px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  }
+  
+  .explore-button {
+    background-color: #00B4D8;
+    border: none;
+    padding: 12px 25px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+  }
+  
+  .explore-button:hover {
+    background-color: #008CBA;
+  }
+  
+  
