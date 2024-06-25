@@ -25,24 +25,7 @@ const DeleteBusCompanyModal = ({ show, onHide, busCompany, onDelete }) => {
 
     if (!busCompany) return null;
 
-    return (
-        <Modal show={show} onHide={onHide}>
-            <Modal.Header closeButton>
-                <Modal.Title>Delete Bus Company</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <p>Are you sure you want to delete bus company <strong>{busCompany.buscompany_name}</strong>?</p>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Close
-                </Button>
-                <Button variant="danger" onClick={handleDelete}>
-                    Delete Bus Company
-                </Button>
-            </Modal.Footer>
-        </Modal>
-    );
+    
 };
 
 export default DeleteBusCompanyModal;
