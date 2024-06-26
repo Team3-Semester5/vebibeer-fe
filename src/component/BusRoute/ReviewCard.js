@@ -1,25 +1,66 @@
-import React from 'react';
-import './ReviewCard.css';  // Assume styles are defined here
+import React, { useState } from 'react';
+import './ReviewCard.css';
 
-const ReviewCard = ({ review }) => {
+const ReviewCard = ({ review, onDelete, onEdit }) => {
+  const user = JSON.parse(sessionStorage.getItem("user"));
+
+  const isValidDate = (dateString) => {
+    return dateString !== null && dateString !== undefined;
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
+  const formattedDate = isValidDate(review.rating_editTime) ? formatDate(review.rating_editTime) : 'Invalid Date';
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(review.rating_content);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveClick = () => {
+    onEdit(review.rating_id, editedContent);
+    setIsEditing(false);
+  };
+  console.log(review)
+
   return (
     <div className="review-card">
-      <div className="review-header container">
-        <div className="review-user row">
-          {/* <div className="user-initials">
-            {review.userInitials}
-          </div> */}
-          <div className='user-initials col-md-4'>
-            <img src={review.customer.customer_img_ava} alt='Hello' width='100%' height='100%' />
-          </div>
-          <div className="user-name col-md-8">{review.customer.username}</div>
+      <div className="review-header">
+        <div className="user-info">
+          <img src={review.customer && review.customer.customer_img_ava ? review.customer.customer_img_ava : "https://inkythuatso.com/uploads/thumbnails/800/2023/03/8-anh-dai-dien-trang-inkythuatso-03-15-26-54.jpg"} alt="User Avatar" className="user-initials" />
+          <span className="user-name">{review.customer ? review.customer.username : 'Unknown User'}</span>
         </div>
-        <div className="review-rating">{review.amount_star} ★</div>
+        <div className="review-rating">
+          {Array.from({ length: 5 }, (_, index) => (
+            <span key={index} className={`star ${index < review.amount_star ? 'filled' : ''}`}>&#9733;</span>
+          ))}
+        </div>
       </div>
-      <div className="review-content">{review.rating_content}</div>
+        <div className="review-content">
+          {isEditing ? (
+            <textarea value={editedContent} onChange={(e) => setEditedContent(e.target.value)} />
+          ) : (
+            <p>{review.rating_content}</p>
+          )}
+        </div>
+
       <div className="review-footer">
-        <span className="review-date">{review.rating_editTime}</span>
-        {review.customer.verify_purchased && <span className="review-verified">✔ Đã mua vé</span>}
+        <span className="review-date">{formattedDate}</span>
+        <br></br>
+        {review.customer.verify_purchased}
+        {review.customer && review.customer.verify_purchased && <span className="review-verified">Verified</span>}
+        {user && user.username === review.customer.username && (
+          <div className="review-actions">
+            <button className="delete" onClick={() => onDelete(review.rating_id)}>Delete</button>
+            {!isEditing && <button className="edit" onClick={handleEditClick}>Edit</button>}
+            {isEditing && <button className="edit" onClick={handleSaveClick}>Save</button>}
+          </div>
+        )}
       </div>
     </div>
   );

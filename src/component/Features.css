@@ -6,11 +6,12 @@
   border-radius: 15px;
   overflow: hidden;
   background: #ffffff;
+  height: 100%;
 }
 
 .card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* Styling for the icon container */
@@ -24,6 +25,9 @@
 
 .card-body {
   padding: 1rem 2rem; /* Adjust padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .fa-icon {
@@ -43,7 +47,7 @@
   line-height: 1.6;
 }
 
-.container-fluid{
+.container-fluid {
   background: linear-gradient(to right, #e6f1ff, #ffffff);
 }
 

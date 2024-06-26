@@ -257,11 +257,11 @@ const ContinueComponent = ({ formData }, isCheckout) => {
 
 
 const Cart = () => {
-    const user = JSON.parse(sessionStorage.getItem("user") || '{}');
+    const user = JSON.parse(sessionStorage.getItem("user"));
     const [formData, setFormData] = useState({
-        name: user.customer_fullname || '',
-        phone: user.customer_phone || '',
-        email: user.username || ''
+        name: user?. user.customer_fullname ?? '',
+        phone: user?. user.customer_phone ?? '',
+        email: user?. user.username ?? ''
     });
 
     

@@ -3,67 +3,127 @@ import './RouteItem.css';
 import PromoCard from './PromoCard';
 import BusCarousel from './BusCarousel';
 import ReviewCard from './ReviewCard';
+import NewReviewCard from './NewReviewCard';
 import SeatMap from './SeatMap';
 
 const RouteItem = ({ route }) => {
-    // State to manage the visibility of the collapsible content
     const [isOpen, setIsOpen] = useState(false);
     const [vouchers, setVouchers] = useState([]);
     const [ratings, setRatings] = useState([]);
     const [error, setError] = useState(null);
-    const toggleCollapse = () => setIsOpen(!isOpen);
+    const [lowestPrice, setLowestPrice] = useState(null);
+    const [highestPrice, setHighestPrice] = useState(null);
     const [activeTab, setActiveTab] = useState('discount');
+    const user = JSON.parse(sessionStorage.getItem("user"));
+
+    const toggleCollapse = () => setIsOpen(!isOpen);
 
     const handleBookNowClick = () => {
         toggleCollapse();
-        if (activeTab != 'seat') {
+        if (activeTab !== 'seat') {
             setActiveTab('seat');
             return;
         }
-        setActiveTab('discount')
+        setActiveTab('discount');
     };
 
+    const fetchRatingList = async () => {
+        const id = route.busCompany.busCompany_id;
+        try {
+            const response = await fetch('http://localhost:8080/rating/' + id);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            // Sắp xếp các đánh giá theo thứ tự thời gian gần nhất
+            const sortedRatings = data.sort((a, b) => new Date(b.rating_editTime) - new Date(a.rating_editTime));
+            setRatings(sortedRatings);
+        } catch (error) {
+            setError(error.message);
+            console.error('Error fetching ratings:', error);
+        }
+    };
+
+    const handleNewReview = (newReview) => {
+        // Sau khi submit đánh giá mới thành công, gọi lại fetchRatingList để lấy dữ liệu mới nhất từ server
+        fetchRatingList();
+    };
+    const handleDeleteReview = async (reviewId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/rating/delete/${reviewId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                fetchRatingList(); // Refresh the ratings list after successful delete
+            } else {
+                console.error('Failed to delete review');
+            }
+        } catch (error) {
+            console.error('Network or server error:', error);
+        }
+    };
+
+    const handleEditReview = async (reviewId, newContent) => {
+        try {
+            const response = await fetch(`http://localhost:8080/rating/update/${reviewId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rating_content: newContent }),
+                credentials: 'include'
+            });
+            if (response.ok) {
+                fetchRatingList(); // Refresh the ratings list after successful edit
+            } else {
+                console.error('Failed to edit review');
+            }
+        } catch (error) {
+            console.error('Network or server error:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchVoucherList = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:8080/voucher');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setVouchers(data);
+                const [voucherResponse, ratingResponse, lowestResponse, highestResponse] = await Promise.all([
+                    fetch('http://localhost:8080/buscomapany/voucher'),
+                    fetch(`http://localhost:8080/rating/${route.busCompany.busCompany_id}`),
+                    fetch('http://localhost:8080/tickets/lowest-price'),
+                    fetch('http://localhost:8080/tickets/highest-price')
+                ]);
+
+                if (!voucherResponse.ok) throw new Error(`HTTP error! status: ${voucherResponse.status}`);
+                if (!ratingResponse.ok) throw new Error(`HTTP error! status: ${ratingResponse.status}`);
+                if (!lowestResponse.ok) throw new Error(`HTTP error! status: ${lowestResponse.status}`);
+                if (!highestResponse.ok) throw new Error(`HTTP error! status: ${highestResponse.status}`);
+
+                const [voucherData, ratingData, lowestPrice, highestPrice] = await Promise.all([
+                    voucherResponse.json(),
+                    ratingResponse.json(),
+                    lowestResponse.json(),
+                    highestResponse.json()
+                ]);
+
+                console.log('Vouchers:', voucherData); // Log voucher data
+                console.log('Ratings:', ratingData); // Log rating data
+                console.log('Lowest Price:', lowestPrice); // Log lowest price
+                console.log('Highest Price:', highestPrice); // Log highest price
+
+                setVouchers(voucherData);
+                setRatings(ratingData);
+                setLowestPrice(lowestPrice);
+                setHighestPrice(highestPrice);
             } catch (error) {
                 setError(error.message);
-                console.error('Error fetching vouchers:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
-        const fetchRatingList = async () => {
-            const id = route.busCompany.busCompany_id;
-            try {
-                const response = await fetch('http://localhost:8080/rating/' + id);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setRatings(data);
-            } catch (error) {
-                setError(error.message);
-                console.error('Error fetching vouchers:', error);
-            }
-        };
-
-        if (activeTab === 'rating') {
-            fetchRatingList();
-        }
-
-        if (activeTab === 'discount') {
-            fetchVoucherList();
-        }
-    }, [activeTab]);
-
-
+        fetchData();
+    }, [route.busCompany.busCompany_id]);
 
     const renderContent = (props) => {
         switch (activeTab) {
@@ -80,7 +140,6 @@ const RouteItem = ({ route }) => {
                     <div>
                         <BusCarousel route={props} />
                     </div>
-
                 );
             case 'services':
                 if (!props || props.length === 0) {
@@ -97,7 +156,6 @@ const RouteItem = ({ route }) => {
                                     <h4>{prop.service_name}</h4>
                                     <p>{prop.service_description}</p>
                                 </div>
-
                             </div>
                         ))}
                     </div>
@@ -130,7 +188,6 @@ const RouteItem = ({ route }) => {
             case 'direction':
                 return (
                     <div className="container mt-4">
-
                         <div className="policy-container">
                             <h1>Chính sách hủy đơn hàng</h1>
                             <div className="timeline-container">
@@ -145,15 +202,13 @@ const RouteItem = ({ route }) => {
                                     </div>
                                 </div>
                             </div>
-                            
+                            <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
                         </div>
-                        <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
                         <div className="mb-3">
                             <h2>Chính sách nhà xe</h2>
                             <ul>
                                 <li>Cấm kị tất cả loại vật liệu dễ cháy như xăng, dầu.</li>
                                 <li>Khoảng cách an toàn, thời gian di chuyển.</li>
-                                {/* Add more items as needed */}
                             </ul>
                         </div>
                         <div className="mb-3">
@@ -174,8 +229,14 @@ const RouteItem = ({ route }) => {
                 return (
                     <div>
                         {ratings.map(review => (
-                            <ReviewCard key={review.rating_id} review={review} />
+                            <ReviewCard key={review.rating_id} review={review} onDelete={handleDeleteReview} onEdit={handleEditReview} />
                         ))}
+                        {user && (
+                            <NewReviewCard
+                                onSubmitReview={handleNewReview}
+                                busCompany_id={route.busCompany.busCompany_id}
+                            />
+                        )}
 
                     </div>
                 );
@@ -184,12 +245,12 @@ const RouteItem = ({ route }) => {
                     <div>
                         <SeatMap route={props} />
                     </div>
-                )
-
+                );
             default:
                 return <p>Hello</p>;
         }
     };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', margin: '10px', padding: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -216,11 +277,14 @@ const RouteItem = ({ route }) => {
                                 {isOpen ? 'Hide Details' : 'Show Details'}
                             </button>
                         )}
-
                     </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                    <h3>400$</h3>
+                    <div className="route-summary" onClick={toggleCollapse}>
+                        <h3>{route.route_name}</h3>
+                        <p>{route.busCompany.name}</p>
+                        <p>Giá: {lowestPrice} - {highestPrice} VNĐ</p>
+                    </div>
                     <p>{route.car.amount_seat} seats left</p>
                     <button onClick={handleBookNowClick} style={{ backgroundColor: '#4CAF50', color: 'white', padding: '10px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
                         Book now
@@ -240,7 +304,6 @@ const RouteItem = ({ route }) => {
                                 <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Đánh giá</button>
                             </div>
                         )}
-
                         <div className="content">
                             {renderContent(route)}
                         </div>
@@ -248,7 +311,7 @@ const RouteItem = ({ route }) => {
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default RouteItem;
