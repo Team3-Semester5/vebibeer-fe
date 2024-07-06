@@ -1,41 +1,29 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function OAuth2RedirectHandler() {
+const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
+};
+
+const OAuth2RedirectHandler = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const query = useQuery();
+    const token = query.get('token');
+    const error = query.get('error');
 
-    // Function to extract URL parameters
-    const getUrlParameter = (name) => {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        const results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    };
-
-    useEffect(() => {
-        const token = getUrlParameter('token');
-        const error = getUrlParameter('error');
-
-        if (token != null) {
-            alert('Login success')
+    React.useEffect(() => {
+        if (token) {
+            alert(token)
             localStorage.setItem('accessToken', token);
-            navigate('/', { state: { from: location }, replace: true });
-            
+            navigate('/', { state: { from: location } });
         } else {
-            alert('Login Failed')
-            navigate('/login', { 
-                state: { 
-                    from: location,
-                    error: error 
-                },
-                replace: true
-            });
+            alert(error)
+            navigate('/login', { state: { from: location, error: error } });
         }
-    }, [navigate, location]);
+    }, [navigate, token, error]);
 
-    // Normally, you might return null or a loading indicator here
-    return null;
-}
+    return null; // This component does not render anything itself
+};
 
 export default OAuth2RedirectHandler;

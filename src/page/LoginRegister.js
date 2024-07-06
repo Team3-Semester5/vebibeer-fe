@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes, css } from "styled-components";
 import bannerSignup from "../assets/images/banner.jpg";
 import { useNavigate } from "react-router-dom";
 import Menu from "../component/Menu";
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 // Keyframes for sliding animations
 const slideInFromLeft = keyframes`
@@ -70,22 +71,22 @@ const FormWrapper = styled.div`
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 
   animation: ${(props) => {
-        if (props.slideIn && props.reverse)
-            return css`
+    if (props.slideIn && props.reverse)
+      return css`
         ${slideInFromRight} 0.5s forwards
       `;
-        if (props.slideIn)
-            return css`
+    if (props.slideIn)
+      return css`
         ${slideInFromLeft} 0.5s forwards
       `;
-        if (props.reverse)
-            return css`
+    if (props.reverse)
+      return css`
         ${slideOutToLeft} 0.5s forwards
       `;
-        return css`
+    return css`
       ${slideOutToRight} 0.5s forwards
     `;
-    }};
+  }};
 `;
 
 const Title = styled.h2`
@@ -158,211 +159,247 @@ const SocialLoginSection = styled.div`
 
 
 const SignupForm = ({ onSwitch }) => {
-    const [fullname, setFirstName] = useState("");
-    const [username, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+  const [fullname, setFirstName] = useState("");
+  const [username, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (password !== confirmPassword) {
-            alert('Passwords do not match!');
-            return;
-        }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
 
-        const userData = {
-            fullname,
-            username,
-            password,
-        };
-
-        try {
-            const response = await fetch('http://localhost:8080/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const result = await response.json();
-            console.log(result);
-            alert('Dang ky thanh cong');
-            onSwitch();
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
+    const userData = {
+      fullname,
+      username,
+      password,
     };
 
+    try {
+      const response = await fetch('http://localhost:8080/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      console.log(result);
+      alert('Dang ky thanh cong');
+      onSwitch();
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  };
 
 
-    return (
-        <FormWrapper slideIn>
-            <Title className="nameF">Vebibeer Signup Form</Title>
-            <form onSubmit={handleSubmit}>
-                <FormGroup>
-                    <label htmlFor="fullname">Full Name</label>
-                    <input
-                        type="text"
-                        id="fullname"
-                        value={fullname}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        required
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <label htmlFor="username">Email</label>
-                    <input
-                        type="email"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                    />
-                </FormGroup>
-                <SubmitButton type="submit">Register</SubmitButton>
-            </form>
-            <button
-                onClick={onSwitch}
-                style={{ color: "black", marginTop: "20px", fontSize: "15px" }}
-            >
-                Go to Login
-            </button>
-        </FormWrapper>
-    );
+
+  return (
+    <FormWrapper slideIn>
+      <Title className="nameF">Vebibeer Signup Form</Title>
+      <form onSubmit={handleSubmit}>
+        <FormGroup>
+          <label htmlFor="fullname">Full Name</label>
+          <input
+            type="text"
+            id="fullname"
+            value={fullname}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label htmlFor="username">Email</label>
+          <input
+            type="email"
+            id="username"
+            value={username}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <SubmitButton type="submit">Register</SubmitButton>
+      </form>
+      <button
+        onClick={onSwitch}
+        style={{ color: "black", marginTop: "20px", fontSize: "15px" }}
+      >
+        Go to Login
+      </button>
+    </FormWrapper>
+  );
 };
 
 const LoginForm = ({ onSwitch }) => {
-    let navigate = useNavigate();
-    const [username, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  let navigate = useNavigate();
+  const [username, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        const userData = {
-            username,
-            password,
-        };
-
-        try {
-            const response = await fetch('http://localhost:8080/api/authenticate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData),
-            });
-
-            if (!response.ok) {
-                alert('Login fail!!!');
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            const access_token = data.accessToken;
-            localStorage.setItem('accessToken', access_token);
-            const user = data.customer;
-            sessionStorage.setItem("user", JSON.stringify(user));
-            console.log(JSON.parse(sessionStorage.getItem("user")));
-            alert('Login Success');
-            navigate('/')
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
+    const userData = {
+      username,
+      password,
     };
 
-    return (
-        <FormWrapper slideIn reverse>
-            <Title>Vebibeer Login Form</Title>
-            <form onSubmit={handleSubmit}>
-                <FormGroup>
-                    <label htmlFor="username">Email </label>
-                    <input
-                        type="email"
-                        id="username"
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </FormGroup>
-                <SubmitButton type="submit">Login</SubmitButton>
-            </form>
-            <SocialLoginSection>
-                <p>Fast Login With Your Favourite Social Profile</p>
-                <a className="btn btn-outline-primary" href="http://localhost:8080/oauth2/authorize/google?redirect_uri=http://localhost:3000/oauth2/redirect">Login with google</a>
-            </SocialLoginSection>
-            <button
-                onClick={onSwitch}
-                style={{
-                    color: "black",
-                    marginTop: "20px",
-                    fontSize: "22px",
-                }}
-            >
-                Go to Signup
-            </button>
-        </FormWrapper>
-    );
+    try {
+      const response = await fetch('http://localhost:8080/api/authenticate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        alert('Login fail!!!');
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      const access_token = data.accessToken;
+      localStorage.setItem('accessToken', access_token);
+      const user = data.customer;
+      sessionStorage.setItem("user", JSON.stringify(user));
+      console.log(JSON.parse(sessionStorage.getItem("user")));
+      alert('Login Success');
+      navigate('/')
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  };
+
+  const responseGoogle = async (response) => {
+    const tokenId = response.credential;
+    console.log(tokenId);
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: tokenId }),
+      });
+
+      if (!response.ok) {
+        alert('Login fail!!!');
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      const access_token = data.accessToken;
+      localStorage.setItem('accessToken', access_token);
+      const user = data.customer;
+      sessionStorage.setItem("user", JSON.stringify(user));
+      console.log(JSON.parse(sessionStorage.getItem("user")));
+      alert('Login Success');
+      navigate('/')
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  }
+
+  return (
+    <FormWrapper slideIn reverse>
+      <Title>Vebibeer Login Form</Title>
+      <form onSubmit={handleSubmit}>
+        <FormGroup>
+          <label htmlFor="username">Email </label>
+          <input
+            type="email"
+            id="username"
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <FormGroup>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </FormGroup>
+        <SubmitButton type="submit">Login</SubmitButton>
+      </form>
+      <SocialLoginSection>
+        <p>Fast Login With Your Favourite Social Profile</p>
+        <GoogleOAuthProvider clientId='173698177497-a6i697njfg5r11d869irhujufpscvpim.apps.googleusercontent.com'>
+          <div>
+            <GoogleLogin
+              onSuccess={responseGoogle}
+              onError={responseGoogle}
+            />
+          </div>
+        </GoogleOAuthProvider>
+      </SocialLoginSection>
+      <button
+        onClick={onSwitch}
+        style={{
+          color: "black",
+          marginTop: "20px",
+          fontSize: "22px",
+        }}
+      >
+        Go to Signup
+      </button>
+    </FormWrapper>
+  );
 };
 
 const All = () => {
-    const [isSignup, setIsSignup] = useState(false);
-    const [slideIn, setSlideIn] = useState(true);
+  const [isSignup, setIsSignup] = useState(false);
+  const [slideIn, setSlideIn] = useState(true);
 
-    const handleSwitch = () => {
-        setSlideIn(false);
-        setTimeout(() => {
-            setIsSignup(!isSignup);
-            setSlideIn(true);
-        }, 500);
-    };
+  const handleSwitch = () => {
+    setSlideIn(false);
+    setTimeout(() => {
+      setIsSignup(!isSignup);
+      setSlideIn(true);
+    }, 500);
+  };
 
-    return (
-        <div>
-            <Menu />
-            <Container bgImage={bannerSignup} >
-                {isSignup ? (
-                    <SignupForm onSwitch={handleSwitch} />
-                ) : (
-                    <LoginForm onSwitch={handleSwitch} />
-                )}
-            </Container>
-        </div>
+  return (
+    <div>
+      <Menu />
+      <Container bgImage={bannerSignup} >
+        {isSignup ? (
+          <SignupForm onSwitch={handleSwitch} />
+        ) : (
+          <LoginForm onSwitch={handleSwitch} />
+        )}
+      </Container>
+    </div>
 
-    );
+  );
 };
 
 export default All;

@@ -7,7 +7,10 @@ import PaymentMethod from './page/PaymentMethod';
 import All from './page/LoginRegister';
 import OAuth2RedirectHandler from './utils/OAuth2RedirectHandler';
 import ProfilePage from './page/CustomerProfilePage';
-import BusLayout from "./page/BusCompanyManager/layouts/Bus";
+import OrderResult from './page/OrderResult';
+import BusLayout from './page/busmanage/BusLayout';
+import AdLayout from './page/Admanage/AdLayout';
+// import BusLayout from "./page/BusCompanyManager/layouts/Bus";
 
 function App() {
   return (
@@ -20,7 +23,10 @@ function App() {
         <Route path="/login" element={<All/>} />
         <Route path='/oauth2/redirect' element={<OAuth2RedirectHandler/>}/>
         <Route path='/profile' element={<ProfilePage/>}/>
-        <Route path='/bus/dataTable' element={<BusLayout/>} />
+        <Route path='/payment-result' element={<OrderResult/>} />
+        <Route path='/bus/*' element={<BusLayout />} />
+        <Route path='/ad/*' element={<AdLayout/>} />
+        {/* <Route path='/bus/dataTable' element={<BusLayout/>} /> */}
       </Routes>
     </Router>
 

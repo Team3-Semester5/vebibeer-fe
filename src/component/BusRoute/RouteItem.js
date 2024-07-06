@@ -187,41 +187,43 @@ const RouteItem = ({ route }) => {
                 );
             case 'direction':
                 return (
-                    <div className="container mt-4">
-                        <div className="policy-container">
-                            <h1>Chính sách hủy đơn hàng</h1>
-                            <div className="timeline-container">
-                                <div className="timeline">
-                                    <div className="point point-start">
-                                        <span className="time">Hôm nay<br />20:16<br />15/06/2024</span>
-                                        <div className="fee">Phí hủy 20%</div>
-                                    </div>
-                                    <div className="point point-end">
-                                        <span className="time">08:16<br />16/06/2024</span>
-                                        <div className="fee">Phí hủy 100%</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
+                    <div className="policy-container">
+                        <header className="policy-header">
+                            Chính sách hủy đơn hàng
+                        </header>
+                        <div className="policy-section">
+                            <h2>Phí hủy</h2>
+                            <p><strong>Phí hủy 10%:</strong> Phí hủy sẽ được tính trên giá đặc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán.</p>
+                            <p><strong>Không có phí hủy</strong></p>
                         </div>
-                        <div className="mb-3">
+                        <div className="policy-section">
                             <h2>Chính sách nhà xe</h2>
                             <ul>
-                                <li>Cấm kị tất cả loại vật liệu dễ cháy như xăng, dầu.</li>
-                                <li>Khoảng cách an toàn, thời gian di chuyển.</li>
+                                <li>Có mặt tại vị trí phòng/quầy vé/bến xe trước 30 phút để làm thủ tục lên xe</li>
+                                {/* Add more list items as per the image */}
                             </ul>
                         </div>
-                        <div className="mb-3">
+                        <div className="policy-section">
                             <h2>Hành lý xách tay</h2>
-                            <p>Không trọng lượng hạn hẹp không vượt quá 7 kg.</p>
+                            <ul>
+                                {/* List out the rules */}
+                            </ul>
                         </div>
-                        <div className="mb-3">
-                            <h2>Điều kiện vận chuyển đặc biệt</h2>
-                            <p>Đối với hàng hóa đặc biệt, cần có giấy phép vận chuyển riêng.</p>
+                        <div className="policy-section">
+                            <h2>Trẻ em và phụ nữ có thai</h2>
+                            <ul>
+                                {/* List out the rules */}
+                            </ul>
                         </div>
-                        <div className="mb-3">
-                            <h2>Quy định về đổi trả</h2>
-                            <p>Khách hàng có thể đổi trả hàng trong vòng 24 giờ nếu sản phẩm còn nguyên đai, nguyên kiện.</p>
+                        <div className="policy-section">
+                            <h2>Đồng vật cảnh/Thú cưng</h2>
+                            <ul>
+                                {/* List out the rules */}
+                            </ul>
+                        </div>
+                        <div className="policy-section">
+                            <h2>Xuất hóa đơn GTGT</h2>
+                            <p>Nhà xe không cung cấp hóa đơn GTGT</p>
                         </div>
                     </div>
                 );

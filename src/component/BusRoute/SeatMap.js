@@ -72,18 +72,30 @@ function SeatMap({ route }) {
         return (
             <Card className="deck-card">
                 <Card.Header className="deck-header">{deckName} {isLowerDeck && <span className="icon-steering-wheel"></span>}</Card.Header>
-                <Card.Body>
-                    {deckSeats.map(seat => (
-                        <Button
-                            key={seat.ticket_seat}
-                            variant={selectedSeats.includes(seat.ticket_seat) ? 'success' : 'secondary'}
-                            disabled={seat.ticket_status !== 'Empty'}
-                            className="seat-button"
-                            onClick={() => toggleSeatSelection(seat.ticket_seat)}
-                        >
-                            {seat.ticket_seat}
-                        </Button>
-                    ))}
+                <Card.Body style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around' }}>
+                    <Container>
+                        <Row>
+                            {deckSeats.map(seat => (
+                                <Col>
+                                    <Button
+                                        key={seat.ticket_seat}
+                                        variant={selectedSeats.includes(seat.ticket_seat) ? 'success' : 'secondary'}
+                                        disabled={seat.ticket_status !== 'Empty'}
+                                        className="seat-button"
+                                        onClick={() => toggleSeatSelection(seat.ticket_seat)}
+                                        style={{
+                                            width: 'calc(100% - 4px)', // More precise width calculation
+                                            margin: '2px'
+                                        }}
+                                    >
+                                        {seat.ticket_seat}
+                                    </Button>
+                                </Col>
+
+                            ))}
+                        </Row>
+                    </Container>
+
                 </Card.Body>
             </Card>
         );

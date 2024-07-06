@@ -79,97 +79,44 @@
   }
 
   /* CancellationPolicy.css */
-.policy-container {
+  .policy-container {
     font-family: Arial, sans-serif;
-    width: 80%;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.policy-container h1 {
-    margin-bottom: 20px;
-}
-
-.policy-container .timeline-container {
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.policy-container .timeline-point {
-    text-align: center;
-    width: 100px;
-}
-
-.policy-container .timeline {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.policy-container .point {
-    position: relative;
-    width: 200px; /* Adjust width as necessary */
-}
-
-.policy-container .time {
-    font-size: 14px;
-    color: #666;
-    margin-top: -30%;
-}
-
-
-.policy-container .point::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.policy-container .point-start::before {
-    background-color: blue;
-}
-
-.policy-container .point-end::before {
-    background-color: red;
-}
-
-.timeline::before {
-    content: '';
-    position: absolute;
-    height: 4px;
-    width: 100%;
-    top: 20px;
-    background: linear-gradient(to right, blue, red);
-    z-index: 0;
-}
-
-.policy-container .fee {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 5px 10px;
-    font-weight: bold;
-    z-index: 1;
-}
-
-.note {
-    font-size: 14px;
-    line-height: 1.4;
     color: #333;
-    text-align: left;
-    padding-top: 40px;
-}
+    background-color: #fff;
+    padding: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .policy-header {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  .policy-section h2 {
+    color: #0056b3;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .policy-section p, .policy-section ul {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .policy-section ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  .policy-section ul li::before {
+    content: '•';
+    color: #0056b3;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }

@@ -257,11 +257,11 @@ const ContinueComponent = ({ formData }, isCheckout) => {
 
 
 const Cart = () => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(sessionStorage.getItem("user")) || {};
     const [formData, setFormData] = useState({
-        name: user?. user.customer_fullname ?? '',
-        phone: user?. user.customer_phone ?? '',
-        email: user?. user.username ?? ''
+        name: user.customer_fullname,
+        phone: user.customer_phone,
+        email: user.username
     });
 
     
@@ -270,7 +270,7 @@ const Cart = () => {
         <Container>
             <Row>
                 <Col md={8}>
-                    <PersonalInfoForm formData={formData} setFormData={setFormData}/>
+                    <PersonalInfoForm formData={formData} setFormData={setFormData} user = {user}/>
                 </Col>
                 <Col md={4}>
                     <TripDetails />
