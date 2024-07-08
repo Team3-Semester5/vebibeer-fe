@@ -14,7 +14,7 @@ const Navbar = () => {
           <Link to="dataTable">Data Table</Link>
         </li>
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
-          <Link to="list">Trip List</Link>
+          <Link to="route">Trip List</Link>
         </li>
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="busProfile">Bus Profile</Link>

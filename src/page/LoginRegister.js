@@ -361,6 +361,9 @@ const LoginForm = ({ onSwitch }) => {
           </div>
         </GoogleOAuthProvider>
       </SocialLoginSection>
+      <div>
+        <a href="http://localhost:8080/api/forgetPassword?username=chumlu2102@gmail.com">Forget Password</a>
+      </div>
       <button
         onClick={onSwitch}
         style={{

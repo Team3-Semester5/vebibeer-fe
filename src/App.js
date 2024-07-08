@@ -11,6 +11,8 @@ import OrderResult from './page/OrderResult';
 import BusLayout from './page/busmanage/BusLayout';
 import AdLayout from './page/Admanage/AdLayout';
 import TransactionHistory from './page/TransactionHistory';
+import ChangePassword from './page/ChangePassword';
+// import AboutUss from './page/AboutUss'
 // import BusLayout from "./page/BusCompanyManager/layouts/Bus";
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
         <Route path='/bus/*' element={<BusLayout />} />
         <Route path='/ad/*' element={<AdLayout/>} />
         <Route path="/history" element={<TransactionHistory />} />
+        <Route path='/changePassword' element={<ChangePassword />} />
+        {/* <Route path="/aboutUs" element={<AboutUss />} /> */}
         {/* <Route path='/bus/dataTable' element={<BusLayout/>} /> */}
       </Routes>
     </Router>

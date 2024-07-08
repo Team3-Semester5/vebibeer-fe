@@ -83,10 +83,7 @@ function SeatMap({ route }) {
                                         disabled={seat.ticket_status !== 'Empty'}
                                         className="seat-button"
                                         onClick={() => toggleSeatSelection(seat.ticket_seat)}
-                                        style={{
-                                            width: 'calc(100% - 4px)', // More precise width calculation
-                                            margin: '2px'
-                                        }}
+                                        
                                     >
                                         {seat.ticket_seat}
                                     </Button>

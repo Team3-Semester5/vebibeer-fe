@@ -5,19 +5,33 @@ import Menu from '../component/Menu';
 
 const OrderResult = () => {
     const [status, setStatus] = useState('');
-    const [cart, setCart] = useState([]);
+    const [tickets, setTickets] = useState([]);
+    const [totalMoney, setTotalMoney] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const url = new URL(window.location.href);
-        const status = url.searchParams.get('status');
-        setStatus(status); // Set the status state with the fetched status
-        setCart(JSON.parse(sessionStorage.getItem('cart')))
+        try {
+            const url = new URL(window.location.href);
+            const status = url.searchParams.get('status');
+            setStatus(status); // Set the status state with the fetched status
+            const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
+            setTickets(savedSeats);
+            console.log(tickets.toString());
+            setTotalMoney(parseInt(sessionStorage.getItem("totalMoney")));
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    }, []);
+
+    const backToHome = () => {
         if (status === 'OrderSuccess') {
             sessionStorage.removeItem('cart');
             sessionStorage.setItem('totalMoney', 0);
         }
-    }, []);
+
+    }
 
     return (
         <div>
@@ -38,22 +52,21 @@ const OrderResult = () => {
                 <p>We've received your order and it will ship in 5-7 business days.<br />Your order number is #B6CT3</p>
                 <div className="order-summary">
                     <h2>Order Summary</h2>
-                    <div className="item">
-                        <img src="shirt.jpg" alt="Cotton Shirt" />
-                        <p>Half Sleeve 100% Cotton Shirts For Women</p>
-                        <span>₹ 800</span>
-                    </div>
-                    <div className="item">
-                        <img src="scarf.jpg" alt="Womens Scarfs" />
-                        <p>Stylish womens scarfs combo</p>
-                        <span>₹ 800</span>
-                    </div>
+                    {tickets.map((ticket) => {
+                        <div className="item" key={ticket.ticket_id}>
+                            <img src={ticket.route.car.car_imgUrl1} alt="Womens Scarfs" />
+                            <p>{ticket.ticket_seat}</p>
+                            <span>{ticket.ticket_price}đ</span>
+                        </div>
+                    })}
+
                     <div className="total">
-                        <strong>Total</strong>
-                        <strong>₹ 1600</strong>
+                        <strong>Total: </strong>
+                        <strong>{totalMoney}đ</strong>
                     </div>
                 </div>
-                <button className="home-button" onClick={() => navigate('/')}>Back to Home</button>
+                <button className="home-button" onClick={backToHome()}>Hello</button>
+                <button className="home-button" onClick={() => navigate('/')}>Back To Menu</button>
             </div>
         </div>
     );
