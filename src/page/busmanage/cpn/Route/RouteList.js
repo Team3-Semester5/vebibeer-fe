@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddRouteModal from './AddRouteModal';
 import UpdateRouteModal from './UpdateRouteModal';
 import DeleteRouteModal from './DeleteRouteModal';
-
+import '../../../../assets/css/Buscompany.css';
 const RouteList = () => {
     const [routes, setRoutes] = useState([]);
     const [filteredRoutes, setFilteredRoutes] = useState([]);
@@ -13,11 +13,12 @@ const RouteList = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedRoute, setSelectedRoute] = useState(null);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     useEffect(() => {
         const fetchRoutes = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/routes/');
+                const response = await fetch('http://localhost:8080/route/');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -44,7 +45,15 @@ const RouteList = () => {
 
         setFilteredRoutes(filtered);
     }, [searchTerm, routes]);
-
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredRoutes.slice(indexOfFirstItem, indexOfLastItem);
+    const totalItems = filteredRoutes.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const handleFirstPage = () => setCurrentPage(1);
+    const handleLastPage = () => setCurrentPage(totalPages);
+    const handleNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    const handlePreviousPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
     const handleAddRoute = (newRoute) => {
         setRoutes([...routes, newRoute]);
         setFilteredRoutes([...routes, newRoute]);
@@ -67,7 +76,7 @@ const RouteList = () => {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4 buscompany">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1>Route List</h1>
                 <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
@@ -102,7 +111,7 @@ const RouteList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredRoutes.map((route) => (
+                    {currentItems.map((route) => (
                         <tr key={route.route_id}>
                             <td>{route.busCompany ? route.busCompany.busCompany_name : 'N/A'}</td>
                             <td>{route.startLocation ? route.startLocation.location_name : 'N/A'}</td>
@@ -113,7 +122,8 @@ const RouteList = () => {
                             <td>{route.route_description}</td>
                             <td>{route.car ? route.car.car_code : 'N/A'}</td>
                             <td>{route.driver ? route.driver.driver_name : 'N/A'}</td>
-                            <td><button
+                            <td>
+                                <button
                                     className="btn btn-warning btn-sm mr-2"
                                     onClick={() => {
                                         setSelectedRoute(route);
@@ -136,6 +146,29 @@ const RouteList = () => {
                     ))}
                 </tbody>
             </table>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                <nav>
+                    <ul className="pagination">
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleFirstPage}>First</button>
+                        </li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handlePreviousPage}>Previous</button>
+                        </li>
+                        {Array.from({ length: totalPages }, (_, i) => (
+                            <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                                <button className="page-link" onClick={() => setCurrentPage(i + 1)}>{i + 1}</button>
+                            </li>
+                        ))}
+                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleNextPage}>Next</button>
+                        </li>
+                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={handleLastPage}>Last</button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
             <AddRouteModal
                 show={showAddModal}
                 onHide={() => setShowAddModal(false)}

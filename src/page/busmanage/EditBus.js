@@ -9,7 +9,7 @@ import RouteList from "./cpn/Route/RouteList";
 function EditBus() {
   return (
     <div>
-      <BusCompanyList />
+      {/* <BusCompanyList /> */}
       <CarList />
       {/* <DriverList />
       <LocationList />

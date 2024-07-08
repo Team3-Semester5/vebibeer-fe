@@ -31,7 +31,12 @@ const Navbar = () => {
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="service">Service</Link>
         </li>
-
+        {/* <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
+          <Link to="reviewrating">Review Rating</Link>
+        </li> */}
+        <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
+          <Link to="informationCustomer">Customer</Link>
+        </li>
         <li
           style={{
             marginLeft: "200px",
@@ -48,7 +53,7 @@ const Navbar = () => {
               border: "none", // Bỏ viền
               borderRadius: "5px", // Bo góc
             }}
-            onClick={() => {}}
+            onClick={() => { }}
           >
             Logout
           </button>

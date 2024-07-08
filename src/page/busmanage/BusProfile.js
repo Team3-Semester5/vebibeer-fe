@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Badge, Button, Card, Form, Navbar, Nav, Container, Row, Col } from "react-bootstrap";
-import "./busProfile.css"
+import React, { useState, useEffect, useRef } from "react";
+import { Button, Card, Form, Container, Row, Col, Alert } from "react-bootstrap";
+import "./busProfile.css";
 
-function BusPr({ onAdd, onHide }) {
+function BusPr({ onAdd = () => {}, onHide = () => {} }) {
   const [busCompany, setBusCompany] = useState({
     username: "",
     password: "",
@@ -17,6 +17,9 @@ function BusPr({ onAdd, onHide }) {
     busCompany_location: "",
   });
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null); // Thêm state cho thông báo thành công
+  const [uploadSuccessMessage, setUploadSuccessMessage] = useState(null); // Thêm state cho thông báo upload thành công
+  const fileInputRef = useRef(null); // Sử dụng React ref
 
   useEffect(() => {
     // Fetch bus company data here if needed
@@ -36,11 +39,38 @@ function BusPr({ onAdd, onHide }) {
     setBusCompany({ ...busCompany, [name]: value });
   };
 
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch(`http://localhost:8080/admin/buscompanies/upload/1`, { // Sử dụng ID thực của bus company
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const updatedBusCompany = await response.json();
+        setBusCompany({ ...busCompany, busCompany_imgUrl: updatedBusCompany.busCompany_imgUrl });
+        setUploadSuccessMessage('Image uploaded successfully'); // Thay đổi trạng thái thông báo upload thành công
+        setTimeout(() => setUploadSuccessMessage(null), 3000); // Ẩn thông báo sau 3 giây
+      } catch (error) {
+        setError('Error uploading image');
+        console.error('Error uploading image:', error);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/admin/buscompanies/save/", {
-        method: "POST",
+      const response = await fetch("http://localhost:8080/admin/buscompanies/update/1", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -52,6 +82,8 @@ function BusPr({ onAdd, onHide }) {
       const newBusCompany = await response.json();
       onAdd(newBusCompany);
       onHide();
+      setSuccessMessage('Profile updated successfully'); // Thay đổi trạng thái thông báo thành công
+      setTimeout(() => setSuccessMessage(null), 3000); // Ẩn thông báo sau 3 giây
     } catch (error) {
       setError(error.message);
       console.error('Error adding bus company:', error);
@@ -60,14 +92,16 @@ function BusPr({ onAdd, onHide }) {
 
   return (
     <>
-      <Container fluid>
-        <Row>
+      <Container fluid style={{marginTop : 150}}>
+        <Row >
           <Col md="8">
             <Card>
               <Card.Header>
                 <Card.Title as="h4">Edit Profile</Card.Title>
               </Card.Header>
               <Card.Body>
+                {successMessage && <Alert variant="success">{successMessage}</Alert>}
+                {uploadSuccessMessage && <Alert variant="success">{uploadSuccessMessage}</Alert>}
                 <Form onSubmit={handleSubmit}>
                   <Row>
                     <Col className="pr-1" md="4">
@@ -100,6 +134,7 @@ function BusPr({ onAdd, onHide }) {
                           placeholder="Email"
                           type="email"
                           value={busCompany.username}
+                          readOnly // Thêm thuộc tính readOnly
                         />
                       </Form.Group>
                     </Col>
@@ -125,7 +160,7 @@ function BusPr({ onAdd, onHide }) {
                           value={busCompany.busCompany_dob}
                           onChange={handleChange}
                           placeholder="Date of Birth"
-                          type="text"
+                          type="date"
                         />
                       </Form.Group>
                     </Col>
@@ -209,14 +244,27 @@ function BusPr({ onAdd, onHide }) {
               </div>
               <Card.Body>
                 <div className="author">
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                  
                     <img
                       alt="..."
                       className="avatar border-gray"
-                      src={busCompany.busCompany_imgUrl}
+                      src={busCompany.busCompany_imgUrl || 'https://cdn.trendhunterstatic.com/thumbs/human-facebook-default-avatar.jpeg?auto=webp'} // Hiển thị ảnh đại diện
+                      style={{ cursor: 'pointer' }} // Thêm con trỏ chuột chỉ vào ảnh
+                      onClick={() => {
+                        console.log("Image clicked"); // Thêm log để kiểm tra sự kiện click
+                        if (fileInputRef.current) {
+                          fileInputRef.current.click(); // Kích hoạt input chọn file khi click vào ảnh
+                        }
+                      }}
+                    />
+                    <input
+                      type="file"
+                      ref={fileInputRef} // Sử dụng ref thay vì id
+                      style={{ display: 'none' }} // Ẩn input chọn file
+                      onChange={handleImageUpload} // Gọi hàm xử lý upload ảnh
                     />
                     <h5 className="title">{busCompany.busCompany_fullname}</h5>
-                  </a>
+                  
                   <p className="description">{busCompany.username}</p>
                 </div>
                 <p className="description text-center">

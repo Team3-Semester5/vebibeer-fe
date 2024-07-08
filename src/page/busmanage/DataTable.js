@@ -25,8 +25,6 @@ ChartJS.register(
 function DataTable() {
   const [driverCount, setDriverCount] = useState(0);
   const [busCount, setBusCount] = useState(0);
-  const [ticketSold, setTicketSold] = useState(0);
-  const [revenue, setRevenue] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -52,16 +50,12 @@ function DataTable() {
         console.error("Error fetching data:", error);
       }
     };
-      
+
     fetchCounts();
   }, []);
 
-  const calculateTotalRevenue = () => {
-    console.log()
-  }
-
   return (
-    <Table
+    <Table 
       striped
       bordered
       hover

@@ -65,55 +65,56 @@ const RouteItem = ({ route }) => {
         }
     };
 
-    const handleEditReview = async (reviewId, newContent) => {
+   
+      
+
+    const handleEditReview = async (reviewId, newContent, newStar) => {
         try {
-            const response = await fetch(`http://localhost:8080/rating/update/${reviewId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ rating_content: newContent }),
-                credentials: 'include'
-            });
-            if (response.ok) {
-                fetchRatingList(); // Refresh the ratings list after successful edit
-            } else {
-                console.error('Failed to edit review');
-            }
+          const response = await fetch(`http://localhost:8080/rating/update/${reviewId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rating_content: newContent, amount_star: newStar }),
+            credentials: 'include'
+          });
+          if (response.ok) {
+            fetchRatingList(); // Refresh the ratings list after successful edit
+          } else {
+            console.error('Failed to edit review');
+          }
         } catch (error) {
-            console.error('Network or server error:', error);
+          console.error('Network or server error:', error);
         }
-    };
+      };
+      
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [voucherResponse, ratingResponse, lowestResponse, highestResponse] = await Promise.all([
+                
+                const [voucherResponse, lowestResponse, highestResponse] = await Promise.all([
                     fetch('http://localhost:8080/buscomapany/voucher'),
-                    fetch(`http://localhost:8080/rating/${route.busCompany.busCompany_id}`),
                     fetch('http://localhost:8080/tickets/lowest-price'),
                     fetch('http://localhost:8080/tickets/highest-price')
                 ]);
 
                 if (!voucherResponse.ok) throw new Error(`HTTP error! status: ${voucherResponse.status}`);
-                if (!ratingResponse.ok) throw new Error(`HTTP error! status: ${ratingResponse.status}`);
                 if (!lowestResponse.ok) throw new Error(`HTTP error! status: ${lowestResponse.status}`);
                 if (!highestResponse.ok) throw new Error(`HTTP error! status: ${highestResponse.status}`);
 
-                const [voucherData, ratingData, lowestPrice, highestPrice] = await Promise.all([
+                const [voucherData, lowestPrice, highestPrice] = await Promise.all([
                     voucherResponse.json(),
-                    ratingResponse.json(),
                     lowestResponse.json(),
                     highestResponse.json()
                 ]);
 
                 console.log('Vouchers:', voucherData); // Log voucher data
-                console.log('Ratings:', ratingData); // Log rating data
                 console.log('Lowest Price:', lowestPrice); // Log lowest price
                 console.log('Highest Price:', highestPrice); // Log highest price
-
+                fetchRatingList()
                 setVouchers(voucherData);
-                setRatings(ratingData);
+
                 setLowestPrice(lowestPrice);
                 setHighestPrice(highestPrice);
             } catch (error) {
@@ -150,7 +151,7 @@ const RouteItem = ({ route }) => {
                         {props.services.map(prop => (
                             <div key={prop.service_id} className='row'>
                                 <div className='col-md-2'>
-                                    <img src={prop.service_logoUrl} style={{ width: '80%', height: '100%', padding: '10px' }} />
+                                    <img src={prop.service_logoUrl} style={{ width: '80%', height: '100%', padding: '10px' }}  alt='avatar error'/>
                                 </div>
                                 <div className='col-md-10' style={{ padding: '10px' }}>
                                     <h4>{prop.service_name}</h4>
@@ -187,43 +188,41 @@ const RouteItem = ({ route }) => {
                 );
             case 'direction':
                 return (
-                    <div className="policy-container">
-                        <header className="policy-header">
-                            Chính sách hủy đơn hàng
-                        </header>
-                        <div className="policy-section">
-                            <h2>Phí hủy</h2>
-                            <p><strong>Phí hủy 10%:</strong> Phí hủy sẽ được tính trên giá đặc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán.</p>
-                            <p><strong>Không có phí hủy</strong></p>
+                    <div className="container mt-4">
+                        <div className="policy-container">
+                            <h1>Chính sách hủy đơn hàng</h1>
+                            <div className="timeline-container">
+                                <div className="timeline">
+                                    <div className="point point-start">
+                                        <span className="time">Hôm nay<br />20:16<br />15/06/2024</span>
+                                        <div className="fee">Phí hủy 20%</div>
+                                    </div>
+                                    <div className="point point-end">
+                                        <span className="time">08:16<br />16/06/2024</span>
+                                        <div className="fee">Phí hủy 100%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
                         </div>
-                        <div className="policy-section">
+                        <div className="mb-3">
                             <h2>Chính sách nhà xe</h2>
                             <ul>
-                                <li>Có mặt tại vị trí phòng/quầy vé/bến xe trước 30 phút để làm thủ tục lên xe</li>
-                                {/* Add more list items as per the image */}
+                                <li>Cấm kị tất cả loại vật liệu dễ cháy như xăng, dầu.</li>
+                                <li>Khoảng cách an toàn, thời gian di chuyển.</li>
                             </ul>
                         </div>
-                        <div className="policy-section">
+                        <div className="mb-3">
                             <h2>Hành lý xách tay</h2>
-                            <ul>
-                                {/* List out the rules */}
-                            </ul>
+                            <p>Không trọng lượng hạn hẹp không vượt quá 7 kg.</p>
                         </div>
-                        <div className="policy-section">
-                            <h2>Trẻ em và phụ nữ có thai</h2>
-                            <ul>
-                                {/* List out the rules */}
-                            </ul>
+                        <div className="mb-3">
+                            <h2>Điều kiện vận chuyển đặc biệt</h2>
+                            <p>Đối với hàng hóa đặc biệt, cần có giấy phép vận chuyển riêng.</p>
                         </div>
-                        <div className="policy-section">
-                            <h2>Đồng vật cảnh/Thú cưng</h2>
-                            <ul>
-                                {/* List out the rules */}
-                            </ul>
-                        </div>
-                        <div className="policy-section">
-                            <h2>Xuất hóa đơn GTGT</h2>
-                            <p>Nhà xe không cung cấp hóa đơn GTGT</p>
+                        <div className="mb-3">
+                            <h2>Quy định về đổi trả</h2>
+                            <p>Khách hàng có thể đổi trả hàng trong vòng 24 giờ nếu sản phẩm còn nguyên đai, nguyên kiện.</p>
                         </div>
                     </div>
                 );

@@ -13,7 +13,8 @@ const DriverList = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDriver, setSelectedDriver] = useState(null);
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [driversPerPage] = useState(5);
     useEffect(() => {
         const fetchDrivers = async () => {
             try {
@@ -66,7 +67,20 @@ const DriverList = () => {
         setDrivers(updatedDrivers);
         setFilteredDrivers(updatedDrivers);
     };
+    const indexOfLastDriver = currentPage * driversPerPage;
+    const indexOfFirstDriver = indexOfLastDriver - driversPerPage;
+    const currentDrivers = filteredDrivers.slice(indexOfFirstDriver, indexOfLastDriver);
+    const handlePageChange = pageNumber => {
+        setCurrentPage(pageNumber);
+    };
 
+    const nextPage = () => {
+        setCurrentPage(current => Math.min(current + 1, Math.ceil(filteredDrivers.length / driversPerPage)));
+    };
+
+    const prevPage = () => {
+        setCurrentPage(current => Math.max(current - 1, 1));
+    };
     return (
         <div className="container mt-4 buscompany">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -97,7 +111,7 @@ const DriverList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredDrivers.map((driver) => (
+                    {currentDrivers.map(driver => (
                         <tr key={driver.driver_id}>
                             <td>{driver.driver_name}</td>
                             <td>
@@ -135,14 +149,18 @@ const DriverList = () => {
                 </tbody>
             </table>
             <div className="d-flex justify-content-between align-items-center">
-                <span>1-5 of {filteredDrivers.length} results</span>
+                <span>{indexOfFirstDriver + 1}-{Math.min(indexOfLastDriver, filteredDrivers.length)} of {filteredDrivers.length} results</span>
                 <nav>
                     <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#">First</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Last</a></li>
+                        <li className="page-item"><a className="page-link" href="#" onClick={() => handlePageChange(1)}>First</a></li>
+                        <li className="page-item"><a className="page-link" href="#" onClick={prevPage}>Previous</a></li>
+                        {Array.from({ length: Math.ceil(filteredDrivers.length / driversPerPage) }, (_, i) => (
+                            <li key={i + 1} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                                <a className="page-link" href="#" onClick={() => handlePageChange(i + 1)}>{i + 1}</a>
+                            </li>
+                        ))}
+                        <li className="page-item"><a className="page-link" href="#" onClick={nextPage}>Next</a></li>
+                        <li className="page-item"><a className="page-link" href="#" onClick={() => handlePageChange(Math.ceil(filteredDrivers.length / driversPerPage))}>Last</a></li>
                     </ul>
                 </nav>
             </div>

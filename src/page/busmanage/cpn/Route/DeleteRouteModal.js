@@ -6,7 +6,7 @@ const DeleteRouteModal = ({ show, onHide, route, onDelete }) => {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/routes/${route.route_id}`, {
+            const response = await fetch(`http://localhost:8080/route/buscomapany/delete/${route.route_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

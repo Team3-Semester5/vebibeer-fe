@@ -67,7 +67,7 @@ const ServiceList = () => {
     };
 
     return (
-        <div className="container mt-4 buscompany">
+        <div className="container mt-4 buscompany" style={{marginTop: 100,  }}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1>Service List</h1>
                 <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>

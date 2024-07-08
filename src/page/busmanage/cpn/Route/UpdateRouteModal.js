@@ -20,9 +20,9 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
         setUpdatedRoute(route);
         const fetchData = async () => {
             try {
-                const busCompanyRes = await fetch('http://localhost:8080/api/buscompanies/');
-                const carRes = await fetch('http://localhost:8080/api/cars/');
-                const driverRes = await fetch('http://localhost:8080/api/drivers/');
+                const busCompanyRes = await fetch('http://localhost:8080/admin/buscompanies');
+                const carRes = await fetch('http://localhost:8080/buscompany/car');
+                const driverRes = await fetch('http://localhost:8080/buscompany/driver');
                 if (!busCompanyRes.ok || !carRes.ok || !driverRes.ok) {
                     throw new Error('Failed to fetch data');
                 }
@@ -61,7 +61,7 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
         };
 
         try {
-            const response = await fetch(`http://localhost:8080/api/routes/${updatedRoute.route_id}`, {
+            const response = await fetch(`http://localhost:8080//buscomapany/save/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

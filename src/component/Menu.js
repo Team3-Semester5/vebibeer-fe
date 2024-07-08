@@ -53,7 +53,7 @@ const Menu = () => {
                                     <a>{user.username}</a>
                                     <div className={`dropdown-content ${dropdownOpen ? 'show' : ''}`}>
                                         <a href="http://localhost:3000/profile">Profile</a>
-                                        <a href="http://localhost:3000/setting">Settings</a>
+                                        <a href="http://localhost:3000/history">Transactions</a>
                                         <a onClick={handleLogout}>Logout</a>
                                     </div>
                                 </li>

@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddLocationModal from './AddLocationModal';
 import UpdateLocationModal from './UpdateLocationModal';
 import DeleteLocationModal from './DeleteLocationModal';
-
+import '../../../../assets/css/Buscompany.css';
 const LocationList = () => {
     const [locations, setLocations] = useState([]);
     const [filteredLocations, setFilteredLocations] = useState([]);
@@ -13,6 +13,8 @@ const LocationList = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     useEffect(() => {
         const fetchLocations = async () => {
@@ -66,6 +68,19 @@ const LocationList = () => {
         setFilteredLocations(updatedLocations);
     };
 
+    const totalPages = Math.ceil(filteredLocations.length / itemsPerPage);
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const paginatedLocations = filteredLocations.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
     return (
         <div className="container mt-4 buscompany">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -96,7 +111,7 @@ const LocationList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredLocations.map((location) => (
+                    {paginatedLocations.map((location) => (
                         <tr key={location.location_id}>
                             <td>{location.location_name}</td>
                             <td>
@@ -134,14 +149,26 @@ const LocationList = () => {
                 </tbody>
             </table>
             <div className="d-flex justify-content-between align-items-center">
-                <span>1-5 of {filteredLocations.length} results</span>
+                <span>{(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filteredLocations.length)} of {filteredLocations.length} results</span>
                 <nav>
                     <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#">First</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Last</a></li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(1)}>First</button>
+                        </li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>Previous</button>
+                        </li>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                <button className="page-link" onClick={() => handlePageChange(index + 1)}>{index + 1}</button>
+                            </li>
+                        ))}
+                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>Next</button>
+                        </li>
+                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(totalPages)}>Last</button>
+                        </li>
                     </ul>
                 </nav>
             </div>

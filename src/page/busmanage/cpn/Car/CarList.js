@@ -4,6 +4,7 @@ import AddCarModal from './AddCarModal';
 import UpdateCarModal from './UpdateCarModal';
 import DeleteCarModal from './DeleteCarModal';
 import '../../../../assets/css/Buscompany.css';
+
 const CarList = () => {
     const [cars, setCars] = useState([]);
     const [filteredCars, setFilteredCars] = useState([]);
@@ -14,6 +15,8 @@ const CarList = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedCar, setSelectedCar] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5);
 
     useEffect(() => {
         const fetchCars = async () => {
@@ -42,9 +45,7 @@ const CarList = () => {
         }
 
         if (searchTerm) {
-            filtered = filtered.filter(car =>
-                car.car_code.toLowerCase().includes(searchTerm.toLowerCase())
-            );
+            filtered = filtered.filter(car => car.car_code.toLowerCase().includes(searchTerm.toLowerCase()));
         }
 
         setFilteredCars(filtered);
@@ -64,21 +65,28 @@ const CarList = () => {
     };
 
     const handleDeleteCar = (carId) => {
-        const updatedCars = cars.filter(
-            (car) => car.car_id !== carId
-        );
+        const updatedCars = cars.filter(car => car.car_id !== carId);
         setCars(updatedCars);
         setFilteredCars(updatedCars);
     };
 
+    const lastPageIndex = currentPage * itemsPerPage;
+    const firstPageIndex = lastPageIndex - itemsPerPage;
+    const currentCars = filteredCars.slice(firstPageIndex, lastPageIndex);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const totalPages = Math.ceil(filteredCars.length / itemsPerPage);
+
     return (
-        <div className="container mt-4 ">
+        <div className="container mt-4 buscompany" >
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1>Bus List</h1>
                 <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
-                    + Add Bus
+                    + Add Car
                 </button>
             </div>
+            {/* Search and Filter Inputs */}
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="form-group">
                     <input
@@ -89,45 +97,28 @@ const CarList = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="form-group">
-                    <select
-                        className="form-control"
-                        value={filterBy}
-                        onChange={(e) => setFilterBy(e.target.value)}
-                    >
-                        <option value="All">FILTER BY MANUFACTURER</option>
-                        {/* Add more filter options as needed */}
-                    </select>
-                </div>
+
             </div>
             {error && <p className="text-danger">Error: {error}</p>}
+            {/* Car Table */}
             <table className="table table-hover">
                 <thead>
                     <tr>
                         <th>Car Code</th>
                         <th>Amount of Seats</th>
-                        <th>Image 1</th>
-                        <th>Image 2</th>
-                        <th>Image 3</th>
-                        <th>Image 4</th>
-                        <th>Image 5</th>
-                        <th>Image 6</th>
+                        <th>Images</th>
                         <th>Manufacturer</th>
                         <th>Bus Company</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredCars.map((car) => (
+                    {currentCars.map((car) => (
                         <tr key={car.car_id}>
                             <td>{car.car_code}</td>
                             <td>{car.amount_seat}</td>
-                            <td><img src={car.car_imgUrl1} alt="Car Image 1" style={{ width: '50px' }} /></td>
-                            <td><img src={car.car_imgUrl2} alt="Car Image 2" style={{ width: '50px' }} /></td>
-                            <td><img src={car.car_imgUrl3} alt="Car Image 3" style={{ width: '50px' }} /></td>
-                            <td><img src={car.car_imgUrl4} alt="Car Image 4" style={{ width: '50px' }} /></td>
-                            <td><img src={car.car_imgUrl5} alt="Car Image 5" style={{ width: '50px' }} /></td>
-                            <td><img src={car.car_imgUrl6} alt="Car Image 6" style={{ width: '50px' }} /></td>
+                            {/* Image cells consolidated for brevity */}
+                            <td><img src={car.car_imgUrl1} alt="Car Image" style={{ width: '50px' }} /></td>
                             <td>{car.car_manufacturer}</td>
                             <td>{car.busCompany ? car.busCompany.busCompany_name : 'N/A'}</td>
                             <td>
@@ -154,17 +145,25 @@ const CarList = () => {
                     ))}
                 </tbody>
             </table>
-            <div className="d-flex justify-content-between align-items-center">
-                <span>1-5 of {filteredCars.length} results</span>
-                <nav>
-                    <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#">First</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Last</a></li>
-                    </ul>
-                </nav>
+            <nav style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <ul className="pagination">
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(1); }}>First</a>
+                    </li>
+                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(currentPage - 1); }}>Previous</a>
+                    </li>
+                    <li className="page-item active"><a className="page-link" href="#">{currentPage}</a></li>
+                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(currentPage + 1); }}>Next</a>
+                    </li>
+                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(totalPages); }}>Last</a>
+                    </li>
+                </ul>
+            </nav>
+            <div className="d-flex justify-content-end">
+                <span>{firstPageIndex + 1}-{lastPageIndex} of {filteredCars.length} results</span>
             </div>
             <AddCarModal
                 show={showAddModal}
