@@ -31,7 +31,7 @@ const Menu = () => {
 
     const handleLogout = () => {
         sessionStorage.setItem("user", null);
-        navigate("")
+        navigate("/")
         alert('success');
     }
 

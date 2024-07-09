@@ -135,7 +135,7 @@ const TripDetails = () => {
     return (
         <Container className="mt-4">
             <div className="card mb-3">
-                Tạm tính <span style={{ fontWeight: 'bold' }}>{totalMoney}</span>
+                Tạm tính <span style={{ fontWeight: 'bold' }}>{totalMoney}.000 VND</span>
             </div>
             {tickets.map(ticket => (
                 <Card className="mb-3" key={ticket.ticket_id} style={{ maxWidth: '372px' }}>

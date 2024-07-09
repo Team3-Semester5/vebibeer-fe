@@ -56,7 +56,7 @@ const OrderResult = () => {
                         <div className="item" key={ticket.ticket_id}>
                             <img src={ticket.route.car.car_imgUrl1} alt="Womens Scarfs" />
                             <p>{ticket.ticket_seat}</p>
-                            <span>{ticket.ticket_price}đ</span>
+                            <span>{ticket.ticket_price}.000 VND</span>
                         </div>
                     })}
 

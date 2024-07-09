@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { Button, Modal, Form, Alert } from 'react-bootstrap';
+import Menu from '../component/Menu';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({
@@ -189,7 +190,8 @@ export default function ProfilePage() {
 
   return (
     <section style={{ backgroundColor: '#eee', minHeight: '100vh' }}>
-      <div className="container py-5">
+      <Menu></Menu>
+      <div className="container py-5" style={{marginTop: '80px'}}>
         {showSuccessMessage && (
           <Alert variant="success" onClose={() => setShowSuccessMessage(false)} dismissible>
             Updated successfully!

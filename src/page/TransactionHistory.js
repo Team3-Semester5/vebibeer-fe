@@ -11,6 +11,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/images/namepage.png";
 import "../assets/css/NavbarAd.css";
+import Menu from "../component/Menu";
 
 export default function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
@@ -63,7 +64,7 @@ export default function TransactionHistory() {
 
   return (
     <div>
-      <nav className="navbar">
+      {/* <nav className="navbar">
         <Link to="#" onClick={() => navigate(-1)}>
           <img src={logo} alt="Logo" className="navbar-logo" />
         </Link>
@@ -84,7 +85,8 @@ export default function TransactionHistory() {
             </button>
           </li>
         </ul>
-      </nav>
+      </nav> */}
+      <Menu></Menu>
 
       <Container className="py-5" style={{ marginTop: "50px" }}>
         <h1>Transaction History</h1>

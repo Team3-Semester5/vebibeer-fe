@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './SearchBox.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsAltH } from '@fortawesome/free-solid-svg-icons';
+import DatePicker from 'react-datepicker';
 
 const SearchBox = () => {
     const navigate = useNavigate();
@@ -77,7 +78,8 @@ const SearchBox = () => {
                         </select>
                     </div>
                     <div className="col-md">
-                        <input type="date" className="form-control" value={date} onChange={(e) => setDate(e.target.value)} />
+                        {/* <input type="date" className="form-control" value={date} onChange={(e) => setDate(e.target.value)} /> */}
+                        <DatePicker className="form-control" minDate={date} value={date} onChange={(e) => setDate(e.target.value)}/>
                     </div>
                     <div className="col-md-auto">
                         <button className="btn btn-primary" onClick={handleSearch}>Tìm kiếm</button>
