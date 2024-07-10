@@ -26,8 +26,8 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
             try {
                 // const busCompanyRes = await fetch('http://localhost:8080/admin/buscompanies/');
                 const predefinedLocations =  await fetch('http://localhost:8080/api/locations/')
-                const carRes = await fetch('http://localhost:8080/buscompany/car');
-                const driver_idRes = await fetch('http://localhost:8080/buscompany/driver');
+                const carRes = await fetch('http://localhost:8080/buscompany/car/by-company/1');
+                const driver_idRes = await fetch('http://localhost:8080/buscompany/driver/by-company/1');
                 if ( !carRes.ok || !driver_idRes.ok) {
                     throw new Error('Failed to fetch data');
                 }
@@ -181,7 +181,6 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                         <Form.Label>Car</Form.Label>
                         <Form.Control
                             as="select"
-                            multiple
                             name="car_id"
                             value={route.car_id}
                             onChange={handleChange}

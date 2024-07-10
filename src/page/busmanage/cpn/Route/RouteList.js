@@ -12,13 +12,26 @@ const RouteList = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedRoute, setSelectedRoute] = useState(null);
+    const [selectedRoute, setSelectedRoute] = useState({
+        route_id: 1,
+        route_startTime: "2024-05-19T17:00:00.000+00:00",
+        route_endTime: "2024-05-19T17:00:00.000+00:00",
+        policy: "Chính sách vận hành an toàn và đúng giờ.",
+        route_description: "Tuyến đường từ Hà Nội đến TP. Hồ Chí Minh, phục vụ khách hàng với chất lượng cao.",
+        busCompany: {},
+        startLocation: {},
+        endLocation: {},
+        car: {},
+        driver: {},
+        services: [{}]
+    });
+    // const [selectedRoute, setSelectedRoute] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
     useEffect(() => {
         const fetchRoutes = async () => {
             try {
-                const response = await fetch('http://localhost:8080/route/');
+                const response = await fetch('http://localhost:8080/route/buscompany/1/routes');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -177,7 +190,7 @@ const RouteList = () => {
             <UpdateRouteModal
                 show={showUpdateModal}
                 onHide={() => setShowUpdateModal(false)}
-                route={selectedRoute}
+                oldRoute={selectedRoute}
                 onUpdate={handleUpdateRoute}
             />
             <DeleteRouteModal

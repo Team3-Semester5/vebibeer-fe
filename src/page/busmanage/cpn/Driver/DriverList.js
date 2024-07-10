@@ -18,7 +18,7 @@ const DriverList = () => {
     useEffect(() => {
         const fetchDrivers = async () => {
             try {
-                const response = await fetch('http://localhost:8080/buscompany/driver');
+                const response = await fetch('http://localhost:8080/buscompany/driver/by-company/1');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -76,9 +76,7 @@ const DriverList = () => {
 
     const nextPage = () => {
         setCurrentPage(current => Math.min(current + 1, Math.ceil(filteredDrivers.length / driversPerPage)));
-    };
-
-    const prevPage = () => {
+    }; const prevPage = () => {
         setCurrentPage(current => Math.max(current - 1, 1));
     };
     return (
@@ -143,8 +141,7 @@ const DriverList = () => {
                                 >
                                     Delete
                                 </button>
-                            </td>
-                        </tr>
+                            </td></tr>
                     ))}
                 </tbody>
             </table>

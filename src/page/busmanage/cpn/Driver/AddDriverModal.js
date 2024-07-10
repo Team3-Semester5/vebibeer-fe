@@ -6,28 +6,12 @@ const AddDriverModal = ({ show, onHide, onAdd }) => {
         driver_name: '',
         driver_avaUrl: '',
         driver_description: '',
-        busCompany: { busCompany_id: '' }
+        busCompany_id: 1
     });
     const [error, setError] = useState(null);
     const [previewImage, setPreviewImage] = useState(null);
-    const [busCompanies, setBusCompanies] = useState([]);
 
-    useEffect(() => {
-        fetchBusCompanies();
-    }, []);
 
-    const fetchBusCompanies = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/admin/buscompanies');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const busCompanies = await response.json();
-            setBusCompanies(busCompanies);
-        } catch (error) {
-            console.error('Error fetching bus companies:', error);
-        }
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -50,9 +34,6 @@ const AddDriverModal = ({ show, onHide, onAdd }) => {
         }
     };
 
-    const handleBusCompanyChange = (e) => {
-        setDriver({ ...driver, busCompany: { busCompany_id: parseInt(e.target.value) } });
-    };
 
     const handleSubmit = async () => {
         try {
@@ -103,8 +84,7 @@ const AddDriverModal = ({ show, onHide, onAdd }) => {
                             placeholder="Or enter image URL"
                             name="driver_avaUrl"
                             value={driver.driver_avaUrl}
-                            onChange={handleChange}
-                            style={{ marginTop: '10px' }}
+                            onChange={handleChange} style={{ marginTop: '10px' }}
                         />
                         {previewImage && <img src={previewImage} alt="Avatar Preview" style={{ width: '100px', height: '100px', marginTop: '10px' }} />}
                     </Form.Group>
@@ -117,17 +97,7 @@ const AddDriverModal = ({ show, onHide, onAdd }) => {
                             onChange={handleChange}
                         />
                     </Form.Group>
-                    <Form.Group controlId="formBusCompany">
-                        <Form.Label>Bus Company</Form.Label>
-                        <Form.Control as="select" onChange={handleBusCompanyChange}>
-                            <option value="">Select Bus Company</option>
-                            {busCompanies.map(company => (
-                                <option key={company.busCompany_id} value={company.busCompany_id}>
-                                    {company.busCompany_fullname}
-                                </option>
-                            ))}
-                        </Form.Control>
-                    </Form.Group>
+
                 </Form>
                 {error && <p className="text-danger">Error: {error}</p>}
             </Modal.Body>

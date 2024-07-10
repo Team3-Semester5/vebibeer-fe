@@ -74,12 +74,18 @@ const RouteList = () => {
     const fetchRoutes = async () => {
       try {
         const url = new URL('http://localhost:8080/route/search');
-        if (departure) url.searchParams.append('startCity', departure);
-        if (destination) url.searchParams.append('endCity', destination);
-        if (date) url.searchParams.append('date', date);
+        // if (departure);;
+        // if (destination) ;
+        // if (date) ;;
+        url.searchParams.append('startCity', departure || '');
+        url.searchParams.append('endCity', destination || '');
+        url.searchParams.append('date', date || '');
+        console.log(url.toString())
         const response = await fetch(url.toString());
+        
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          setError(`HTTP error! status: ${response.status}`);
+          
         }
         const data = await response.json();
         setRoutes(data);
@@ -92,6 +98,7 @@ const RouteList = () => {
       } catch (error) {
         setError(error.message);
         console.error('Error fetching routes:', error);
+        
       }
     };
 
@@ -208,9 +215,8 @@ const RouteList = () => {
       <br></br>
       <br></br>
       <br></br>
-      {/* <SearchBox /> */}
+      <SearchBox />
       <div className='container'>
-
         <div className='row'>
           <div className='col-md-3'>
             <aside className="sidebar">

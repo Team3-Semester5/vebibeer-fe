@@ -31,7 +31,9 @@ function DataTable() {
     const fetchCounts = async () => {
       try {
         // Fetching driver count
-        const driverResponse = await fetch("http://localhost:8080/buscompany/driver/");
+        const driverResponse = await fetch(
+          "http://localhost:8080/buscompany/driver/"
+        );
         if (!driverResponse.ok) {
           throw new Error("Failed to fetch drivers");
         }
@@ -55,12 +57,16 @@ function DataTable() {
   }, []);
 
   return (
-    <Table 
+    <Table
       striped
       bordered
       hover
       className="w-100 ml-5"
-      style={{ fontSize: "1.2em", width: "80%", marginLeft: "200px",marginTop: "100px" }}
+      style={{
+        fontSize: "1.2em",
+        width: "80%",
+        height: "300px",
+      }}
     >
       <thead>
         <tr>
@@ -83,7 +89,7 @@ function DataTable() {
             </tr>
             <tr>
               <td style={{ fontSize: "1.2em" }}>Revenue of year</td>
-              <td style={{ fontSize: "1.2em" }}>{}</td>
+              <td style={{ fontSize: "1.2em" }}>{ }</td>
             </tr>
             <tr>
               <td style={{ fontSize: "1.2em" }}>Number of buses</td>
@@ -93,7 +99,7 @@ function DataTable() {
               <td style={{ fontSize: "1.2em" }}>
                 Number of tickets sold during the month
               </td>
-              <td style={{ fontSize: "1.2em" }}>{}</td>
+              <td style={{ fontSize: "1.2em" }}>{ }</td>
             </tr>
           </>
         )}
@@ -120,7 +126,7 @@ const BarChart = () => {
     ],
     datasets: [
       {
-        label: "Sales",
+        label: "Revenue",
         backgroundColor: "rgba(75,192,192,0.4)",
         borderColor: "rgba(75,192,192,1)",
         borderWidth: 1,
@@ -151,15 +157,23 @@ const BarChart = () => {
 const MainComponent = () => {
   return (
     <Container>
-      <Row style={{ marginLeft: "30px" }}>
-        <Col style={{ marginRight: "200px" }}>
-          <h2>Data Table</h2>
+      <Row className="align-items-start">
+        <Col md={4}>
+          <h2
+            style={{
+              marginTop: "100px",
+              marginBottom: "40px",
+              paddingLeft: "140px",
+            }}
+          >
+            Data Table
+          </h2>
           <DataTable />
         </Col>
-      </Row>
-      <Row style={{ marginLeft: "30px" }}>
-        <Col>
-          <h2>Revenue of month</h2>
+        <Col md={8} style={{ paddingLeft: "40px" }}>
+          <h2 style={{ marginTop: "100px", paddingLeft: "280px" }}>
+            Revenue of months
+          </h2>
           <BarChart />
         </Col>
       </Row>

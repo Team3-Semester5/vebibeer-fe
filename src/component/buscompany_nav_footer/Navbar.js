@@ -7,7 +7,9 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-header">
-        <img src={logo} alt="Logo" className="navbar-logo" />
+        <a href="http://localhost:3000/">
+          <img src={logo} alt="Logo" className="navbar-logo" />
+        </a>
       </div>
       <ul>
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
@@ -53,7 +55,7 @@ const Navbar = () => {
               border: "none", // Bỏ viền
               borderRadius: "5px", // Bo góc
             }}
-            onClick={() => { }}
+            onClick={() => {}}
           >
             Logout
           </button>
@@ -63,4 +65,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar

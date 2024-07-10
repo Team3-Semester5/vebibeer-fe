@@ -25,28 +25,30 @@
 
 .nav-links li a {
   color: white;
-  text-decoration: none;
+  text-decoration: none !important; /* Remove underline */
   padding: 10px 15px;
   transition: color 0.3s;
   margin-right: 5px;
 }
 
 .nav-links li a:hover {
-  color: #00B4D8;
+  color: #00b4d8;
   /* Change hover color */
-  border-bottom: 2px solid #00B4D8;
+  border-bottom: 2px solid #00b4d8;
 }
 
 .book-now {
-  background-color: #00B4D8;
+  background-color: #00b4d8;
   padding: 10px 20px;
   border-radius: 5px;
+  text-decoration: none !important; /* Remove underline */
 }
 
 .book-now:hover {
   background-color: aliceblue;
-  border: 1px solid #00B4D8;
+  border: 1px solid #00b4d8;
   padding: 9px 19px;
+  text-decoration: none !important; /* Remove underline */
 }
 
 .logo {
@@ -63,9 +65,9 @@
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #00B4D8;
+  background-color: #00b4d8;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   left: 0;
   right: 0;
@@ -74,8 +76,13 @@
 .dropdown-content a {
   color: black;
   padding: 12px 16px;
-  text-decoration: none;
+  text-decoration: none !important; /* Remove underline */
   display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd; /* Add a background color on hover */
+  color: black; /* Change text color on hover */
 }
 
 .dropdown-content.show {

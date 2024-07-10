@@ -17,11 +17,10 @@ const CarList = () => {
     const [selectedCar, setSelectedCar] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
-
     useEffect(() => {
         const fetchCars = async () => {
             try {
-                const response = await fetch('http://localhost:8080/buscompany/car');
+                const response = await fetch('http://localhost:8080/buscompany/car/by-company/1');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -81,8 +80,7 @@ const CarList = () => {
     return (
         <div className="container mt-4 buscompany" >
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h1>Bus List</h1>
-                <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+                <h1>Bus List</h1><button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
                     + Add Car
                 </button>
             </div>
@@ -106,7 +104,12 @@ const CarList = () => {
                     <tr>
                         <th>Car Code</th>
                         <th>Amount of Seats</th>
-                        <th>Images</th>
+                        <th>Images 1</th>
+                        <th>Images 2</th>
+                        <th>Images 3</th>
+                        <th>Images 4</th>
+                        <th>Images 5</th>
+                        <th>Images 6</th>
                         <th>Manufacturer</th>
                         <th>Bus Company</th>
                         <th>Action</th>
@@ -119,6 +122,11 @@ const CarList = () => {
                             <td>{car.amount_seat}</td>
                             {/* Image cells consolidated for brevity */}
                             <td><img src={car.car_imgUrl1} alt="Car Image" style={{ width: '50px' }} /></td>
+                            <td><img src={car.car_imgUrl2} alt="Car Image" style={{ width: '50px' }} /></td>
+                            <td><img src={car.car_imgUrl3} alt="Car Image" style={{ width: '50px' }} /></td>
+                            <td><img src={car.car_imgUrl4} alt="Car Image" style={{ width: '50px' }} /></td>
+                            <td><img src={car.car_imgUrl5} alt="Car Image" style={{ width: '50px' }} /></td>
+                            <td><img src={car.car_imgUrl6} alt="Car Image" style={{ width: '50px' }} /></td>
                             <td>{car.car_manufacturer}</td>
                             <td>{car.busCompany ? car.busCompany.busCompany_name : 'N/A'}</td>
                             <td>
@@ -130,8 +138,7 @@ const CarList = () => {
                                     }}
                                 >
                                     Edit
-                                </button>
-                                <button
+                                </button><button
                                     className="btn btn-danger btn-sm"
                                     onClick={() => {
                                         setSelectedCar(car);

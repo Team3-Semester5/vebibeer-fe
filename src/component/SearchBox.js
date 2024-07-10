@@ -40,7 +40,7 @@ const SearchBox = () => {
         const temp = departure;
         setDeparture(destination);
         setDestination(temp);
-        
+
     };
 
     const handleSearch = () => {
@@ -48,10 +48,10 @@ const SearchBox = () => {
             alert('Vui lòng điền đầy đủ thông tin');
             return;
         }
-    
+
         navigate(`/routeGuest?startCity=${encodeURIComponent(departure)}&endCity=${encodeURIComponent(destination)}&date=${encodeURIComponent(date)}`);
     };
-    
+
     return (
         <div className="container my-4">
             <div className="card p-3 beautiful-search-box">
@@ -78,8 +78,8 @@ const SearchBox = () => {
                         </select>
                     </div>
                     <div className="col-md">
-                        {/* <input type="date" className="form-control" value={date} onChange={(e) => setDate(e.target.value)} /> */}
-                        <DatePicker className="form-control" minDate={date} value={date} onChange={(e) => setDate(e.target.value)}/>
+                        <input type="date" class="form-control" value={date} onChange={(e) => setDate(e.target.value)} min={new Date().toISOString().split('T')[0]} />
+                        {/* <DatePicker className="form-control" minDate={date} value={date} onChange={(e) => setDate(e.target.value)}/> */}
                     </div>
                     <div className="col-md-auto">
                         <button className="btn btn-primary" onClick={handleSearch}>Tìm kiếm</button>

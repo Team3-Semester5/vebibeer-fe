@@ -1,35 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
-    const [updatedRoute, setUpdatedRoute] = useState(route);
-    const [busCompanies, setBusCompanies] = useState([]);
+const UpdateRouteModal = ({ show, onHide, oldRoute, onUpdate }) => {
+    const [route, setRoute] = useState({
+        busCompany_id: 1,
+        startLocation_id: '',
+        endLocation_id: '',
+        route_startTime: '',
+        route_endTime: '',
+        policy: '',
+        route_description: '',
+        car_id: '',
+        driver_id: '',
+        priceTicket:''
+    });
+    // const [busCompanies, setBusCompanies] = useState([]);
     const [cars, setCars] = useState([]);
     const [drivers, setDrivers] = useState([]);
     const [error, setError] = useState(null);
+    const [locations, setLocations] = useState([]);
 
-    const predefinedLocations = [
-        { location_id: '1', location_name: 'Hà Nội' },
-        { location_id: '2', location_name: 'TP. Hồ Chí Minh' },
-        { location_id: '3', location_name: 'Đà Nẵng' },
-        { location_id: '4', location_name: 'Hải Phòng' },
-        { location_id: '5', location_name: 'Cần Thơ' }
-    ];
-
+    
     useEffect(() => {
-        setUpdatedRoute(route);
         const fetchData = async () => {
             try {
-                const busCompanyRes = await fetch('http://localhost:8080/admin/buscompanies');
-                const carRes = await fetch('http://localhost:8080/buscompany/car');
-                const driverRes = await fetch('http://localhost:8080/buscompany/driver');
-                if (!busCompanyRes.ok || !carRes.ok || !driverRes.ok) {
+                // const busCompanyRes = await fetch('http://localhost:8080/admin/buscompanies/');
+                const predefinedLocations =  await fetch('http://localhost:8080/api/locations/')
+                const carRes = await fetch('http://localhost:8080/buscompany/car/by-company/1');
+                const driver_idRes = await fetch('http://localhost:8080/buscompany/driver/by-company/1');
+                if ( !carRes.ok || !driver_idRes.ok) {
                     throw new Error('Failed to fetch data');
                 }
-                const busCompanies = await busCompanyRes.json();
+                // const busCompanies = await busCompanyRes.json();
+                const locations = await predefinedLocations.json();
                 const cars = await carRes.json();
-                const drivers = await driverRes.json();
-                setBusCompanies(busCompanies);
+                const drivers = await driver_idRes.json();
+
+                // setBusCompanies(busCompanies);
+                setLocations(locations);
                 setCars(cars);
                 setDrivers(drivers);
             } catch (error) {
@@ -38,45 +46,53 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
             }
         };
         fetchData();
-    }, [route]);
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUpdatedRoute({ ...updatedRoute, [name]: value });
+        setRoute({ ...route, [name]: value });
+    };
+
+    const handleCarChange = (e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+        setRoute({ ...route, car_id: selectedOptions });
     };
 
     const handleSubmit = async () => {
-        if (!updatedRoute.busCompany || !updatedRoute.startLocation || !updatedRoute.endLocation || !updatedRoute.route_startTime || !updatedRoute.route_endTime || !updatedRoute.driver) {
+        if (!route.busCompany_id || !route.startLocation_id || !route.endLocation_id || !route.route_startTime || !route.endLocation_id || !route.driver_id) {
             setError('All fields are required.');
             return;
         }
 
-        const preparedRoute = {
-            ...updatedRoute,
-            busCompany: { busCompany_id: updatedRoute.busCompany },
-            startLocation: { location_id: updatedRoute.startLocation },
-            endLocation: { location_id: updatedRoute.endLocation },
-            car: { car_id: updatedRoute.car },
-            driver: { driver_id: updatedRoute.driver }
-        };
+        // Prepare data to send only IDs for busCompany, startLocation_id, endLocation_id, and driver_id
+        // const preparedRoute = {
+        //     ...route,
+        //     busCompany: { buscompany_id: 1 },
+        //     startLocation_id: { location_id: route.startLocation_id },
+        //     endLocation_id: { location_id: route.endLocation_id },
+        //     car: route.car.map(car_id => ({ car_id })),
+        //     driver_id: { driver_id_id: route.driver_id }
+        // };
 
         try {
-            const response = await fetch(`http://localhost:8080//buscomapany/save/`, {
-                method: 'PUT',
+            const response = await fetch('http://localhost:8080/route/buscomapany/save/', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(preparedRoute)
+                body: JSON.stringify(route)
             });
+            console.log(JSON.stringify(route))
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status} - ${errorData.message}`);
             }
-            const updatedData = await response.json();
-            onUpdate(updatedData);
+            const newRoute = await response.json();
+            onUpdate(newRoute);
             onHide();
         } catch (error) {
             setError(error.message);
-            console.error('Error updating route:', error);
+            console.error('Error adding route:', error);
         }
     };
 
@@ -86,8 +102,6 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
         return date.toISOString().slice(0, 16); // format as yyyy-MM-ddThh:mm
     };
 
-    if (!updatedRoute) return null;
-
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
@@ -95,48 +109,32 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Group controlId="formBusCompany">
-                        <Form.Label>Bus Company</Form.Label>
+                    <Form.Group controlId="formStartPoint">
+                        <Form.Label>Start Point</Form.Label>
                         <Form.Control
                             as="select"
-                            name="busCompany"
-                            value={updatedRoute.busCompany}
+                            name="startLocation_id"
+                            value={oldRoute.startLocation.location_id}
                             onChange={handleChange}
                         >
-                            <option value="">Select a Bus Company</option>
-                            {busCompanies.map((company) => (
-                                <option key={company.busCompany_id} value={company.busCompany_id}>
-                                    {company.busCompany_name}
-                                </option>
-                            ))}
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId="formStartLocation">
-                        <Form.Label>Start Location</Form.Label>
-                        <Form.Control
-                            as="select"
-                            name="startLocation"
-                            value={updatedRoute.startLocation}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select a Start Location</option>
-                            {predefinedLocations.map((location) => (
+                            <option value={oldRoute.startLocation.location_id}>{oldRoute.startLocation.location_name}</option>
+                            {locations.map((location) => (
                                 <option key={location.location_id} value={location.location_id}>
                                     {location.location_name}
                                 </option>
                             ))}
                         </Form.Control>
                     </Form.Group>
-                    <Form.Group controlId="formEndLocation">
-                        <Form.Label>End Location</Form.Label>
+                    <Form.Group controlId="formEndPoint">
+                        <Form.Label>End Point</Form.Label>
                         <Form.Control
                             as="select"
-                            name="endLocation"
-                            value={updatedRoute.endLocation}
+                            name="endLocation_id"
+                            value={oldRoute.endLocation.location_id}
                             onChange={handleChange}
                         >
-                            <option value="">Select an End Location</option>
-                            {predefinedLocations.map((location) => (
+                            <option value={oldRoute.endLocation.location_id}>{oldRoute.endLocation.location_name}</option>
+                            {locations.map((location) => (
                                 <option key={location.location_id} value={location.location_id}>
                                     {location.location_name}
                                 </option>
@@ -148,7 +146,7 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
                         <Form.Control
                             type="datetime-local"
                             name="route_startTime"
-                            value={getFormattedDateTime(updatedRoute.route_startTime)}
+                            value={getFormattedDateTime(oldRoute.route_startTime)}
                             onChange={handleChange}
                         />
                     </Form.Group>
@@ -157,16 +155,16 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
                         <Form.Control
                             type="datetime-local"
                             name="route_endTime"
-                            value={getFormattedDateTime(updatedRoute.route_endTime)}
+                            value={getFormattedDateTime(oldRoute.route_endTime)}
                             onChange={handleChange}
                         />
                     </Form.Group>
-                    <Form.Group controlId="formPolicy">
-                        <Form.Label>Policy</Form.Label>
+                    <Form.Group controlId="formRoutePolicy">
+                        <Form.Label>Route Policy</Form.Label>
                         <Form.Control
                             type="text"
                             name="policy"
-                            value={updatedRoute.policy}
+                            value={oldRoute.policy}
                             onChange={handleChange}
                         />
                     </Form.Group>
@@ -175,7 +173,7 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
                         <Form.Control
                             type="text"
                             name="route_description"
-                            value={updatedRoute.route_description}
+                            value={oldRoute.route_description}
                             onChange={handleChange}
                         />
                     </Form.Group>
@@ -183,11 +181,11 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
                         <Form.Label>Car</Form.Label>
                         <Form.Control
                             as="select"
-                            name="car"
-                            value={updatedRoute.car}
+                            name="car_id"
+                            value={oldRoute.car.car_id}
                             onChange={handleChange}
                         >
-                            <option value="">Select a Car</option>
+                            <option value={oldRoute.car.car_id}>{oldRoute.car.car_code}</option>
                             {cars.map((car) => (
                                 <option key={car.car_id} value={car.car_id}>
                                     {car.car_code}
@@ -195,21 +193,31 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
                             ))}
                         </Form.Control>
                     </Form.Group>
-                    <Form.Group controlId="formDriver">
+                    <Form.Group controlId="formDriver_iddriver_id">
                         <Form.Label>Driver</Form.Label>
                         <Form.Control
                             as="select"
-                            name="driver"
-                            value={updatedRoute.driver}
+                            name="driver_id"
+                            value={oldRoute.driver.driver_id}
                             onChange={handleChange}
                         >
-                            <option value="">Select a Driver</option>
+                            <option value={oldRoute.driver.driver_id}>{oldRoute.driver.driver_name}</option>
                             {drivers.map((driver) => (
                                 <option key={driver.driver_id} value={driver.driver_id}>
                                     {driver.driver_name}
                                 </option>
                             ))}
                         </Form.Control>
+                    </Form.Group>
+                    <Form.Group controlId="priceTicket">
+                        <Form.Label>Price</Form.Label>
+                        <Form.Control
+                            type="number"
+                            name="priceTicket"
+                            value={route.priceTicket}
+                            onChange={handleChange}
+                        />
+                            
                     </Form.Group>
                 </Form>
                 {error && <p className="text-danger">Error: {error}</p>}
@@ -219,7 +227,7 @@ const UpdateRouteModal = ({ show, onHide, route, onUpdate }) => {
                     Close
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
-                    Update Route
+                    Save Route
                 </Button>
             </Modal.Footer>
         </Modal>

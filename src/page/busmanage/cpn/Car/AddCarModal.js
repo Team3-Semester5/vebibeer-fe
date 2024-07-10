@@ -2,29 +2,30 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 const AddCarModal = ({ show, onHide, onAdd }) => {
-        const [car, setCar] = useState({
-            car_code: '',
-            car_amount_seat: '',
-            car_img1: '',
-            car_img2: '',
-            car_img3: '',
-            car_img4: '',
-            car_img5: '',
-            car_img6: '',
-            car_manufacturer: '',
-            bus_company_id: ''
-        });
-        const [error, setError] = useState(null);
-        const [previewImages, setPreviewImages] = useState({
-            car_img1: '',
-            car_img2: '',
-            car_img3: '',
-            car_img4: '',
-            car_img5: '',
-            car_img6: ''
-        });
-    
-   
+    const [car, setCar] = useState({
+        car_code: '',
+        amount_seat: '',
+        car_imgUrl1: '',
+        car_imgUrl2: '',
+        car_imgUrl3: '',
+        car_imgUrl4: '',
+        car_imgUrl5: '',
+        car_imgUrl6: '',
+        car_manufacturer: '',
+        busCompany_id: 1// Automatically set from props1
+    });
+
+
+
+    const [error, setError] = useState(null);
+    const [previewImages, setPreviewImages] = useState({
+        car_imgUrl1: '',
+        car_imgUrl2: '',
+        car_imgUrl3: '',
+        car_imgUrl4: '',
+        car_imgUrl5: '',
+        car_imgUrl6: ''
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,7 +47,7 @@ const AddCarModal = ({ show, onHide, onAdd }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch('http://localhost:8080/buscompany/car/save', {
+            const response = await fetch('http://localhost:8080/buscompany/car/save/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ const AddCarModal = ({ show, onHide, onAdd }) => {
                         <Form.Control
                             type="text"
                             name="car_code"
-                            value={car.car_code}
+                            value={car.car_code || ''}
                             onChange={handleChange}
                         />
                     </Form.Group>
@@ -85,12 +86,11 @@ const AddCarModal = ({ show, onHide, onAdd }) => {
                         <Form.Label>Amount of Seats</Form.Label>
                         <Form.Control
                             type="number"
-                            name="car_amount_seat"
-                            value={car.car_amount_seat}
-                            onChange={handleChange}
-                        />
+                            name="amount_seat"
+                            value={car.amount_seat || ''}
+                            onChange={handleChange} />
                     </Form.Group>
-                    {['car_img1', 'car_img2', 'car_img3', 'car_img4', 'car_img5', 'car_img6'].map((img, index) => (
+                    {['car_imgUrl1', 'car_imgUrl2', 'car_imgUrl3', 'car_imgUrl4', 'car_imgUrl5', 'car_imgUrl6'].map((img, index) => (
                         <Form.Group controlId={`form${img}`} key={index}>
                             <Form.Label>Car Image {index + 1}</Form.Label>
                             <Form.Control
@@ -106,7 +106,7 @@ const AddCarModal = ({ show, onHide, onAdd }) => {
                                 onChange={handleChange}
                                 style={{ marginTop: '10px' }}
                             />
-                            {previewImages[img] && <img src={previewImages[img]} alt={`Car Image ${index + 1}`} style={{ width: '100px', height: '100px', marginTop: '10px' }} />}
+                            {previewImages[img] && <img src={previewImages[img]} alt={`Preview of Car Image ${index + 1}`} style={{ width: '100px', height: '100px', marginTop: '10px' }} />}
                         </Form.Group>
                     ))}
                     <Form.Group controlId="formCarManufacturer">
@@ -114,16 +114,7 @@ const AddCarModal = ({ show, onHide, onAdd }) => {
                         <Form.Control
                             type="text"
                             name="car_manufacturer"
-                            value={car.car_manufacturer}
-                            onChange={handleChange}
-                        />
-                    </Form.Group>
-                    <Form.Group controlId="formBusCompanyId">
-                        <Form.Label>Bus Company ID</Form.Label>
-                        <Form.Control
-                            type="number"
-                            name="bus_company_id"
-                            value={car.bus_company_id}
+                            value={car.car_manufacturer || ''}
                             onChange={handleChange}
                         />
                     </Form.Group>

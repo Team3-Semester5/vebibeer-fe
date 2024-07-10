@@ -62,7 +62,7 @@ const OrderResult = () => {
 
                     <div className="total">
                         <strong>Total: </strong>
-                        <strong>{totalMoney}đ</strong>
+                        <strong>{totalMoney}.000 VND</strong>
                     </div>
                 </div>
                 <button className="home-button" onClick={backToHome()}>Hello</button>
