@@ -95,8 +95,8 @@ const RouteItem = ({ route }) => {
                 
                 const [voucherResponse, lowestResponse, highestResponse] = await Promise.all([
                     fetch('http://localhost:8080/buscomapany/voucher'),
-                    fetch('http://localhost:8080/tickets/lowest-price'),
-                    fetch('http://localhost:8080/tickets/highest-price')
+                    fetch(`http://localhost:8080/tickets/lowest-price/${route.route_id}/`),
+                    fetch(`http://localhost:8080/tickets/highest-price/${route.route_id}/`)
                 ]);
 
                 if (!voucherResponse.ok) throw new Error(`HTTP error! status: ${voucherResponse.status}`);

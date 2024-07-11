@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import "../../assets/css/Navbar.css";
+import { useNavigate } from "react-router-dom";
 
 // Đăng ký các components cần thiết cho Chart.js
 ChartJS.register(
@@ -25,14 +26,21 @@ ChartJS.register(
 function DataTable() {
   const [driverCount, setDriverCount] = useState(0);
   const [busCount, setBusCount] = useState(0);
+  const [ticketsSold, setTicketsSold] = useState(0);
   const [error, setError] = useState(null);
+  const [revenueYear, setRevenueYear] = useState(0);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (user?.role_user != 'ROLE_BUSCOMPANY') {
+      navigate("/login");
+    }
     const fetchCounts = async () => {
       try {
         // Fetching driver count
         const driverResponse = await fetch(
-          "http://localhost:8080/buscompany/driver/"
+          "http://localhost:8080/buscompany/driver/by-company/1"
         );
         if (!driverResponse.ok) {
           throw new Error("Failed to fetch drivers");
@@ -41,12 +49,32 @@ function DataTable() {
         setDriverCount(driverData.length); // Assuming driverData is an array
 
         // Fetching bus count
-        const busResponse = await fetch("http://localhost:8080/buscompany/car");
+        const busResponse = await fetch("http://localhost:8080/buscompany/car/by-company/1");
         if (!busResponse.ok) {
           throw new Error("Failed to fetch buses");
         }
         const busData = await busResponse.json();
         setBusCount(busData.length); // Assuming busData is an array
+
+        // Fetching number of tickets sold
+        var now = new Date();
+        var currentMonth = now.getMonth() + 1;
+        var currentYear = now.getFullYear();
+        const ticketsResponse = await fetch(`http://localhost:8080/manageBus/${user.busCompany_id}?year=${currentYear}&month=${currentMonth}`);
+        if (!ticketsResponse.ok) {
+          throw new Error("Failed to fetch ticket sales information");
+        }
+        const ticketsData = await ticketsResponse.json();
+        if (ticketsData.length > 0) {
+          setTicketsSold(ticketsData[0].amount_tickets);
+        }
+
+        const revenueResponse = await fetch(`http://localhost:8080/manageBus/revenue/${user.busCompany_id}?year=${currentYear}`);
+        if (!revenueResponse.ok) {
+          throw new Error("Failed to fetch revenue data");
+        }
+        const revenueData = await revenueResponse.json();
+        setRevenueYear(revenueData[0].total_earnings);
       } catch (error) {
         setError(error.message);
         console.error("Error fetching data:", error);
@@ -64,12 +92,13 @@ function DataTable() {
       className="w-100 ml-5"
       style={{
         fontSize: "1.2em",
-        width: "80%",
+        width: "85%",
         height: "300px",
+
       }}
     >
       <thead>
-        <tr>
+        <tr >
           <th style={{ fontSize: "1.2em" }}>Indicators</th>
           <th style={{ fontSize: "1.2em" }}>Number</th>
         </tr>
@@ -89,7 +118,7 @@ function DataTable() {
             </tr>
             <tr>
               <td style={{ fontSize: "1.2em" }}>Revenue of year</td>
-              <td style={{ fontSize: "1.2em" }}>{ }</td>
+              <td style={{ fontSize: "1.2em" }}>{revenueYear}.000 VND</td>
             </tr>
             <tr>
               <td style={{ fontSize: "1.2em" }}>Number of buses</td>
@@ -99,7 +128,7 @@ function DataTable() {
               <td style={{ fontSize: "1.2em" }}>
                 Number of tickets sold during the month
               </td>
-              <td style={{ fontSize: "1.2em" }}>{ }</td>
+              <td style={{ fontSize: "1.2em" }}>{ticketsSold}</td>
             </tr>
           </>
         )}
@@ -109,41 +138,88 @@ function DataTable() {
 }
 
 const BarChart = () => {
+  const [monthlyRevenue, setMonthlyRevenue] = useState(new Array(12).fill(0)); // Initialize with zeros for all months
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  useEffect(() => {
+    const fetchMonthlyRevenue = async () => {
+      try {
+        const revenues = new Array(12).fill(0); // Temporary storage for revenue data
+        var now = new Date();
+        var currentMonth = now.getMonth() + 1;
+        var currentYear = now.getFullYear();
+        // Loop through all months
+        // aibiet
+        for (let month = 1; month <= 12; month++) {
+          const response = await fetch(`http://localhost:8080/manageBus/${user.busCompany_id}?year=${currentYear}&month=${month}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch revenue data for month: ${month}`);
+          }
+          const data = await response.json();
+
+          if (data.length > 0 && data[0].hasOwnProperty('amount_tickets')) {
+            revenues[month - 1] = data[0].amount_tickets;
+          } else {
+            console.warn(`No valid revenue data available for month: ${month}`);
+          }
+        }
+
+        setMonthlyRevenue(revenues);
+      } catch (error) {
+        console.error("Error fetching monthly revenue data:", error);
+      }
+    };
+
+    fetchMonthlyRevenue();
+  }, []);
+  // useEffect(() => {
+  //   const fetchMonthlyRevenue = async () => {
+  //     try {
+  //       const revenues = new Array(12).fill(0); // Temporary storage for revenue data
+
+  //       // Loop through all months
+  //       for (let month = 1; month <= 12; month++) {
+  //         const response = await fetch(`http://localhost:8080/api/revenue/1?year=2024&month=${month}`);
+  //         if (!response.ok) {
+  //           throw new Error(`Failed to fetch revenue data for month: ${month}`);
+  //         }
+  //         const data = await response.json();
+  //         // Assuming the response contains an array of objects and we take the first object
+  //         revenues[month - 1] = data[0].total_earnings; // Adjust according to your actual data structure
+  //       }
+
+  //       setMonthlyRevenue(revenues);
+  //     } catch (error) {
+  //       console.error("Error fetching monthly revenue data:", error);
+  //     }
+  //   };
+
+  //   fetchMonthlyRevenue();
+  // }, []);
   const data = {
     labels: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
     ],
     datasets: [
       {
-        label: "Revenue",
-        backgroundColor: "rgba(75,192,192,0.4)",
-        borderColor: "rgba(75,192,192,1)",
+        label: 'Monthly Revenue',
+        data: monthlyRevenue,
+        backgroundColor: 'rgba(75,192,192,0.4)',
+        borderColor: 'rgba(75,192,192,1)',
         borderWidth: 1,
-        hoverBackgroundColor: "rgba(75,192,192,0.6)",
-        hoverBorderColor: "rgba(75,192,192,1)",
-        data: [65, 59, 80, 81, 56, 55, 40, 70, 62, 53, 48, 75],
-      },
-    ],
+        hoverBackgroundColor: 'rgba(75,192,192,0.6)',
+        hoverBorderColor: 'rgba(75,192,192,1)',
+      }
+    ]
   };
 
   const options = {
     maintainAspectRatio: false,
     scales: {
       y: {
-        beginAtZero: true,
-      },
-    },
+        beginAtZero: true
+      }
+    }
   };
 
   return (

@@ -17,6 +17,7 @@ import LoginBus from './page/LoginBus';
 // import BusLayout from "./page/BusCompanyManager/layouts/Bus";
 
 function App() {
+  const user = JSON.parse(sessionStorage.getItem("user"));
   return (
     <Router>
       <Routes>
@@ -24,15 +25,14 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/" element={<Home />} />
         <Route path="/payment" element={<PaymentMethod />} />
-        <Route path="/login" element={<All/>} />
-        <Route path='/oauth2/redirect' element={<OAuth2RedirectHandler/>}/>
-        <Route path='/profile' element={<ProfilePage/>}/>
-        <Route path='/payment-result' element={<OrderResult/>} />
+        <Route path="/login" element={<All />} />
+        <Route path='/oauth2/redirect' element={<OAuth2RedirectHandler />} />
+        <Route path='/profile' element={<ProfilePage />} />
+        <Route path='/payment-result' element={<OrderResult />} />
         <Route path='/bus/*' element={<BusLayout />} />
         <Route path='/ad/*' element={<AdLayout/>} />
         <Route path="/history" element={<TransactionHistory />} />
         <Route path='/changePassword' element={<ChangePassword />} />
-        <Route path='/loginBus' element={<LoginBus/>} />
         {/* <Route path="/aboutUs" element={<AboutUss />} /> */}
         {/* <Route path='/bus/dataTable' element={<BusLayout/>} /> */}
       </Routes>
