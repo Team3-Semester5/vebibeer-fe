@@ -3,6 +3,7 @@ import { Button, Card, Form, Container, Row, Col, Alert } from "react-bootstrap"
 import "./busProfile.css";
 
 function BusPr({ onAdd = () => {}, onHide = () => {} }) {
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const [busCompany, setBusCompany] = useState({
     username: "",
     password: "",
@@ -23,7 +24,7 @@ function BusPr({ onAdd = () => {}, onHide = () => {} }) {
 
   useEffect(() => {
     // Fetch bus company data here if needed
-    fetch("http://localhost:8080/admin/buscompanies/1") // Replace 1 with the actual ID
+    fetch(`http://localhost:8080/admin/buscompanies/${user.busCompany_id}`) // Replace 1 with the actual ID
       .then(response => response.json())
       .then(data => {
         setBusCompany(data);
