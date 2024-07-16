@@ -1,0 +1,110 @@
+/* SeatMap.css */
+.seat-map-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+}
+
+.deck-card,
+.info-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.deck-header {
+    padding: 10px 0;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
+}
+
+.seat-row {
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.seat-button {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+    border: solid 2px black;
+    color: black;
+    font-size: small;
+    padding: 2px;
+}
+
+.info-card {
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.icon-steering-wheel {
+    background-image: url('https://t4.ftcdn.net/jpg/02/03/76/59/360_F_203765980_yd2q0amdBcy2NKhAirhtxNVFrZhfC1z1.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 40px;
+    left: 55px;
+}
+
+.price-strike {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.total-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.continue-button {
+    width: 100%;
+    background-color: #007BFF;
+    color: white;
+}
+
+.legend-card {
+    border: none;
+    background-color: transparent;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.legend-button {
+    border: none;
+    background: none;
+    cursor: default;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.icon-cancel,
+.icon-check,
+.icon-square {
+    font-size: 20px;
+}
+
+.disabled {
+    color: gray;
+}
+
+.selected {
+    color: green;
+}
+
+.available {
+    color: black;
+}

@@ -1,24 +1,43 @@
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './page/Home';
+import RouteGuestList from './page/RouteGuestList';
+import Cart from './page/Cart';
+import PaymentMethod from './page/PaymentMethod';
+import All from './page/LoginRegister';
+import OAuth2RedirectHandler from './utils/OAuth2RedirectHandler';
+import ProfilePage from './page/CustomerProfilePage';
+import OrderResult from './page/OrderResult';
+import BusLayout from './page/busmanage/BusLayout';
+import AdLayout from './page/Admanage/AdLayout';
+import TransactionHistory from './page/TransactionHistory';
+import ChangePassword from './page/ChangePassword';
+import LoginBus from './page/LoginBus';
+// import AboutUss from './page/AboutUss'
+// import BusLayout from "./page/BusCompanyManager/layouts/Bus";
 
 function App() {
+  const user = JSON.parse(sessionStorage.getItem("user"));
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/routeGuest" element={<RouteGuestList />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/payment" element={<PaymentMethod />} />
+        <Route path="/login" element={<All />} />
+        <Route path='/oauth2/redirect' element={<OAuth2RedirectHandler />} />
+        <Route path='/profile' element={<ProfilePage />} />
+        <Route path='/payment-result' element={<OrderResult />} />
+        <Route path='/bus/*' element={<BusLayout />} />
+        <Route path='/ad/*' element={<AdLayout/>} />
+        <Route path="/history" element={<TransactionHistory />} />
+        <Route path='/changePassword' element={<ChangePassword />} />
+        {/* <Route path="/aboutUs" element={<AboutUss />} /> */}
+        {/* <Route path='/bus/dataTable' element={<BusLayout/>} /> */}
+      </Routes>
+    </Router>
+
   );
 }
 
