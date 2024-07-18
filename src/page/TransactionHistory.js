@@ -3,6 +3,7 @@ import { Table, Button, Container, Modal } from 'react-bootstrap';
 // import TransactionDetail from './TransactionDetail';
 import logo from '../assets/images/namepage.png';
 import { Link, useNavigate } from 'react-router-dom';
+import Menu from '../component/Menu';
 
 const TransactionDetail = ({ transaction, onHide }) => {
   return (
@@ -63,36 +64,40 @@ const TransactionList = () => {
     setSelectedTransaction(null);
   };
 
+  const handleCancel = async (transaction) => {
+    console.log(`Cancel transaction with : ${JSON.stringify(transaction)}`);
+    try {
+      const response = await fetch(`http://localhost:8080/transaction/customer/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(transaction)
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
   const handleLogout = () => {
-    // Implement logout logic here
     sessionStorage.removeItem('user');
     navigate('/'); // Redirect to home page
   };
 
+  const isFutureTransaction = (transactionDate) => {
+    const currentDate = new Date();
+    const transactionDateObj = new Date(transactionDate);
+    return transactionDateObj > currentDate;
+  };
+
   return (
     <div>
-      <nav className="navbar">
-        <Link to="/">
-          <img src={logo} alt="Logo" className="navbar-logo" />
-        </Link>
-        <ul>
-          <li>
-            <button
-              style={{
-                fontSize: '1rem',
-                padding: '0.5rem 1rem',
-                backgroundColor: '#007bff', // Blue color
-                color: 'white', // White text
-                border: 'none', // No border
-                borderRadius: '5px', // Rounded corners
-              }}
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </li>
-        </ul>
-      </nav>
+      <Menu/>
       <Container style={{ margin: 100 }}>
         <h2>Transactions</h2>
         <Table striped bordered hover>
@@ -116,6 +121,15 @@ const TransactionList = () => {
                   <Button variant="primary" onClick={() => handleTransactionClick(transaction)}>
                     View Details
                   </Button>
+                  {isFutureTransaction(transaction.routeStartTime) && (
+                    <Button
+                      variant="danger"
+                      onClick={() => handleCancel(transaction)}
+                      style={{ marginLeft: '10px' }}
+                    >
+                      Cancel
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}

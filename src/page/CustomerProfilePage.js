@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { Button, Modal, Form, Alert } from 'react-bootstrap';
 import Menu from '../component/Menu';
+import { API_URL, API_URL1 } from '../constaint/fetchApi';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({
@@ -36,7 +37,7 @@ export default function ProfilePage() {
     const fetchUserProfile = async () => {
       console.log(userId);
       try {
-        const response = await fetch(`http://localhost:8080/customer/${userId}`);
+        const response = await fetch(`${API_URL}/customer/${userId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -71,7 +72,7 @@ export default function ProfilePage() {
       formData.append('file', e.target.files[0]);
 
       try {
-        const response = await fetch(`http://localhost:8080/customer/upload/${userId}`, {
+        const response = await fetch(`${API_URL}/customer/upload/${userId}`, {
           method: 'POST',
           body: formData,
         });
@@ -116,7 +117,7 @@ export default function ProfilePage() {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/customer/changePassword/${userId}`, {
+      const response = await fetch(`${API_URL}/customer/changePassword/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -151,7 +152,7 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/customer/updateProfile/${userId}`, {
+      const response = await fetch(`${API_URL}/customer/updateProfile/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

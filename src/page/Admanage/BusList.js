@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 function BusList() {
   const [routes, setRoutes] = useState([]);
@@ -8,7 +9,7 @@ function BusList() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/routes/");
+        const response = await fetch(`${API_URL}/api/routes/`);
         if (!response.ok) {
           throw new Error("Failed to fetch routes");
         }

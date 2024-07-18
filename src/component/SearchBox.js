@@ -4,6 +4,7 @@ import './SearchBox.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsAltH } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-datepicker';
+import { API_URL, API_URL1 } from '../../src/constaint/fetchApi';
 
 const SearchBox = () => {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ const SearchBox = () => {
     useEffect(() => {
         const fetchRoutes = async () => {
             try {
-                const response = await fetch('http://localhost:8080/route');
+                const response = await fetch(`${API_URL}/route`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

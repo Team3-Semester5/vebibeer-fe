@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Card, Form, Container, Row, Col, Alert } from "react-bootstrap";
 import "./busProfile.css";
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 function BusPr({ onAdd = () => {}, onHide = () => {} }) {
   const user = JSON.parse(sessionStorage.getItem("user"));
@@ -24,7 +25,7 @@ function BusPr({ onAdd = () => {}, onHide = () => {} }) {
 
   useEffect(() => {
     // Fetch bus company data here if needed
-    fetch(`http://localhost:8080/admin/buscompanies/${user.busCompany_id}`) // Replace 1 with the actual ID
+    fetch(`${API_URL}/admin/buscompanies/${user.busCompany_id}`) // Replace 1 with the actual ID
       .then(response => response.json())
       .then(data => {
         setBusCompany(data);
@@ -47,7 +48,7 @@ function BusPr({ onAdd = () => {}, onHide = () => {} }) {
       formData.append('file', file);
 
       try {
-        const response = await fetch(`http://localhost:8080/admin/buscompanies/upload/1`, { // Sử dụng ID thực của bus company
+        const response = await fetch(`${API_URL}/admin/buscompanies/upload/1`, { // Sử dụng ID thực của bus company
           method: 'POST',
           body: formData,
         });
@@ -70,7 +71,7 @@ function BusPr({ onAdd = () => {}, onHide = () => {} }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/admin/buscompanies/update/1", {
+      const response = await fetch(`${API_URL}/admin/buscompanies/update/1`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

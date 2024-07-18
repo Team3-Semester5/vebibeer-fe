@@ -12,6 +12,9 @@ import Service from "./Service.js";
 import CompanyCustomers from "./BusReviewCus.js";
 import EditRoute from "./EditRoute.js";
 import EditRating from "./EditRating.js";
+import BusReviewCus from "./BusReviewCus.js";
+import EditVoucher from "./EditVoucher.js";
+
 
 
 
@@ -31,8 +34,9 @@ const BusLayout = () => {
             <Route path="location" element={<Location />} />
             <Route path="service" element={<Service />} />
             <Route path="route" element={<EditRoute/>} />
-            <Route path="reviewCustomer" element={<CompanyCustomers/>} />
             <Route path="reviewRating" element={<EditRating/>} />
+            <Route path="reviewCustomer" element={<BusReviewCus />} />
+            <Route path="voucher" element={<EditVoucher />} />
           </Routes>
         </div>
       </div>

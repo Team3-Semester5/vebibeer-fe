@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
   const [updatedBusCompany, setUpdatedBusCompany] = useState(busCompany);
@@ -30,7 +31,7 @@ const UpdateBusCompanyModal = ({ show, onHide, busCompany, onUpdate }) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/admin/buscompanies/update/${updatedBusCompany.busCompany_id}`, {
+      const response = await fetch(`${API_URL}/admin/buscompanies/update/${updatedBusCompany.busCompany_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

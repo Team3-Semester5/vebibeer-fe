@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 const AddCustomerModal = ({ show, onHide, onAdd }) => {
   const [customer, setCustomer] = useState({
@@ -32,7 +33,7 @@ const AddCustomerModal = ({ show, onHide, onAdd }) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:8080/customer/save', {
+      const response = await fetch(`${API_URL}/customer/save`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

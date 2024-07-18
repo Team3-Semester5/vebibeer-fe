@@ -4,6 +4,7 @@ import AddCarModal from './AddCarModal';
 import UpdateCarModal from './UpdateCarModal';
 import DeleteCarModal from './DeleteCarModal';
 import '../../../../assets/css/Buscompany.css';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const CarList = () => {
     const [cars, setCars] = useState([]);
@@ -20,7 +21,7 @@ const CarList = () => {
     useEffect(() => {
         const fetchCars = async () => {
             try {
-                const response = await fetch('http://localhost:8080/buscompany/car/by-company/1');
+                const response = await fetch(`${API_URL}/buscompany/car/by-company/1`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

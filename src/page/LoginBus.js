@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Form, FormGroup } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
+import { API_URL, API_URL1 } from '../constaint/fetchApi';
 
 const LoginBus = () => {
 
@@ -15,7 +16,7 @@ const LoginBus = () => {
         };
         alert(busData.username);
         try {
-            const response = await fetch('http://localhost:8080/api/bus/authenticate', {
+            const response = await fetch(`${API_URL}/api/bus/authenticate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const AddCarModal = ({ show, onHide, onAdd }) => {
     const [car, setCar] = useState({
@@ -47,7 +48,7 @@ const AddCarModal = ({ show, onHide, onAdd }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch('http://localhost:8080/buscompany/car/save/', {
+            const response = await fetch(`${API_URL}/buscompany/car/save/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

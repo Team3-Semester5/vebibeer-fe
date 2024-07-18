@@ -6,32 +6,22 @@ const Blog = () => {
         <section id="blog" className="blog">
             <div className="container">
                 <div className="blog-details">
-                    <div className="gallary-header text-center">
-                        <h2>latest news</h2>
+                    <div  style={{paddingBottom :"50px"}} className="gallary-header text-center">
+                        <h2>Latest News</h2>
                         <p>Travel News from all over the world</p>
-                    </div>
-                    <div className="blog-content">
-                        <div className="row">
-                            {[1, 2, 3].map((item) => (
-                                <div key={item} className="col-sm-4 col-md-4">
-                                    <div className="thumbnail">
-                                        <h2>trending news <span>15 november 2017</span></h2>
-                                        <div className="thumbnail-img">
-                                            <img src={`../assets/images/blog/b${item}.jpg`} alt={`blog-img-${item}`} />
-                                            <div className="thumbnail-img-overlay"></div>
-                                        </div>
-                                        <div className="caption">
-                                            <div className="blog-txt">
-                                                <h3>
-                                                    <a href="#">Discover on beautiful weather, Fantastic foods and historical place in {item === 1 ? 'Prag' : item === 2 ? 'India' : 'Natural places'}</a>
-                                                </h3>
-                                                <p>Lorem ipsum dolor sit amet, contur adip elit, sed do mod incid ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
-                                                <a href="#">Read More</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                    </div>  
+                    <div className="columns">
+                        <div className="column">
+                            <h4>Sustainable Travel on the Rise</h4>
+                            <p>Many travelers are now seeking sustainable travel options to minimize their environmental impact. Travel companies are increasing their offerings of eco-friendly tours and accommodations.</p>
+                        </div>
+                        <div className="column">
+                            <h4>New Destinations Opening Up</h4>
+                            <p>As travel restrictions ease, new destinations are becoming accessible. Countries like Japan, New Zealand, and several European nations are welcoming tourists again with updated health and safety protocols.</p>
+                        </div>
+                        <div className="column">
+                            <h4>Luxury Travel Boom</h4>
+                            <p>There has been a surge in demand for luxury travel experiences. High-end resorts,  itineraries are becoming increasingly popular among affluent travelers seeking unique and exclusive experiences..</p>
                         </div>
                     </div>
                 </div>

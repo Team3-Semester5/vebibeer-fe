@@ -12,6 +12,7 @@ import {
   ArcElement
 } from "chart.js";
 import "../../assets/css/NavbarAd.css";
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 // Register Chart.js elements
 ChartJS.register(
@@ -36,7 +37,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRevenueData = async () => {
       try {
-        const revenueResponse = await fetch(`http://localhost:8080/admin-manage/get-infor-buscompany?year=${year}`);
+        const revenueResponse = await fetch(`${API_URL}/admin-manage/get-infor-buscompany?year=${year}`);
         if (!revenueResponse.ok) throw new Error('Network response was not ok');
         const revenue = await revenueResponse.json();
         console.log('Revenue:', revenue);
@@ -57,7 +58,7 @@ const Dashboard = () => {
 
     const fetchBookingData = async () => {
       try {
-        const bookingResponse = await fetch(`http://localhost:8080/admin-manage/get-infor-buscompany?year=${year}`);
+        const bookingResponse = await fetch(`${API_URL}/admin-manage/get-infor-buscompany?year=${year}`);
         if (!bookingResponse.ok) throw new Error('Network response was not ok');
         const bookings = await bookingResponse.json();
         console.log('Bookings:', bookings);
@@ -78,7 +79,7 @@ const Dashboard = () => {
 
     const fetchTopBusCompanies = async () => {
       try {
-        const topBusCompaniesResponse = await fetch(`http://localhost:8080/admin-manage/get-top-5-buscompany?year=${year}`);
+        const topBusCompaniesResponse = await fetch(`${API_URL}/admin-manage/get-top-5-buscompany?year=${year}`);
         if (!topBusCompaniesResponse.ok) throw new Error('Network response was not ok');
         const topBusCompaniesData = await topBusCompaniesResponse.json();
         console.log('Top Bus Companies:', topBusCompaniesData);
@@ -90,7 +91,7 @@ const Dashboard = () => {
 
     const fetchTopCustomers = async () => {
       try {
-        const topCustomersResponse = await fetch("http://localhost:8080/admin-manage/get-top-5-customer");
+        const topCustomersResponse = await fetch(`${API_URL}/admin-manage/get-top-5-customer`);
         if (!topCustomersResponse.ok) throw new Error('Network response was not ok');
         const topCustomersData = await topCustomersResponse.json();
         console.log('Top Customers:', topCustomersData);

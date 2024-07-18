@@ -1,0 +1,40 @@
+.email-verification {
+  font-family: Arial, sans-serif; 
+  padding: 20px; 
+}
+
+.content {
+  max-width: 600px; 
+  margin: auto; 
+  text-align: center; 
+  background-color: #f4f4f4; 
+  padding: 40px; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+
+.email-icon {
+  width: 100px; 
+  height: auto; 
+  margin-bottom: 20px; 
+}
+
+h1 {
+  font-size: 28px; 
+  color: #333; 
+  margin-bottom: 20px; 
+}
+
+p {
+  font-size: 18px; 
+  color: #666; 
+  line-height: 1.5; 
+}
+
+
+  
+  .resend-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }

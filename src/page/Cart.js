@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Container, Row, Col, Alert, Offcanvas, Card } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Alert, Offcanvas, Card, ListGroup, Modal, } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShield, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { parse } from '@fortawesome/fontawesome-svg-core';
+
+
 
 const PersonalInfoForm = ({ formData, setFormData, user }) => {
     let navigate = useNavigate();
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
 
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -20,13 +20,11 @@ const PersonalInfoForm = ({ formData, setFormData, user }) => {
     };
 
     return (
-
-        <Container >
+        <Container>
             <Row className="justify-content-md-center">
-                <Col md={8}>
-
-                    <Form onSubmit={handleSubmit}>
-                        <h5>Thông tin liên hệ</h5>
+                <Col md={9}>
+                    <Form onSubmit={handleSubmit} style={{ marginTop: "30px" }}>
+                        <h2 style={{ paddingBottom: "15px", marginBottom: "20px " , fontWeight :"bold"}}>Thông tin liên hệ</h2>
                         <Form.Group className="mb-3">
                             {formData.name === '' && (
                                 <Alert variant='primary'>
@@ -34,65 +32,23 @@ const PersonalInfoForm = ({ formData, setFormData, user }) => {
                                     <Button variant="primary" style={{ marginLeft: '10%' }} onClick={() => { navigate('/login') }}>
                                         Đăng nhập
                                     </Button>
-
                                 </Alert>
                             )}
-
-                            <Form.Label>Tên người dùng <span style={{ color: 'red' }}>*</span></Form.Label>
-
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter name"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                required
-                            />
+                            <Form.Label style={{fontSize :"24px"}}>Tên người dùng <span style={{ color: 'red' }}>*</span></Form.Label>
+                            <Form.Control type="text" placeholder="Enter name" name="name" value={formData.name} onChange={handleChange} required style={{ marginBottom: "25px" ,fontSize :"19px"}} />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Số điện thoại <span style={{ color: 'red' }}>*</span></Form.Label>
-                            <Form.Control
-                                type="tel"
-                                placeholder="+84"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                required
-                            />
+                            <Form.Label style={{fontSize :"24px"}}>Số điện thoại <span style={{ color: 'red' }}>*</span></Form.Label>
+                            <Form.Control type="tel" placeholder="+84" name="phone" value={formData.phone} onChange={handleChange} required style={{ marginBottom: "25px" ,fontSize :"19px" }} />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Email để nhận thông tin đặt chỗ <span style={{ color: 'red' }}>*</span></Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="Enter email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
+                            <Form.Label style={{fontSize :"24px"}}>Email để nhận thông tin đặt chỗ <span style={{ color: 'red' }}>*</span></Form.Label>
+                            <Form.Control type="email" placeholder="Enter email" name="email" value={formData.email} onChange={handleChange} required style={{ marginBottom: "25px",fontSize :"19px" }} />
                         </Form.Group>
-                        <Alert variant="success" className="mt-3" style={{ display: 'flex' }}>
-                            <div style={{
-                                fontSize: '24px',
-                                color: 'green',
-                                position: 'relative',
-                                display: 'inline-block',
-                                width: '30%',
-                                height: '50px'
-                            }}>
-                                <FontAwesomeIcon icon={faShield} style={{
-                                    position: 'absolute',
-                                    width: '100%',
-                                    height: '100%',
-                                    top: 0,
-                                    left: 0
-                                }} />
-                                <FontAwesomeIcon icon={faCheck} style={{
-                                    position: 'absolute',
-                                    top: '25%',
-                                    left: '40%',
-                                    color: 'white'
-                                }} />
+                        <Alert variant="success" className="mt-3" style={{ display: 'flex',fontSize :"24px", marginBottom: "25px" }}>
+<div style={{ fontSize: '20px', color: 'green', position: 'relative', display: 'inline-block', width: '30%', height: '50px' }}>
+                                <FontAwesomeIcon icon={faShield} style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0 }} />
+                                <FontAwesomeIcon icon={faCheck} style={{ position: 'absolute', top: '25%', left: '40%', color: 'white' }} />
                             </div>
                             Số điện thoại và email được sử dụng để gửi thông tin đơn hàng và liên hệ khi cần thiết.
                         </Alert>
@@ -101,16 +57,16 @@ const PersonalInfoForm = ({ formData, setFormData, user }) => {
             </Row>
         </Container>
     );
-}
+};
 
 const TripDetails = () => {
     const [tickets, setTicket] = useState([]);
     const [error, setError] = useState(null);
     const [totalMoney, setTotalMoney] = useState(0);
+    const [newTotal, setNewTotal] = useState(null);
     const [showDetails, setShowDetails] = useState(false);
     const [showChange, setShowChange] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
-
 
     const handleShowDetails = (ticket) => {
         setSelectedTicket(ticket);
@@ -128,44 +84,62 @@ const TripDetails = () => {
     useEffect(() => {
         const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
         const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
+        sessionStorage.setItem("newTotal", money);
         setTicket(savedSeats);
         setTotalMoney(money);
+        setNewTotal(money);
     }, []);
 
+    // Handle updating total from VoucherPoints component
+    const handleUpdateTotal = (total) => {
+        sessionStorage.setItem("newTotal", JSON.stringify(total));
+        setNewTotal(total);
+    };
+
     return (
-        <Container className="mt-4">
-            <div className="card mb-3">
-                Tạm tính <span style={{ fontWeight: 'bold' }}>{totalMoney}.000 VND</span>
+        <Container className="mt-4" style={{ marginTop: '60px' }}>
+            <div className="card mb-3" style={{ marginBottom: '70px', width: "373px", fontSize: "20px" }}>
+                Tạm tính <span style={{ fontWeight: 'bold' }}>{newTotal}.000 VND</span>
             </div>
+            <VoucherPoints onUpdateTotal={handleUpdateTotal} />
             {tickets.map(ticket => (
                 <Card className="mb-3" key={ticket.ticket_id} style={{ maxWidth: '372px' }}>
                     <Card.Body>
                         <div className="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <p className="mb-1">
-                                    <strong>Date:</strong>
-                                    {ticket.route ? ticket.route.route_startTime : 'No date available'}
-                                </p>
-                                <p><strong>Seat:</strong> {ticket.ticket_seat}</p>
-                            </div>
-                            <Button variant="primary" onClick={() => handleShowDetails(ticket)}>Chi tiết</Button>
+                            <Col md={7} style={{ width: "190px", paddingLeft: "21px" }}>
+                                <div>
+                                    <p className="mb-1">
+                                        <strong style={{ marginRight: "5px" }}>Date:</strong> {ticket.route ? ticket.route.route_startTime : 'No date available'}
+                                    </p>
+                                    <p><strong>Seat:</strong> {ticket.ticket_seat}</p>
+                                </div>
+                            </Col>
+                            <Col md={3} style={{ width: "140px", paddingLeft: "22px" }}>
+                                <Row>
+                                    <Button style={{ width: "88px", margin: "10px 0px 0px 20px", height: "46px", paddingRight: "10px" }} variant="primary" onClick={() => handleShowDetails(ticket)}>Chi tiết</Button>
+                                </Row>
+                                <Row><p style={{ marginTop: "17px", width: "60px", height: "1px" }}></p></Row>
+                            </Col>
                         </div>
                         <div className="mb-4">
                             <h5 className="card-title">{ticket.route ? ticket.route.busCompany_fullname : 'No company'}</h5>
                         </div>
                         <div className="mb-4">
-                            <h6 className="card-subtitle mb-2 text-muted">
-                                {ticket.route ? `${ticket.route.startLocation.location_name} - ${ticket.route.endLocation.location_name}` : 'No route info'}
-                            </h6>
-                            <p className="card-text">
-                                {ticket.route ? ticket.route.busCompany.busCompany_location : 'No location'}
-                            </p>
-                            <Button variant="success" onClick={() => handleShowChange(ticket)}>Thay đổi</Button>
+                            <Row>
+                                <Col md={5} style={{ marginLeft: "20px", marginRight: "10px", width: "189px" }}>
+                                    <h6 className="card-subtitle mb-2 text-muted">
+                                        {ticket.route ? `${ticket.route.startLocation.location_name} - ${ticket.route.endLocation.location_name}` : 'No route info'}
+                                    </h6>
+                                    <p className="card-text">
+                                        {ticket.route ? ticket.route.busCompany.busCompany_location : 'No location'}
+                                    </p>
+                                </Col>
+                                <Col md={4} style={{ paddingRight: "50px" }}><Button style={{ width: "90px", height: "46px" }} variant="success" onClick={() => handleShowChange(ticket)}>Thay đổi</Button></Col>
+                            </Row>
                         </div>
                     </Card.Body>
                 </Card>
             ))}
-
             {/* Offcanvas for Details */}
             <Offcanvas show={showDetails} onHide={handleCloseDetails}>
                 <Offcanvas.Header closeButton>
@@ -183,40 +157,38 @@ const TripDetails = () => {
                     )}
                 </Offcanvas.Body>
             </Offcanvas>
-
             {/* Offcanvas for Change */}
             <Offcanvas show={showChange} onHide={handleCloseChange}>
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>Thay đổi</Offcanvas.Title>
+                    <Offcanvas.Title style={{ fontSize: '20px' }}>Thay đổi</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     {selectedTicket && (
                         <>
-                            <p><strong>Date:</strong> {selectedTicket.route.route_startTime}</p>
-                            <p><strong>Seat:</strong> {selectedTicket.ticket_seat}</p>
-                            <p><strong>Company:</strong> {selectedTicket.route.busCompany_fullname}</p>
-                            <p><strong>Route:</strong> {selectedTicket.route.startLocation.location_name} - {selectedTicket.route.endLocation.location_name}</p>
-                            <p><strong>Location:</strong> {selectedTicket.route.busCompany.busCompany_location}</p>
+                            <p style={{ fontSize: '20px' }}><strong>Date:</strong> {selectedTicket.route.route_startTime}</p>
+                            <p style={{ fontSize: '20px' }}><strong>Seat:</strong> {selectedTicket.ticket_seat}</p>
+                            <p style={{ fontSize: '20px' }}><strong>Company:</strong> {selectedTicket.route.busCompany_fullname}</p>
+                            <p style={{ fontSize: '20px' }}><strong>Route:</strong> {selectedTicket.route.startLocation.location_name} - {selectedTicket.route.endLocation.location_name}</p>
+                            <p style={{ fontSize: '20px' }}><strong>Location:</strong> {selectedTicket.route.busCompany.busCompany_location}</p>
                             {/* Add form elements or inputs here if you want to allow changes */}
                             <div className="form-group">
-                                <label htmlFor="newSeat">New Seat</label>
-                                <input type="text" className="form-control" id="newSeat" placeholder="Enter new seat number" />
+                                <label htmlFor="newSeat" style={{ fontSize: '20px' }}>New Seat</label>
+                                <input type="text" className="form-control" id="newSeat" placeholder="Enter new seat number" style={{ fontSize: '20px' }} />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="newDate">New Date</label>
-                                <input type="date" className="form-control" id="newDate" />
+                                <label htmlFor="newDate" style={{ fontSize: '20px' }}>New Date</label>
+                                <input type="date" className="form-control" id="newDate" style={{ fontSize: '20px' }} />
                             </div>
-                            <Button variant="primary" onClick={() => alert('Changes saved!')}>Save Changes</Button>
+                            <Button variant="primary" onClick={() => alert('Changes saved!')} style={{ fontSize: '20px' }}>Save Changes</Button>
                         </>
                     )}
                 </Offcanvas.Body>
             </Offcanvas>
         </Container>
     );
-
-}
-
-const ContinueComponent = ({ formData }, isCheckout) => {
+};
+//nút tiếp tục
+const ContinueComponent = ({ formData, isCheckout }) => {
     const navigate = useNavigate();
     const handleContinue = () => {
         navigate('/payment'); // Adjust the path as needed
@@ -227,26 +199,25 @@ const ContinueComponent = ({ formData }, isCheckout) => {
             <div className="text-center">
                 {isCheckout ? (
                     <Row>
-                        <Col md={6}>
-                            <Button variant="outline-secondary" style={{ width: '80%', height: '100%' }} disabled={!isFormComplete} onClick={handleContinue} >Tiếp tục</Button>
+                        <Col md={2}  style={{ paddingTop: "20px", paddingLeft: "70px" }}>
+                            <Button variant="outline-secondary" style={{ width :"70%" ,height: '100%', backgroundColor: "#FFCC00", color: "black", fontWeight: "bold", paddingTop: "20px", paddingLeft: "70px" }} disabled={!isFormComplete} onClick={handleContinue}>Tiếp tục</Button>
+    
                         </Col>
-                        <Col md={6}>
+                        <Col md={2} style={{ paddingTop: "20px", paddingLeft: "80px" }}>
                             Bằng việc nhấn nút Tiếp tục, bạn đồng ý với <a href="/privacy-policy">Chính sách bảo mật thanh toán</a> và <a href="/terms">Quy chế</a>
                         </Col>
                     </Row>
-                ) : (
+                ) : (   
                     <Row>
-                        <Col md={6}>
-                            <Button variant="warning" style={{ width: '80%', height: '100%' }} onClick={handleContinue} >Thanh toán</Button>
+                        <Col md={5}>
+                            <Button variant="warning" style={{ width: '80%', marginTop :'10px' }} onClick={handleContinue}>Thanh toán</Button>
                         </Col>
-                        <Col md={6}>
-                            Bạn sẽ sớm nhận được biên số xe, số điện thoại tài xế và dễ dàng thay đổi điểm đón trả sau khi đặt.
+                        <Col md={6} style={{ paddingTop: "20px", }}>
+                            Bằng việc nhấn nút Tiếp tục, bạn đồng ý với <a href="/privacy-policy">Chính sách bảo mật thanh toán</a> và <a href="/terms">Quy chế</a>
                         </Col>
                     </Row>
                 )}
-
-
-                <div>
+                <div style={{ textAlign: "end", paddingRight: "50px" , marginTop :"10px"}}>
                     Bạn sẽ sớm nhận được biên số xe, số điện thoại tài xế và dễ dàng thay đổi điểm đón trả sau khi đặt.
                 </div>
             </div>
@@ -254,23 +225,134 @@ const ContinueComponent = ({ formData }, isCheckout) => {
     );
 };
 
+// xữ lí list voucher ra bằng id bus company
+const VoucherPoints = ({ onUpdateTotal }) => {
+    const [voucher, setVoucher] = useState('');
+    const [saleUp, setSaleUp] = useState(0);
+    const [points, setPoints] = useState(0); // Initialize with 0 and set later from API
+    const [enteredPoints, setEnteredPoints] = useState(0);
+    const [showVoucherModal, setShowVoucherModal] = useState(false);
+    const [vouchers, setVouchers] = useState([]);
+    const [informationUser, setInformationUser] = useState({});
+    const busCompany_id = JSON.parse(sessionStorage.getItem('bus_company_id'));
+    const user = JSON.parse(sessionStorage.getItem('user'));
+
+    const handleShowVoucherModal = () => setShowVoucherModal(true);
+    const handleCloseVoucherModal = () => setShowVoucherModal(false);
+
+    // Fetching vouchers
+    useEffect(() => {
+        fetch(`http://localhost:8080/buscomapany/voucher/bus/${busCompany_id}`)
+            .then(response => response.json())
+            .then(data => setVouchers(data))
+            .catch(error => console.error('Error fetching vouchers:', error));
+    }, [busCompany_id]);
+
+    // Fetching user information
+    useEffect(() => {
+        fetch(`http://localhost:8080/customer/get-cus/?username=${user.username}`)
+            .then(res => res.json())
+            .then(data => {
+                setInformationUser(data);
+                setPoints(data.point); // Assuming 'points' is the field containing the user's points
+            })
+            .catch(error => console.error('Error fetching user information:', error));
+    }, [user.username]);
+
+    // Handle voucher selection
+    const handleVoucherSelect = (selectedVoucher) => {
+        setVoucher(selectedVoucher.voucher_code);
+        setSaleUp(selectedVoucher.saleUp);
+        setShowVoucherModal(false);
+    };
+
+    // Handle points input change
+    const handlePointsChange = (e) => {
+        const value = parseInt(e.target.value, 10);
+        if (value > points) {
+            setEnteredPoints(points); // Cap entered points to the maximum available points
+        } else {
+            setEnteredPoints(value);
+        }
+    };
+
+    // Apply discount logic
+    const applyDiscount = () => {
+        const totalAfterDiscount = calculateTotal();
+        onUpdateTotal(totalAfterDiscount); // Update the parent component's total
+        alert(`Total after applying discounts: ${totalAfterDiscount} VND`);
+    };
+
+    // Calculate total after applying points and voucher
+    const calculateTotal = () => {
+        const totalMoney = parseInt(sessionStorage.getItem('totalMoney') || '0', 10);
+        const discountAmount = totalMoney * (saleUp / 100);
+        const pointsDiscount = enteredPoints; // Assuming each point equals 1 VND
+        const totalAfterDiscount = totalMoney - discountAmount - pointsDiscount;
+        return totalAfterDiscount < 0 ? 0 : totalAfterDiscount; // Ensure total is not negative
+    };
+
+    return (
+        <Container>
+            <Row className="justify-content-md-center">
+                <Col style={{ height: "auto", paddingBottom: "20px", marginRight: "20px", width: "430px" }} md={12}>
+                    <Card className="text-center mb-3">
+                        <Card.Body style={{ padding: "10px" }}>
+                            <Card.Title>Voucher</Card.Title>
+                            <Card.Text style={{ fontSize: "20px" }}>{voucher ? `${voucher} - ${saleUp}%` : "No voucher selected"}</Card.Text>
+                            <Button variant="primary" onClick={handleShowVoucherModal} style={{ marginBottom: "10px" }}>Xem danh sách Voucher</Button>
+                        </Card.Body>
+                        <Card.Body style={{ padding: "10px" }}>
+                            <Card.Title>Points</Card.Title>
+                            <Card.Text style={{ fontSize: "20px" }}>Bạn có {points || 0} điểm</Card.Text>
+                            <Form.Group className="mb-3" style={{ marginBottom: "10px" }}>
+                                <Form.Label style={{ fontSize: "20px" }}>Nhập số điểm bạn muốn áp dụng</Form.Label>
+                                <Form.Control   
+                                    type="number" 
+                                    placeholder="Enter points" 
+                                    value={enteredPoints} 
+                                    onChange={handlePointsChange} 
+                                    max={points}
+                                />
+                            </Form.Group>
+                        </Card.Body>
+                        <Button variant="primary" onClick={applyDiscount} style={{ marginBottom: "10px" }}>Apply Discount</Button>
+                    </Card>
+                </Col>
+            </Row>
+            <Modal show={showVoucherModal} onHide={handleCloseVoucherModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Danh sách Voucher</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <ListGroup>
+                        {vouchers.map(voucher => (
+                            <ListGroup.Item key={voucher.voucher_code} onClick={() => handleVoucherSelect(voucher)}>
+                                {voucher.voucher_code}: Giảm giá {voucher.saleUp}%
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseVoucherModal}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>
+    );
+};
+
+
 
 
 const Cart = () => {
     const user = JSON.parse(sessionStorage.getItem("user")) || {};
-    const [formData, setFormData] = useState({
-        name: user.customer_fullname,
-        phone: user.customer_phone,
-        email: user.username
-    });
-
-    
+    const [formData, setFormData] = useState({ name: user.customer_fullname, phone: user.customer_phone, email: user.username });
 
     return (
         <Container>
             <Row>
                 <Col md={8}>
-                    <PersonalInfoForm formData={formData} setFormData={setFormData} user = {user}/>
+                    <PersonalInfoForm formData={formData} setFormData={setFormData} user={user} />
                 </Col>
                 <Col md={4}>
                     <TripDetails />
@@ -281,4 +363,4 @@ const Cart = () => {
     );
 }
 
-export default Cart
+export default Cart;

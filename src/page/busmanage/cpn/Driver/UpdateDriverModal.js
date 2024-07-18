@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const UpdateDriverModal = ({ show, onHide, driver, onUpdate }) => {
     const [updatedDriver, setUpdatedDriver] = useState(driver);
@@ -36,7 +37,7 @@ const UpdateDriverModal = ({ show, onHide, driver, onUpdate }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/buscompany/driver/update/${updatedDriver.driver_id}`, {
+            const response = await fetch(`${API_URL}/buscompany/driver/update/${updatedDriver.driver_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

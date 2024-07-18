@@ -1,12 +1,13 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 function DeleteRatingModal({ show, onHide, onDelete, ratingId }) {
     const [error, setError] = React.useState(null);
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/rating/delete/${ratingId}`, {
+            const response = await fetch(`${API_URL}/rating/delete/${ratingId}`, {
                 method: 'DELETE'
             });
             if (!response.ok) {

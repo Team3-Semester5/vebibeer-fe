@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const AddRouteModal = ({ show, onHide, onAdd }) => {
     const [route, setRoute] = useState({
@@ -12,7 +13,8 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
         route_description: '',
         car_id: '',
         driver_id: '',
-        priceTicket:''
+        priceTicket:'',
+        daily: false
     });
     // const [busCompanies, setBusCompanies] = useState([]);
     const [cars, setCars] = useState([]);
@@ -24,10 +26,10 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // const busCompanyRes = await fetch('http://localhost:8080/admin/buscompanies/');
-                const predefinedLocations =  await fetch('http://localhost:8080/api/locations/')
-                const carRes = await fetch('http://localhost:8080/buscompany/car/by-company/1');
-                const driver_idRes = await fetch('http://localhost:8080/buscompany/driver/by-company/1');
+                // const busCompanyRes = await fetch(`${API_URL}/admin/buscompanies/`);
+                const predefinedLocations =  await fetch(`${API_URL}/api/locations/`)
+                const carRes = await fetch(`${API_URL}/buscompany/car/by-company/1`);
+                const driver_idRes = await fetch(`${API_URL}/buscompany/driver/by-company/1`);
                 if ( !carRes.ok || !driver_idRes.ok) {
                     throw new Error('Failed to fetch data');
                 }
@@ -49,7 +51,11 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
     }, []);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target;
+        if (type === 'checkbox') {
+            setRoute({...route, daily: value === 'on' ? true : false})
+            return;
+        }
         setRoute({ ...route, [name]: value });
     };
 
@@ -64,18 +70,8 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
             return;
         }
 
-        // Prepare data to send only IDs for busCompany, startLocation_id, endLocation_id, and driver_id
-        // const preparedRoute = {
-        //     ...route,
-        //     busCompany: { buscompany_id: 1 },
-        //     startLocation_id: { location_id: route.startLocation_id },
-        //     endLocation_id: { location_id: route.endLocation_id },
-        //     car: route.car.map(car_id => ({ car_id })),
-        //     driver_id: { driver_id_id: route.driver_id }
-        // };
-
         try {
-            const response = await fetch('http://localhost:8080/route/buscomapany/save/', {
+            const response = await fetch(`${API_URL}/route/buscomapany/save/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -214,6 +210,18 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                             type="number"
                             name="priceTicket"
                             value={route.priceTicket}
+                            onChange={handleChange}
+                        />
+                            
+                    </Form.Group>
+                    ---- CREATE AUTO DAILY ----
+                    <Form.Group controlId="daily">
+                        <Form.Label>Do you want to auto create</Form.Label>
+                        <Form.Check
+                            type="checkbox"
+                            name="daily"
+                            label="YES..."
+                            // checked={route.isDaily}
                             onChange={handleChange}
                         />
                             

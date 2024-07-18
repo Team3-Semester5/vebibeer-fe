@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Form, Container, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 function BusProfile({ onUpdate }) {
   const [busCompany, setBusCompany] = useState({
@@ -20,7 +21,7 @@ function BusProfile({ onUpdate }) {
 
   useEffect(() => {
     // Fetch bus company data here if needed
-    fetch("http://localhost:8080/api/buscompanies/1") // Replace 1 with the actual ID
+    fetch(`${API_URL}/api/buscompanies/1`) // Replace 1 with the actual ID
       .then((response) => response.json())
       .then((data) => {
         setBusCompany(data);
@@ -39,7 +40,7 @@ function BusProfile({ onUpdate }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/buscompanies/", {
+      const response = await fetch(`${API_URL}/api/buscompanies/`, {
         method: "PUT", // Assuming you have a proper API endpoint for updating
         headers: {
           "Content-Type": "application/json",

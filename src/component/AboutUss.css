@@ -1,0 +1,86 @@
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap");
+
+.bg-container {
+  background-image: url("../assets/images/home/bg.jpg"); /* Update the path to your image */
+  background-position: center;
+  height: 740px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  flex-wrap: wrap; /* Add this line to allow flex items to wrap */
+}
+
+.bg {
+  background-image: url("../assets/images/home/bg-xam.jpg");
+  background-position: center;
+  background-size: cover; /* Ensures the background image covers the entire element */
+  background-repeat: no-repeat; /* Prevents the background image from repeating */
+  height: 100vh; /* Sets the height to 100% of the viewport height */
+  width: 100vw; /* Sets the width to 100% of the viewport width */
+  display: flex;
+  align-items: center;
+  margin-top: 0; /* Remove margin to ensure it starts from the top */
+  flex-wrap: wrap; /* Allows flex items to wrap */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+  font-family: "Google Sans", sans-serif;
+}
+
+.text-col {
+  display: flex;
+  flex-direction: column;
+  color: rgb(255, 255, 255);
+  justify-content: center;
+  flex: 1; /* Allow the text column to grow and shrink as needed */
+  max-width: 50%; /* Limit maximum width to 50% of container */
+  padding: 0 20px; /* Add padding to the sides */
+}
+.ok {
+  font-family: "Google Sans", sans-serif;
+}
+
+.form-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  font-family: "Google Sans", sans-serif;
+  flex: 1; /* Allow the form column to grow and shrink */
+  margin-top: 20px; /* Add margin to separate from above content */
+}
+
+.info-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-around; /* Align items evenly */
+  flex-wrap: wrap; /* Allow info columns to wrap */
+}
+
+.info-col {
+  text-align: center;
+  padding: 10px;
+  flex: 1; /* Allow info columns to grow and shrink */
+  max-width: 25%; /* Limit maximum width of each info column */
+}
+
+.info-col h3 {
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.info-col p {
+  font-size: 1rem;
+  color: #6c757d;
+}

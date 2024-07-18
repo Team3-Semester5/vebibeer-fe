@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const AddLocationModal = ({ show, onHide, onAdd }) => {
     const [location, setLocation] = useState({
@@ -38,7 +39,7 @@ const AddLocationModal = ({ show, onHide, onAdd }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/locations/save', {
+            const response = await fetch(`${API_URL}/api/locations/save`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

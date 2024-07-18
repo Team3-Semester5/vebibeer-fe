@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DeleteRatingModal from './DeleteRatingModal';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 function ListRatings() {
 const [ratings, setRatings] = useState([]);
@@ -14,7 +15,7 @@ const [selectedRating, setSelectedRating] = useState(null);
 useEffect(() => {
     const fetchRatings = async () => {
         try {
-            const response = await fetch('http://localhost:8080/rating/');
+            const response = await fetch(`${API_URL}/rating/`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

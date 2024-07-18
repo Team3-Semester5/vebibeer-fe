@@ -4,6 +4,7 @@ import bannerSignup from "../assets/images/banner.jpg";
 import { useNavigate } from "react-router-dom";
 import Menu from "../component/Menu";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { API_URL, API_URL1 } from '../constaint/fetchApi';
 
 // Keyframes for sliding animations
 const slideInFromLeft = keyframes`
@@ -178,7 +179,7 @@ const SignupForm = ({ onSwitch }) => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/register', {
+      const response = await fetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -271,7 +272,7 @@ const LoginForm = ({ onSwitch }) => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/authenticate', {
+      const response = await fetch(`${API_URL}/api/authenticate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -301,7 +302,7 @@ const LoginForm = ({ onSwitch }) => {
     const tokenId = response.credential;
     console.log(tokenId);
     try {
-      const response = await fetch('http://localhost:8080/api/auth/google', {
+      const response = await fetch(`${API_URL}/api/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -362,7 +363,7 @@ const LoginForm = ({ onSwitch }) => {
         </GoogleOAuthProvider>
       </SocialLoginSection>
       <div>
-        <a href="http://localhost:8080/api/forgetPassword?username=chumlu2102@gmail.com">Forget Password</a>
+        <a href="/inputEmail">Forget Password</a>
       </div>
       <button
         onClick={onSwitch}

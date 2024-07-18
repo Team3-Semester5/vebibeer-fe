@@ -4,6 +4,7 @@ import AddBusCompanyModal from './AddBusCompanyModal';
 import UpdateBusCompanyModal from './UpdateBusCompanyModal';
 import DeleteBusCompanyModal from './DeleteBusCompanyModal';
 import '../../../../assets/css/Buscompany.css';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const BusCompanyList = () => {
     const [busCompanies, setBusCompanies] = useState([]);
@@ -19,7 +20,7 @@ const BusCompanyList = () => {
     useEffect(() => {
         const fetchBusCompanies = async () => {
             try {
-                const response = await fetch('http://localhost:8080/admin/buscompanies');
+                const response = await fetch(`${API_URL}/admin/buscompanies`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

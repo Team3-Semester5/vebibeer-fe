@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Button, Container, Form } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Alert, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { API_URL, API_URL1 } from '../constaint/fetchApi';
 
 const ChangePassword = () => {
     const [passwordChange, setPasswordChange] = useState({
@@ -25,9 +26,9 @@ const ChangePassword = () => {
         const params = new URLSearchParams(url.search);
         const username = params.get('username');
         const token = params.get('token');
-        
+
         try {
-            const response = await fetch('http://localhost:8080/api/changePassword?username=' + username + "&token="+token, {
+            const response = await fetch(`${API_URL}/api/changePassword?username=` + username + "&token=" + token, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -50,27 +51,36 @@ const ChangePassword = () => {
 
     return (
         <Container>
-            <Form>
-                <Form.Group controlId='formNewPassword'>
-                    <Form.Label>New Password</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name="newPassword"
-                        value={passwordChange.newPassword || ''}
-                        onChange={handleChange} />
-                </Form.Group>
-                <Form.Group controlId='formConfirmPassword'>
-                    <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name="confirmPassword"
-                        value={passwordChange.confirmPassword || ''}
-                        onChange={handleChange} />
-                </Form.Group>
+            <Row className="justify-content-md-center">
+                <Col md={6}>
+                    <Card className="mt-5">
+                        <Card.Body>
+                            <Card.Title>Đổi mật khẩu</Card.Title>
+                            <Form>
+                                <Form.Group controlId='formNewPassword'>
+                                    <Form.Label>New Password</Form.Label>
+                                    <Form.Control
+                                        type='text'
+                                        name="newPassword"
+                                        value={passwordChange.newPassword || ''}
+                                        onChange={handleChange} />
+                                </Form.Group>
+                                <Form.Group controlId='formConfirmPassword'>
+                                    <Form.Label>Confirm Password</Form.Label>
+                                    <Form.Control
+                                        type='text'
+                                        name="confirmPassword"
+                                        value={passwordChange.confirmPassword || ''}
+                                        onChange={handleChange} />
+                                </Form.Group>
 
-            </Form>
-            <Button onClick={handleSubmit}>Save</Button>
-        </Container>
+                            </Form>
+                            <Button onClick={handleSubmit}>Save</Button>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container >
 
     )
 }

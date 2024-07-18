@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 import {
   Card,
@@ -19,7 +20,7 @@ function TableList() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await fetch('http://localhost:8080/route/');
+        const response = await fetch(`${API_URL}/route/`);
         if (!response.ok) {
           throw new Error('Failed to fetch routes');
         }

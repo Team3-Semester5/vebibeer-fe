@@ -4,6 +4,8 @@ import AddLocationModal from './AddLocationModal';
 import UpdateLocationModal from './UpdateLocationModal';
 import DeleteLocationModal from './DeleteLocationModal';
 import '../../../../assets/css/Buscompany.css';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
+
 const LocationList = () => {
     const [locations, setLocations] = useState([]);
     const [filteredLocations, setFilteredLocations] = useState([]);
@@ -19,7 +21,7 @@ const LocationList = () => {
     useEffect(() => {
         const fetchLocations = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/locations/');
+                const response = await fetch(`${API_URL}/api/locations/`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

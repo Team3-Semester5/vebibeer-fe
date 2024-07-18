@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import "../../assets/css/Navbar.css";
 import { useNavigate } from "react-router-dom";
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 // Đăng ký các components cần thiết cho Chart.js
 ChartJS.register(
@@ -40,7 +41,7 @@ function DataTable() {
       try {
         // Fetching driver count
         const driverResponse = await fetch(
-          "http://localhost:8080/buscompany/driver/by-company/1"
+          `${API_URL}/buscompany/driver/by-company/1`
         );
         if (!driverResponse.ok) {
           throw new Error("Failed to fetch drivers");
@@ -49,7 +50,7 @@ function DataTable() {
         setDriverCount(driverData.length); // Assuming driverData is an array
 
         // Fetching bus count
-        const busResponse = await fetch("http://localhost:8080/buscompany/car/by-company/1");
+        const busResponse = await fetch(`${API_URL}/buscompany/car/by-company/1`);
         if (!busResponse.ok) {
           throw new Error("Failed to fetch buses");
         }
@@ -60,7 +61,7 @@ function DataTable() {
         var now = new Date();
         var currentMonth = now.getMonth() + 1;
         var currentYear = now.getFullYear();
-        const ticketsResponse = await fetch(`http://localhost:8080/manageBus/${user.busCompany_id}?year=${currentYear}&month=${currentMonth}`);
+        const ticketsResponse = await fetch(`${API_URL}/manageBus/${user.busCompany_id}?year=${currentYear}&month=${currentMonth}`);
         if (!ticketsResponse.ok) {
           throw new Error("Failed to fetch ticket sales information");
         }
@@ -69,7 +70,7 @@ function DataTable() {
           setTicketsSold(ticketsData[0].amount_tickets);
         }
 
-        const revenueResponse = await fetch(`http://localhost:8080/manageBus/revenue/${user.busCompany_id}?year=${currentYear}`);
+        const revenueResponse = await fetch(`${API_URL}/manageBus/revenue/${user.busCompany_id}?year=${currentYear}`);
         if (!revenueResponse.ok) {
           throw new Error("Failed to fetch revenue data");
         }
@@ -150,7 +151,7 @@ const BarChart = () => {
         // Loop through all months
         // aibiet
         for (let month = 1; month <= 12; month++) {
-          const response = await fetch(`http://localhost:8080/manageBus/${user.busCompany_id}?year=${currentYear}&month=${month}`);
+          const response = await fetch(`${API_URL}/manageBus/${user.busCompany_id}?year=${currentYear}&month=${month}`);
           if (!response.ok) {
             throw new Error(`Failed to fetch revenue data for month: ${month}`);
           }
@@ -178,7 +179,7 @@ const BarChart = () => {
 
   //       // Loop through all months
   //       for (let month = 1; month <= 12; month++) {
-  //         const response = await fetch(`http://localhost:8080/api/revenue/1?year=2024&month=${month}`);
+  //         const response = await fetch(`${API_URL}/api/revenue/1?year=2024&month=${month}`);
   //         if (!response.ok) {
   //           throw new Error(`Failed to fetch revenue data for month: ${month}`);
   //         }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './SeatMap.css';
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 function SeatMap({ route }) {
     const navigate = useNavigate();
@@ -51,7 +52,7 @@ function SeatMap({ route }) {
 
     useEffect(() => {
         const fetchSeatList = async () => {
-            const response = await fetch(`http://localhost:8080/tickets/${route.route_id}`);
+            const response = await fetch(`${API_URL}/tickets/${route.route_id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -83,7 +84,7 @@ function SeatMap({ route }) {
                                         disabled={seat.ticket_status !== 'Empty'}
                                         className="seat-button"
                                         onClick={() => toggleSeatSelection(seat.ticket_seat)}
-                                        
+
                                     >
                                         {seat.ticket_seat}
                                     </Button>
@@ -110,16 +111,16 @@ function SeatMap({ route }) {
                         <Card.Body>
                             <div>Chú thích</div>
                             <div className="legend-item">
-                                <button className="legend-button disabled"><i className="fa fa-cancel"></i></button>
-                                <span>Ghế không bán</span>
+                                <Button variant='secondary' disabled> A0 </Button>
+                                <span style={{ marginLeft: '5px' }}>  Sold</span>
                             </div>
                             <div className="legend-item">
-                                <button className="legend-button selected"><i className="icon-check"></i></button>
-                                <span>Đang chọn</span>
+                                <Button variant='success'> A0 </Button>
+                                <span style={{ marginLeft: '5px' }}>Picking</span>
                             </div>
                             <div className="legend-item">
-                                <button className="legend-button available"><i className="icon-square"></i></button>
-                                <span>Còn trống</span>
+                                <Button variant='secondary'> A0 </Button>
+                                <span style={{ marginLeft: '5px' }}>  Empty</span>
                             </div>
                         </Card.Body>
                     </Card>
@@ -133,7 +134,7 @@ function SeatMap({ route }) {
             </Row>
             <Row className="mt-3">
                 <Col className="text-right">
-                    <div className="total-price">Tổng cộng: {totalMoney}đ</div>
+                    <div className="total-price">Tổng cộng: {totalMoney * 1000} VND</div>
                     <Button className="continue-button" onClick={handleContinue}>Tiếp tục</Button>
                 </Col>
             </Row>

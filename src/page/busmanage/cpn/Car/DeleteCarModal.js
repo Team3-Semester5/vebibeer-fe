@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const DeleteCarModal = ({ show, onHide, car, onDelete }) => {
     const [error, setError] = useState(null);
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/buscompany/car/delete/${car.car_id}`, {
+            const response = await fetch(`${API_URL}/buscompany/car/delete/${car.car_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

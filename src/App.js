@@ -12,7 +12,10 @@ import BusLayout from './page/busmanage/BusLayout';
 import AdLayout from './page/Admanage/AdLayout';
 import TransactionHistory from './page/TransactionHistory';
 import ChangePassword from './page/ChangePassword';
-import LoginBus from './page/LoginBus';
+import VerifyEmail from './page/Verify';
+import VerifyChangePassword from './page/VerifyChangePassword';
+import ForgetPassword from './page/ForgetPassword';
+import AboutUss from './component/AboutUss';
 // import AboutUss from './page/AboutUss'
 // import BusLayout from "./page/BusCompanyManager/layouts/Bus";
 
@@ -32,9 +35,11 @@ function App() {
         <Route path='/bus/*' element={<BusLayout />} />
         <Route path='/ad/*' element={<AdLayout/>} />
         <Route path="/history" element={<TransactionHistory />} />
+        <Route path='/inputEmail' element={<ForgetPassword/>} />
         <Route path='/changePassword' element={<ChangePassword />} />
-        {/* <Route path="/aboutUs" element={<AboutUss />} /> */}
-        {/* <Route path='/bus/dataTable' element={<BusLayout/>} /> */}
+        <Route path='/verify' element={<VerifyEmail/>} />
+        <Route path='/verifyChangePassword' element={<VerifyChangePassword/>} />
+        <Route path='/aboutus' element={<AboutUss/>} /> 
       </Routes>
     </Router>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const UpdateRouteModal = ({ show, onHide, oldRoute, onUpdate }) => {
     const [route, setRoute] = useState({
@@ -24,10 +25,10 @@ const UpdateRouteModal = ({ show, onHide, oldRoute, onUpdate }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // const busCompanyRes = await fetch('http://localhost:8080/admin/buscompanies/');
-                const predefinedLocations =  await fetch('http://localhost:8080/api/locations/')
-                const carRes = await fetch('http://localhost:8080/buscompany/car/by-company/1');
-                const driver_idRes = await fetch('http://localhost:8080/buscompany/driver/by-company/1');
+                // const busCompanyRes = await fetch(`${API_URL}/admin/buscompanies/`);
+                const predefinedLocations =  await fetch(`${API_URL}/api/locations/`)
+                const carRes = await fetch(`${API_URL}/buscompany/car/by-company/1`);
+                const driver_idRes = await fetch(`${API_URL}/buscompany/driver/by-company/1`);
                 if ( !carRes.ok || !driver_idRes.ok) {
                     throw new Error('Failed to fetch data');
                 }
@@ -75,7 +76,7 @@ const UpdateRouteModal = ({ show, onHide, oldRoute, onUpdate }) => {
         // };
 
         try {
-            const response = await fetch('http://localhost:8080/route/buscomapany/save/', {
+            const response = await fetch(`${API_URL}/route/buscomapany/save/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

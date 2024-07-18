@@ -5,6 +5,7 @@ import BusCarousel from './BusCarousel';
 import ReviewCard from './ReviewCard';
 import NewReviewCard from './NewReviewCard';
 import SeatMap from './SeatMap';
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 const RouteItem = ({ route }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,8 +31,8 @@ const RouteItem = ({ route }) => {
     const fetchRatingList = async () => {
         const id = route.busCompany.busCompany_id;
         try {
-            const response = await fetch('http://localhost:8080/rating/' + id);
-            if (!response.ok) {
+            const response = await fetch(`${API_URL}/rating/` + id);
+            if (!response.ok) {   
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
@@ -51,7 +52,7 @@ const RouteItem = ({ route }) => {
     };
     const handleDeleteReview = async (reviewId) => {
         try {
-            const response = await fetch(`http://localhost:8080/rating/delete/${reviewId}`, {
+            const response = await fetch(`${API_URL}/rating/delete/${reviewId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -70,7 +71,7 @@ const RouteItem = ({ route }) => {
 
     const handleEditReview = async (reviewId, newContent, newStar) => {
         try {
-          const response = await fetch(`http://localhost:8080/rating/update/${reviewId}`, {
+          const response = await fetch(`${API_URL}/rating/update/${reviewId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -94,9 +95,9 @@ const RouteItem = ({ route }) => {
             try {
                 
                 const [voucherResponse, lowestResponse, highestResponse] = await Promise.all([
-                    fetch('http://localhost:8080/buscomapany/voucher'),
-                    fetch(`http://localhost:8080/tickets/lowest-price/${route.route_id}/`),
-                    fetch(`http://localhost:8080/tickets/highest-price/${route.route_id}/`)
+                    fetch(`${API_URL}/buscomapany/voucher`),
+                    fetch(`${API_URL}/tickets/lowest-price/${route.route_id}/`),
+                    fetch(`${API_URL}/tickets/highest-price/${route.route_id}/`)
                 ]);
 
                 if (!voucherResponse.ok) throw new Error(`HTTP error! status: ${voucherResponse.status}`);
@@ -284,7 +285,7 @@ const RouteItem = ({ route }) => {
                     <div className="route-summary" onClick={toggleCollapse}>
                         <h3>{route.route_name}</h3>
                         <p>{route.busCompany.name}</p>
-                        <p>Giá: {lowestPrice} - {highestPrice} VNĐ</p>
+                        <p>Giá: {lowestPrice}.000 - {highestPrice}.000 VNĐ</p>
                     </div>
                     <p>{route.car.amount_seat} seats left</p>
                     <button onClick={handleBookNowClick} style={{ backgroundColor: '#4CAF50', color: 'white', padding: '10px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
@@ -305,7 +306,7 @@ const RouteItem = ({ route }) => {
                                 <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Đánh giá</button>
                             </div>
                         )}
-                        <div className="content">
+                        <div style={{width: '100%'}}>
                             {renderContent(route)}
                         </div>
                     </div>

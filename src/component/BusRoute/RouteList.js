@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import ReactSlider from 'react-slider';
 import SearchBox from '../SearchBox';
 import Menu from '../Menu';
+import { API_URL, API_URL1 } from '../../constaint/fetchApi';
 
 const RouteList = () => {
   const [searchParams] = useSearchParams();
@@ -31,9 +32,10 @@ const RouteList = () => {
   const [searchPickup, setSearchPickup] = useState('');
   const [searchDropoff, setSearchDropoff] = useState('');
 
+
   const fetchRouterList = async () => {
     try {
-      const response = await fetch('http://localhost:8080/route');
+      const response = await fetch(`${API_URL}/route`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

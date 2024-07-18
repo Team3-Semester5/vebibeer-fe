@@ -33,11 +33,11 @@ const Navbar = () => {
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="service">Service</Link>
         </li>
-        {/* <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
-          <Link to="reviewrating">Review Rating</Link>
-        </li> */}
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
-          <Link to="informationCustomer">Customer</Link>
+          <Link to="voucher">Voucher</Link>
+        </li>
+        <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
+          <Link to="reviewCustomer">Customer</Link>
         </li>
         <li
           style={{

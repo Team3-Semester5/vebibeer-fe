@@ -1,29 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
-
-import {
-    faQrcode,
-    faBus,
-    faCreditCard,
-    faMoneyBill,
-    faUniversity,
-    faShieldAlt,
-    faCalendarAlt,
-    faUser,
-    faTruck,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMapMarkerAlt, faQrcode, faBus, faCreditCard, faMoneyBill, faUniversity, faShieldAlt, faCalendarAlt, faUser, faTruck, } from "@fortawesome/free-solid-svg-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row, Alert } from "react-bootstrap";
+import Menu from "../component/Menu";
 
 const PaymentMethods = () => {
     const [selectedMethod, setSelectedMethod] = useState("");
     const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 minutes in seconds
-    const [error, setError] = useState([])
-    // const [cartPayment, setCartPayment] = useState([])
-    // const [user, setUser] = useState({})
+    const [error, setError] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,9 +24,7 @@ const PaymentMethods = () => {
     const formatTime = (seconds) => {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = seconds % 60;
-        return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
-            .toString()
-            .padStart(2, "0")}`;
+        return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
     };
 
     const handleSelection = (method) => {
@@ -47,68 +32,60 @@ const PaymentMethods = () => {
     };
 
     const handlePayment = () => {
-        const amount = parseInt(sessionStorage.getItem('totalMoney'));
-        // setUser();
-        const user = JSON.parse(sessionStorage.getItem("user"))
-        let orderInfo = user.username + ";";
-        let cart = JSON.parse(sessionStorage.getItem("cart"));
-        // setCartPayment(cart);
-        cart.forEach(ticket => {
-            orderInfo = orderInfo + ticket.ticket_id + ",";
-        });
-        console.log(JSON.stringify({
-            "amount": amount,
-            "orderInfo": orderInfo
-
-        }));
-        alert(amount)
-        const fetchPayment = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/cuong/submitOrder', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        "amount": amount,
-                        "orderInfo": orderInfo
-                    })
-
-                })
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        if (selectedMethod === "cash") {
+            alert("Đã nhận order");
+        } else if (selectedMethod === "vnpay") {
+            const amount = parseInt(sessionStorage.getItem('totalMoney'));
+            const user = JSON.parse(sessionStorage.getItem("user"));
+            let orderInfo = user.username + ";";
+            let cart = JSON.parse(sessionStorage.getItem("cart"));
+            cart.forEach(ticket => {
+                orderInfo = orderInfo + ticket.ticket_id + ",";
+            });
+            console.log(JSON.stringify({
+                "amount": amount,
+                "orderInfo": orderInfo
+            }));
+            alert(amount);
+            const fetchPayment = async () => {
+                try {
+                    const response = await fetch('http://localhost:8080/cuong/submitOrder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            "amount": amount,
+                            "orderInfo": orderInfo
+                        })
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    }
+                } catch (error) {
+                    setError(error.message);
+                    console.error('Error adding customer:', error);
                 }
-                const data = await response.json();
-                if (data.redirectUrl) {
-                    window.location.href = data.redirectUrl;
-                }
-            } catch (error) {
-                setError(error.message);
-                console.error('Error adding customer:', error);
-            }
+            };
+            fetchPayment();
+        } else {
+            alert("Please select a payment method.");
         }
-        fetchPayment();
-    }
+    };
 
     return (
         <div style={{ backgroundColor: "#EEEEEE" }}>
-            <Container>
+            < Menu />
+            <Container style={{ marginTop: "110px", marginBottom: "140px" }}>
                 <Row>
-                    <Col md={4}>
-                        VEBIBEER
-                    </Col>
-                    <Col md={8}>
-                        Hello
-                    </Col>
-                </Row>
-            </Container>
-            <Container>
-                <Row>
-                    <Col md={8}>
+                    <Col md={8} style={{ marginLeft: "89px" }}>
                         <div className="list-group">
                             <div className="list-group-item">
                                 <h2>Phương thức thanh toán</h2>
-
                                 <div className="list-group-item">
                                     <label className="d-flex align-items-start">
                                         <input
@@ -132,11 +109,7 @@ const PaymentMethods = () => {
                                             <p>Bạn có thể thanh toán cho tài xế khi lên xe</p>
                                         </div>
                                     </label>
-                                    {selectedMethod === "cash" && (
-                                        <div className="alert alert-info text-center mt-2">
-                                            Đã chuyển tiền
-                                        </div>
-                                    )}
+
                                 </div>
                                 <div className="list-group-item">
                                     <label className="d-flex align-items-start">
@@ -160,39 +133,36 @@ const PaymentMethods = () => {
                                                 />
                                                 Thanh toán VNPAY-QR
                                             </div>
-                                            <button onClick={handlePayment}>Thanh toan</button>
                                             <p>
                                                 Thiết bị cần cài đặt Ứng dụng ngân hàng (Mobile Banking)
                                                 hoặc Ví VNPAY
                                             </p>
                                         </div>
                                     </label>
-                                    {selectedMethod === "vnpay" && (
-                                        <div className="alert alert-info text-center mt-2">
-                                            Đã chuyển tiền
-                                        </div>
-                                    )}
+
                                 </div>
                             </div>
                         </div>
                     </Col>
-                    <Col md={4}>
-                        
-                    </Col>
-                </Row>
-                <Row>
-                    <div className="col-md-12 text-center text-md-left mt-3 mt-md-0">
-                        <p className="m-3" style={{ marginLeft: "30px " }}>
-                            Bằng việc nhấn nút Thanh toán, bạn đồng ý với
-                            <a href="#terms" className="m-2">
-                                Chính sách bảo mật thanh toán
-                            </a>
-                        </p>
-                    </div>
+                    <Col md={2}></Col>
                 </Row>
             </Container>
+            <Container fluid className="p-3 my-3 border rounded" style={{ bottom: 0, width: '100%' }}>
+                <div className="text-center">
+                    <Row>
+                        <Col md={5} style={{ paddingTop: "20px", paddingLeft: "70px" }}>
+                            <Button variant="outline-secondary" style={{ width: '70%', height: '100%', backgroundColor: "#FFCC00", color: "black", fontWeight: "bold" }} onClick={handlePayment}>Thanh toán</Button>
+                        </Col>
+                        <Col md={6} style={{ paddingTop: "20px", paddingLeft: "80px" }}>
+                            Bằng việc nhấn nút Tiếp tục, bạn đồng ý với <a href="/privacy-policy">Chính sách bảo mật thanh toán</a> và <a href="/terms">Quy chế</a>
+                        </Col>
+                    </Row>
+                    <div style={{ textAlign: "end", paddingRight: "70px" }}>
+                        Bạn sẽ sớm nhận được biên số xe, số điện thoại tài xế và dễ dàng thay đổi điểm đón trả sau khi đặt.
+                    </div>
+                </div>
+            </Container>
         </div>
-
     );
 };
 

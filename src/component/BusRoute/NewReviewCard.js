@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './NewReviewCard.css';
+import { API_URL, API_URL1 } from '../../constaint/fetchApi'; // vô front end hi. rồi import hai thằng ni vô xong rồi copy cái biến ni bỏ vô nơi cái fetch
 
 const NewReviewCard = ({ onSubmitReview, busCompany_id }) => {
     const [review, setReview] = useState({
@@ -28,20 +29,20 @@ const NewReviewCard = ({ onSubmitReview, busCompany_id }) => {
             alert('Bạn phải đăng nhập để gửi đánh giá');
             return;
         }
-        alert(user.customer_id)
+        alert(user.customer_id);
         const newReview = {
             amount_star: review.amountStar,
             rating_content: review.ratingContent,
             rating_editTime: new Date().getTime(), // Timestamp in milliseconds
             username: user.username,
             busCompany_id: busCompany_id
-
         };
 
         console.log('Submitting review:', newReview);
 
         try {
-            const response = await fetch('http://localhost:8080/rating/save', {
+            const response = await fetch(`${API_URL}/rating/save`, { // oke ko Tấn bỏ vô như rứa thôi là được rồi alo
+            
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ const NewReviewCard = ({ onSubmitReview, busCompany_id }) => {
                         onSubmitReview({
                             ...newReview,
                             rating_content: newReview.rating_content,
-                            customer: {
+customer: {
                                 username: user.username,
                                 customer_img_ava: user.customer_img_ava,
                                 verify_purchased: true, // hoặc giá trị thích hợp nếu có

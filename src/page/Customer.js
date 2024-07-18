@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddCustomerModal from '../component/Customer/AddCustomerModal';
 import UpdateCustomerModal from '../component/Customer/UpdateCustomerModal';
 import DeleteCustomerModal from '../component/Customer/DeleteCustomerModal';
+import { API_URL, API_URL1 } from '../constaint/fetchApi';
 
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
@@ -18,7 +19,7 @@ const CustomerList = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
-                const response = await fetch('http://localhost:8080/customer');
+                const response = await fetch(`${API_URL}/customer`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

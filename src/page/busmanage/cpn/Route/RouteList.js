@@ -4,6 +4,8 @@ import AddRouteModal from './AddRouteModal';
 import UpdateRouteModal from './UpdateRouteModal';
 import DeleteRouteModal from './DeleteRouteModal';
 import '../../../../assets/css/Buscompany.css';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
+
 const RouteList = () => {
     const [routes, setRoutes] = useState([]);
     const [filteredRoutes, setFilteredRoutes] = useState([]);
@@ -31,7 +33,7 @@ const RouteList = () => {
     useEffect(() => {
         const fetchRoutes = async () => {
             try {
-                const response = await fetch('http://localhost:8080/route/buscompany/1/routes');
+                const response = await fetch(`${API_URL}/route/buscompany/1/routes`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddDriverModal from './AddDriverModal';
 import UpdateDriverModal from './UpdateDriverModal';
 import DeleteDriverModal from './DeleteDriverModal';
+import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
 
 const DriverList = () => {
     const [drivers, setDrivers] = useState([]);
@@ -18,7 +19,7 @@ const DriverList = () => {
     useEffect(() => {
         const fetchDrivers = async () => {
             try {
-                const response = await fetch('http://localhost:8080/buscompany/driver/by-company/1');
+                const response = await fetch(`${API_URL}/buscompany/driver/by-company/1`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
