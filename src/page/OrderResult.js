@@ -20,7 +20,7 @@ const OrderResult = () => {
             const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
             setTickets(savedSeats);
             console.log(tickets.toString());
-            setTotalMoney(parseInt(sessionStorage.getItem("totalMoney")));
+            setTotalMoney(parseInt(sessionStorage.getItem("newTotalMoney")));
         } catch (error) {
             console.log(error)
         }

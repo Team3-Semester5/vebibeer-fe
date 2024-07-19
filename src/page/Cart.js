@@ -26,7 +26,7 @@ const PersonalInfoForm = ({ formData, setFormData, user }) => {
                     <Form onSubmit={handleSubmit} style={{ marginTop: "30px" }}>
                         <h2 style={{ paddingBottom: "15px", marginBottom: "20px " , fontWeight :"bold"}}>Thông tin liên hệ</h2>
                         <Form.Group className="mb-3">
-                            {formData.name === '' && (
+                            {user?.username === '' && (
                                 <Alert variant='primary'>
                                     Đăng nhập để tự động điền thông tin khách hàng
                                     <Button variant="primary" style={{ marginLeft: '10%' }} onClick={() => { navigate('/login') }}>
@@ -59,11 +59,10 @@ const PersonalInfoForm = ({ formData, setFormData, user }) => {
     );
 };
 
-const TripDetails = () => {
-    const [tickets, setTicket] = useState([]);
+const TripDetails = ({tickets, totalMoney, setTotalMoney}) => {
+    
     const [error, setError] = useState(null);
-    const [totalMoney, setTotalMoney] = useState(0);
-    const [newTotal, setNewTotal] = useState(null);
+    
     const [showDetails, setShowDetails] = useState(false);
     const [showChange, setShowChange] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
@@ -81,27 +80,19 @@ const TripDetails = () => {
     const handleCloseDetails = () => setShowDetails(false);
     const handleCloseChange = () => setShowChange(false);
 
-    useEffect(() => {
-        const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
-        const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
-        sessionStorage.setItem("newTotal", money);
-        setTicket(savedSeats);
-        setTotalMoney(money);
-        setNewTotal(money);
-    }, []);
+    
 
     // Handle updating total from VoucherPoints component
     const handleUpdateTotal = (total) => {
-        sessionStorage.setItem("newTotal", JSON.stringify(total));
-        setNewTotal(total);
+        setTotalMoney(total);
     };
 
     return (
         <Container className="mt-4" style={{ marginTop: '60px' }}>
             <div className="card mb-3" style={{ marginBottom: '70px', width: "373px", fontSize: "20px" }}>
-                Tạm tính <span style={{ fontWeight: 'bold' }}>{newTotal}.000 VND</span>
+                Tạm tính <span style={{ fontWeight: 'bold' }}>{totalMoney * 1000} VND</span>
             </div>
-            <VoucherPoints onUpdateTotal={handleUpdateTotal} />
+            <VoucherPoints handleUpdateTotal={handleUpdateTotal} totalMoney={totalMoney} />
             {tickets.map(ticket => (
                 <Card className="mb-3" key={ticket.ticket_id} style={{ maxWidth: '372px' }}>
                     <Card.Body>
@@ -188,9 +179,12 @@ const TripDetails = () => {
     );
 };
 //nút tiếp tục
-const ContinueComponent = ({ formData, isCheckout }) => {
+const ContinueComponent = ({ formData, isCheckout, totalMoney }) => {
+
     const navigate = useNavigate();
+
     const handleContinue = () => {
+        sessionStorage.setItem("newTotalMoney", totalMoney);
         navigate('/payment'); // Adjust the path as needed
     };
     const isFormComplete = formData.name && formData.phone && formData.email;
@@ -226,23 +220,24 @@ const ContinueComponent = ({ formData, isCheckout }) => {
 };
 
 // xữ lí list voucher ra bằng id bus company
-const VoucherPoints = ({ onUpdateTotal }) => {
-    const [voucher, setVoucher] = useState('');
-    const [saleUp, setSaleUp] = useState(0);
+const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
     const [points, setPoints] = useState(0); // Initialize with 0 and set later from API
+    const [maxPoint, setMaxPoint] = useState(0); // Initialize with 0 and set later from API
     const [enteredPoints, setEnteredPoints] = useState(0);
     const [showVoucherModal, setShowVoucherModal] = useState(false);
     const [vouchers, setVouchers] = useState([]);
     const [informationUser, setInformationUser] = useState({});
     const busCompany_id = JSON.parse(sessionStorage.getItem('bus_company_id'));
     const user = JSON.parse(sessionStorage.getItem('user'));
+    const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
 
-    const handleShowVoucherModal = () => setShowVoucherModal(true);
+    const handleShowVoucherModal = () =>{ setShowVoucherModal(true); handleUpdateTotal(money)}
     const handleCloseVoucherModal = () => setShowVoucherModal(false);
 
     // Fetching vouchers
     useEffect(() => {
-        fetch(`http://localhost:8080/buscomapany/voucher/bus/${busCompany_id}`)
+        fetch(`http://localhost:8080/buscompany/voucher/bus/${busCompany_id}`)
             .then(response => response.json())
             .then(data => setVouchers(data))
             .catch(error => console.error('Error fetching vouchers:', error));
@@ -250,47 +245,38 @@ const VoucherPoints = ({ onUpdateTotal }) => {
 
     // Fetching user information
     useEffect(() => {
+        if (user == null) {
+            return;
+        }
         fetch(`http://localhost:8080/customer/get-cus/?username=${user.username}`)
             .then(res => res.json())
             .then(data => {
                 setInformationUser(data);
-                setPoints(data.point); // Assuming 'points' is the field containing the user's points
+                setMaxPoint(data.point); // Assuming 'points' is the field containing the user's points
             })
             .catch(error => console.error('Error fetching user information:', error));
-    }, [user.username]);
+    }, []);
 
-    // Handle voucher selection
-    const handleVoucherSelect = (selectedVoucher) => {
-        setVoucher(selectedVoucher.voucher_code);
-        setSaleUp(selectedVoucher.saleUp);
-        setShowVoucherModal(false);
-    };
+    const handleVoucherSelect = (voucher) => {
+        setSelectedVoucher(voucher);
+        totalMoney = totalMoney - (totalMoney * voucher.saleUp)/100;
+        handleUpdateTotal(totalMoney);
+        handleCloseVoucherModal();
+    }
 
-    // Handle points input change
-    const handlePointsChange = (e) => {
-        const value = parseInt(e.target.value, 10);
-        if (value > points) {
-            setEnteredPoints(points); // Cap entered points to the maximum available points
-        } else {
-            setEnteredPoints(value);
+    const updateTotalAfterPoint = () => {
+        if (points > maxPoint) {
+            alert('Your point is not enough!');
+            return;
         }
-    };
+        setMaxPoint(maxPoint - points);
+        totalMoney = totalMoney - points;
+        handleUpdateTotal(totalMoney);
+    }
 
-    // Apply discount logic
-    const applyDiscount = () => {
-        const totalAfterDiscount = calculateTotal();
-        onUpdateTotal(totalAfterDiscount); // Update the parent component's total
-        alert(`Total after applying discounts: ${totalAfterDiscount} VND`);
-    };
-
-    // Calculate total after applying points and voucher
-    const calculateTotal = () => {
-        const totalMoney = parseInt(sessionStorage.getItem('totalMoney') || '0', 10);
-        const discountAmount = totalMoney * (saleUp / 100);
-        const pointsDiscount = enteredPoints; // Assuming each point equals 1 VND
-        const totalAfterDiscount = totalMoney - discountAmount - pointsDiscount;
-        return totalAfterDiscount < 0 ? 0 : totalAfterDiscount; // Ensure total is not negative
-    };
+    const handlePointsChange = (e) => {
+        setPoints(e.target.value);
+    }
 
     return (
         <Container>
@@ -299,24 +285,24 @@ const VoucherPoints = ({ onUpdateTotal }) => {
                     <Card className="text-center mb-3">
                         <Card.Body style={{ padding: "10px" }}>
                             <Card.Title>Voucher</Card.Title>
-                            <Card.Text style={{ fontSize: "20px" }}>{voucher ? `${voucher} - ${saleUp}%` : "No voucher selected"}</Card.Text>
+                            <Card.Text style={{ fontSize: "20px" }}>{selectedVoucher ? `${selectedVoucher.voucher_code} - ${selectedVoucher.saleUp}%` : "No voucher selected"}</Card.Text>
                             <Button variant="primary" onClick={handleShowVoucherModal} style={{ marginBottom: "10px" }}>Xem danh sách Voucher</Button>
                         </Card.Body>
                         <Card.Body style={{ padding: "10px" }}>
                             <Card.Title>Points</Card.Title>
-                            <Card.Text style={{ fontSize: "20px" }}>Bạn có {points || 0} điểm</Card.Text>
+                            <Card.Text style={{ fontSize: "20px" }}>Bạn có {maxPoint || 0} điểm</Card.Text>
                             <Form.Group className="mb-3" style={{ marginBottom: "10px" }}>
                                 <Form.Label style={{ fontSize: "20px" }}>Nhập số điểm bạn muốn áp dụng</Form.Label>
                                 <Form.Control   
                                     type="number" 
-                                    placeholder="Enter points" 
-                                    value={enteredPoints} 
-                                    onChange={handlePointsChange} 
+                                    placeholder="Enter points"
+                                    onChange={handlePointsChange}
                                     max={points}
                                 />
+                                <Button variant="primary" onClick={updateTotalAfterPoint} style={{ marginBottom: "10px" }}>Apply Discount</Button>
                             </Form.Group>
                         </Card.Body>
-                        <Button variant="primary" onClick={applyDiscount} style={{ marginBottom: "10px" }}>Apply Discount</Button>
+                        
                     </Card>
                 </Col>
             </Row>
@@ -326,7 +312,7 @@ const VoucherPoints = ({ onUpdateTotal }) => {
                 </Modal.Header>
                 <Modal.Body>
                     <ListGroup>
-                        {vouchers.map(voucher => (
+                        {vouchers?.map(voucher => (
                             <ListGroup.Item key={voucher.voucher_code} onClick={() => handleVoucherSelect(voucher)}>
                                 {voucher.voucher_code}: Giảm giá {voucher.saleUp}%
                             </ListGroup.Item>
@@ -347,6 +333,21 @@ const VoucherPoints = ({ onUpdateTotal }) => {
 const Cart = () => {
     const user = JSON.parse(sessionStorage.getItem("user")) || {};
     const [formData, setFormData] = useState({ name: user.customer_fullname, phone: user.customer_phone, email: user.username });
+    const [tickets, setTicket] = useState([]);
+    const [totalMoney, setTotalMoney] = useState(0);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        if (user == null) {
+            navigate("/login")
+        }
+        const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
+        setTicket(savedSeats);
+        setTotalMoney(money);
+    }, []);
+
 
     return (
         <Container>
@@ -355,10 +356,10 @@ const Cart = () => {
                     <PersonalInfoForm formData={formData} setFormData={setFormData} user={user} />
                 </Col>
                 <Col md={4}>
-                    <TripDetails />
+                    <TripDetails tickets={tickets} totalMoney = {totalMoney} setTotalMoney={setTotalMoney}/>
                 </Col>
             </Row>
-            <ContinueComponent formData={formData} />
+            <ContinueComponent formData={formData} totalMoney={totalMoney} />
         </Container>
     );
 }

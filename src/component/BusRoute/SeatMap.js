@@ -100,6 +100,7 @@ function SeatMap({ route }) {
     };
 
     const handleContinue = () => {
+        sessionStorage.setItem('bus_company_id', route.busCompany.busCompany_id);
         navigate('/cart'); // Adjust the path as needed
     };
 

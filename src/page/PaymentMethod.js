@@ -35,7 +35,7 @@ const PaymentMethods = () => {
         if (selectedMethod === "cash") {
             alert("Đã nhận order");
         } else if (selectedMethod === "vnpay") {
-            const amount = parseInt(sessionStorage.getItem('totalMoney'));
+            const amount = parseInt(sessionStorage.getItem('newTotalMoney'));
             const user = JSON.parse(sessionStorage.getItem("user"));
             let orderInfo = user.username + ";";
             let cart = JSON.parse(sessionStorage.getItem("cart"));
