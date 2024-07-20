@@ -1,0 +1,122 @@
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.card-content h2 {
+    margin: 0;
+    color: #333;
+}
+
+.card-content p {
+    margin: 5px 0 0;
+    color: #666;
+}
+
+.active{
+    color: rgb(8, 144, 229);
+    border-bottom: solid 2px rgb(8, 144, 229);
+    
+}
+
+/* Schedule.css */
+.schedule-container {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    max-width: 600px;
+    margin: 20px;
+  }
+  
+  .schedule-container .notes {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  
+  .schedule-container .schedule {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .schedule-container h3 {
+    color: #000;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .schedule-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .schedule-container li {
+    margin-bottom: 5px;
+  }
+  
+  .schedule-container li span {
+    font-weight: bold;
+  }
+
+  /* CancellationPolicy.css */
+  .policy-container {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+    padding: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .policy-header {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  .policy-section h2 {
+    color: #0056b3;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .policy-section p, .policy-section ul {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .policy-section ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+  
+  .policy-section ul li::before {
+    content: '•';
+    color: #0056b3;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }

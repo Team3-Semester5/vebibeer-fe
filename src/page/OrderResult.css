@@ -1,0 +1,49 @@
+/* src/ThankYouPage.css */
+.thank-you-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .confirmation-icon {
+    color: #4CAF50;
+    margin-bottom: 20px;
+  }
+  
+  .order-summary {
+    text-align: left;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .item img {
+    width: 50px;
+    height: auto;
+  }
+  
+  .total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  .home-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
