@@ -39,6 +39,7 @@
 .star {
     font-size: 24px;
     cursor: pointer;
+    color: grey;
 }
 
 .star.filled {

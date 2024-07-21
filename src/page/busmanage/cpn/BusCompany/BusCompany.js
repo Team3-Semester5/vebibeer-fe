@@ -16,6 +16,8 @@ const BusCompanyList = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedBusCompany, setSelectedBusCompany] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5); // You can adjust this as needed
 
     useEffect(() => {
         const fetchBusCompanies = async () => {
@@ -72,7 +74,35 @@ const BusCompanyList = () => {
         setBusCompanies(updatedBusCompanies);
         setFilteredBusCompanies(updatedBusCompanies);
     };
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredBusCompanies.slice(indexOfFirstItem, indexOfLastItem);
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(filteredBusCompanies.length / itemsPerPage); i++) {
+        pageNumbers.push(i);
+    }
+    const handleFirstPage = () => {
+        setCurrentPage(1);
+    };
 
+    const handlePreviousPage = () => {
+        setCurrentPage(prev => Math.max(prev - 1, 1));
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredBusCompanies.length / itemsPerPage)));
+    };
+
+    const handleLastPage = () => {
+        setCurrentPage(Math.ceil(filteredBusCompanies.length / itemsPerPage));
+    };
+    const renderPageNumbers = pageNumbers.map(number => (
+        <li key={number} className="page-item">
+            <a onClick={() => setCurrentPage(number)} className="page-link">
+                {number}
+            </a>
+        </li>
+    ));
     return (
         <div className="container mt-4 buscompany">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -108,9 +138,9 @@ const BusCompanyList = () => {
             <table className="table table-hover">
                 <thead>
                     <tr>
-                        <th>Username</th>
+                        {/* <th>Username</th> */}
                         {/* <th>Password</th> */}
-                        <th>Status</th>
+
                         <th>Fullname</th>
                         <th>Date of Birth</th>
                         <th>Avatar</th>
@@ -119,65 +149,81 @@ const BusCompanyList = () => {
                         <th>Name</th>
                         <th>Location</th>
                         <th>Contract</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>{filteredBusCompanies.map((busCompany) => (
-                        <tr key={busCompany.busCompany_id}>
-                            <td>{busCompany.username}</td>
-                            {/* <td>{busCompany.password}</td> */}
-                            <td>{busCompany.busCompany_status}</td>
-                            <td>{busCompany.busCompany_fullname}</td>
-                            <td>{new Date(busCompany.busCompany_dob).toLocaleDateString()}</td>
-                            <td>
-                                {busCompany.busCompany_imgUrl && (
-                                    <img
-                                        src={busCompany.busCompany_imgUrl}
-                                        alt="Avatar"
-                                        style={{ width: '50px', height: '50px' }}
-                                    />
-                                )}
-                            </td>
-                            <td>{busCompany.busCompany_description}</td>
-                            <td>{busCompany.busCompany_nationality}</td>
-                            <td>{busCompany.busCompany_name}</td>
-                            <td>{busCompany.busCompany_location}
-                                
-                            </td>
-                            <td>{busCompany.busCompany_contract}</td>
-                            <td>
-                                <button
-                                    className="btn btn-warning btn-sm mr-2"
-                                    onClick={() => {
-                                        setSelectedBusCompany(busCompany);
-                                        setShowUpdateModal(true);
-                                    }}
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    className="btn btn-danger btn-sm"
-                                    onClick={() => {
-                                        setSelectedBusCompany(busCompany);
-                                        setShowDeleteModal(true);
-                                    }}
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                <tbody>{currentItems.map((busCompany) => (
+                    <tr key={busCompany.busCompany_id}>
+                        {/* <td>{busCompany.username}</td> */}
+                        {/* <td>{busCompany.password}</td> */}
+
+                        <td>{busCompany.busCompany_fullname}</td>
+                        <td>{new Date(busCompany.busCompany_dob).toLocaleDateString()}</td>
+                        <td>
+                            {busCompany.busCompany_imgUrl && (
+                                <img
+                                    src={busCompany.busCompany_imgUrl}
+                                    alt="Avatar"
+                                    style={{ width: '50px', height: '50px' }}
+                                />
+                            )}
+                        </td>
+                        <td>{busCompany.busCompany_description}</td>
+                        <td>{busCompany.busCompany_nationally}</td>
+                        <td>{busCompany.busCompany_name}</td>
+                        <td>{busCompany.busCompany_location}
+
+                        </td>
+                        <td>{busCompany.busCompany_contract}</td>
+                        <td>{busCompany.busCompany_status}</td>
+                        <td>
+                            <button
+                                className="btn btn-warning btn-sm mr-2"
+                                onClick={() => {
+                                    setSelectedBusCompany(busCompany);
+                                    setShowUpdateModal(true);
+                                }}
+                            >
+                                Edit
+                            </button>
+                            <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => {
+                                    setSelectedBusCompany(busCompany);
+                                    setShowDeleteModal(true);
+                                }}
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
             <div className="d-flex justify-content-between align-items-center">
                 <span>1-5 of {filteredBusCompanies.length} results</span>
                 <nav>
                     <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#">First</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                        <li className="page-item active"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Next</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Last</a></li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <a className="page-link" href="#" onClick={handleFirstPage}>First</a>
+                        </li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <a className="page-link" href="#" onClick={handlePreviousPage}>Previous</a>
+                        </li>
+                        {pageNumbers.map(number => (
+                            <li key={number} className={`page-item ${number === currentPage ? 'active' : ''}`}>
+                                <a className="page-link" href="#" onClick={() => setCurrentPage(number)}>
+                                    {number}
+                                </a>
+                            </li>
+                        ))}
+                        <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
+                            <a className="page-link" href="#" onClick={handleNextPage}>Next</a>
+                        </li>
+                        <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
+                            <a className="page-link" href="#" onClick={handleLastPage}>Last</a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -199,6 +245,7 @@ const BusCompanyList = () => {
                 onDelete={handleDeleteBusCompany}
             />
         </div>
+
     );
 };
 

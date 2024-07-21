@@ -40,9 +40,16 @@ const AddServiceModal = ({ show, onHide, onAdd }) => {
         },
         body: JSON.stringify(service)
       });
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+  
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Received non-JSON response from server");
+      }
+  
       const newService = await response.json();
       onAdd(newService);
       onHide();
@@ -51,7 +58,6 @@ const AddServiceModal = ({ show, onHide, onAdd }) => {
       console.error('Error adding service:', error);
     }
   };
-
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
@@ -64,7 +70,7 @@ const AddServiceModal = ({ show, onHide, onAdd }) => {
             <Form.Control
               type="text"
               name="service_name"
-              value={service.service_name}
+              value={service.service_name || ''}
               onChange={handleChange}
             />
           </Form.Group>
@@ -73,7 +79,7 @@ const AddServiceModal = ({ show, onHide, onAdd }) => {
             <Form.Control
               type="text"
               name="service_description"
-              value={service.service_description}
+              value={service.service_description || ''}
               onChange={handleChange}
             />
           </Form.Group>
@@ -81,14 +87,14 @@ const AddServiceModal = ({ show, onHide, onAdd }) => {
             <Form.Label>Logo</Form.Label>
             <Form.Control
               type="file"
-              name="service_logo"
+              name="service_logo "
               onChange={handleFileChange}
             />
             <Form.Control
               type="text"
               placeholder="Or enter image URL"
               name="service_logoUrl"
-              value={service.service_logoUrl}
+              value={service.service_logoUrl || ''}
               onChange={handleChange}
               style={{ marginTop: '10px' }}
             />

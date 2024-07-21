@@ -56,9 +56,9 @@ const ReviewCard = ({ review, onDelete, onEdit }) => {
         {review.customer && review.customer.verify_purchased && <span className="review-verified">Verified</span>}
         {user && user.username === review.customer.username && (
           <div className="review-actions">
-            <button className="btn btn-outline-danger" onClick={() => onDelete(review.rating_id)}>Delete</button>
-            {!isEditing && <button className="btn btn-outline-success"  onClick={handleEditClick}>Edit</button>}
-            {isEditing && <button className="btn btn-outline-success" onClick={handleSaveClick}>Save</button>}
+            <button className="delete" onClick={() => onDelete(review.rating_id)}>Delete</button>
+            {!isEditing && <button className="edit" onClick={handleEditClick}>Edit</button>}
+            {isEditing && <button className="edit" onClick={handleSaveClick}>Save</button>}
           </div>
         )}
       </div>

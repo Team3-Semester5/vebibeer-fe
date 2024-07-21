@@ -49,6 +49,9 @@ const Navbar = () => {
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="reviewCustomer">Customer</Link>
         </li>
+        <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
+          <Link to="voucher">Voucher</Link>
+        </li>
         <li
           style={{
             marginLeft: "200px",

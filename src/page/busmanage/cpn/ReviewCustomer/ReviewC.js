@@ -120,7 +120,7 @@ const ReviewC = () => {
 
     const ActionModal = ({ show, onHide, transaction, onConfirm, title }) => {
         // Việt hóa tiêu đề dựa theo hành động
-        const vietnameseTitle = title === 'Accept' ? 'chấp nhận' : 'từ chối';
+        const vietnameseTitle = title === 'Accept' ? 'Accept' : 'Reject';
 
         return (
             <Modal show={show} onHide={onHide} centered>
@@ -143,7 +143,7 @@ const ReviewC = () => {
     };
 
     const filterTransaction = transactions.filter(transaction => transaction.transactionStatus === 'Pending');
-
+   customers.filter(customer => customer.transactionStatus === 'OrderSuccess');
     const formatDateTime = (dateTimeString) => {
         const options = {
             hour: '2-digit',
@@ -166,7 +166,7 @@ const ReviewC = () => {
     return (
         <div className="container mt-4">
             <h1>Customer List</h1>
-            <div className="mb-3">
+            <div className="mb-3 mt-5">
                 <input
                     type="text"
                     className="form-control"

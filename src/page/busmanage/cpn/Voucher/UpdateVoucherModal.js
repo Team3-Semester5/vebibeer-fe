@@ -91,7 +91,7 @@ const UpdateVoucherModal = ({ show, onHide, voucher, onUpdate }) => {
                             <Form.Control
                             type="text"
                             name="voucherCondition"
-                            value={updatedVoucher.voucher_condition|| ''}
+                            value={updatedVoucher.voucher_condition     || ''}
                             onChange={handleChange}
                         />
                     </Form.Group>
