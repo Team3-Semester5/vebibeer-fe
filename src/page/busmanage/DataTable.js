@@ -41,7 +41,7 @@ function DataTable() {
       try {
         // Fetching driver count
         const driverResponse = await fetch(
-          `${API_URL}/buscompany/driver/by-company/1`
+          `${API_URL}/buscompany/driver/by-company/${user.busCompany_id}`
         );
         if (!driverResponse.ok) {
           throw new Error("Failed to fetch drivers");
@@ -50,7 +50,7 @@ function DataTable() {
         setDriverCount(driverData.length); // Assuming driverData is an array
 
         // Fetching bus count
-        const busResponse = await fetch(`${API_URL}/buscompany/car/by-company/1`);
+        const busResponse = await fetch(`${API_URL}/buscompany/car/by-company/${user.busCompany_id}`);
         if (!busResponse.ok) {
           throw new Error("Failed to fetch buses");
         }

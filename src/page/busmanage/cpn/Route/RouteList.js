@@ -5,7 +5,7 @@ import UpdateRouteModal from './UpdateRouteModal';
 import DeleteRouteModal from './DeleteRouteModal';
 import '../../../../assets/css/Buscompany.css';
 import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
-
+import { useNavigate } from "react-router-dom";
 const RouteList = () => {
     const [routes, setRoutes] = useState([]);
     const [filteredRoutes, setFilteredRoutes] = useState([]);
@@ -30,10 +30,15 @@ const RouteList = () => {
     // const [selectedRoute, setSelectedRoute] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
+    const navigate = useNavigate();
+    const user = JSON.parse(sessionStorage.getItem("user"));
     useEffect(() => {
         const fetchRoutes = async () => {
+            if (user?.role_user != 'ROLE_BUSCOMPANY') {
+                navigate("/login");
+              }
             try {
-                const response = await fetch(`${API_URL}/route/buscompany/1/routes`);
+                const response = await fetch(`${API_URL}/route/buscompany/${user.busCompany_id}/routes`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

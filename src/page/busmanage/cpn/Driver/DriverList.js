@@ -3,8 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddDriverModal from './AddDriverModal';
 import UpdateDriverModal from './UpdateDriverModal';
 import DeleteDriverModal from './DeleteDriverModal';
-import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
-
+import { API_URL } from '../../../../constaint/fetchApi';
+import { useNavigate } from "react-router-dom";
 const DriverList = () => {
     const [drivers, setDrivers] = useState([]);
     const [filteredDrivers, setFilteredDrivers] = useState([]);
@@ -16,16 +16,21 @@ const DriverList = () => {
     const [selectedDriver, setSelectedDriver] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [driversPerPage] = useState(5);
+    const navigate = useNavigate();
+    const user = JSON.parse(sessionStorage.getItem("user"));
     useEffect(() => {
         const fetchDrivers = async () => {
+            if (user?.role_user != 'ROLE_BUSCOMPANY') {
+                navigate("/login");
+              }
             try {
-                const response = await fetch(`${API_URL}/buscompany/driver/by-company/1`);
+                const response = await fetch(`${API_URL}/buscompany/driver/by-company/${user.busCompany_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setDrivers(data);
-                setFilteredDrivers(data);
+                setDrivers(data.filter(driver => !(driver.driver_description && driver.driver_description.toLowerCase().includes('ban'))));
+                setFilteredDrivers(data.filter(driver => !(driver.driver_description && driver.driver_description.toLowerCase().includes('ban'))));
             } catch (error) {
                 setError(error.message);
                 console.error('Error fetching drivers:', error);
@@ -48,15 +53,17 @@ const DriverList = () => {
     }, [searchTerm, drivers]);
 
     const handleAddDriver = (newDriver) => {
-        const updatedDrivers = [...drivers, newDriver];
-        setDrivers(updatedDrivers);
-        setFilteredDrivers(updatedDrivers);
+        if (!(newDriver.driver_description && newDriver.driver_description.toLowerCase().includes('ban'))) {
+            const updatedDrivers = [...drivers, newDriver];
+            setDrivers(updatedDrivers);
+            setFilteredDrivers(updatedDrivers);
+        }
     };
 
     const handleUpdateDriver = (updatedDriver) => {
         const updatedDrivers = drivers.map((driver) =>
             driver.driver_id === updatedDriver.driver_id ? updatedDriver : driver
-        );
+        ).filter(driver => !(driver.driver_description && driver.driver_description.toLowerCase().includes('ban')));
         setDrivers(updatedDrivers);
         setFilteredDrivers(updatedDrivers);
     };
@@ -68,18 +75,23 @@ const DriverList = () => {
         setDrivers(updatedDrivers);
         setFilteredDrivers(updatedDrivers);
     };
+
     const indexOfLastDriver = currentPage * driversPerPage;
     const indexOfFirstDriver = indexOfLastDriver - driversPerPage;
     const currentDrivers = filteredDrivers.slice(indexOfFirstDriver, indexOfLastDriver);
-    const handlePageChange = pageNumber => {
+
+    const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
     const nextPage = () => {
         setCurrentPage(current => Math.min(current + 1, Math.ceil(filteredDrivers.length / driversPerPage)));
-    }; const prevPage = () => {
+    };
+
+    const prevPage = () => {
         setCurrentPage(current => Math.max(current - 1, 1));
     };
+
     return (
         <div className="container mt-4 buscompany">
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -142,7 +154,8 @@ const DriverList = () => {
                                 >
                                     Delete
                                 </button>
-                            </td></tr>
+                            </td>
+                        </tr>
                     ))}
                 </tbody>
             </table>
@@ -150,15 +163,23 @@ const DriverList = () => {
                 <span>{indexOfFirstDriver + 1}-{Math.min(indexOfLastDriver, filteredDrivers.length)} of {filteredDrivers.length} results</span>
                 <nav>
                     <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#" onClick={() => handlePageChange(1)}>First</a></li>
-                        <li className="page-item"><a className="page-link" href="#" onClick={prevPage}>Previous</a></li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(1)}>First</button>
+                        </li>
+                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={prevPage}>Previous</button>
+                        </li>
                         {Array.from({ length: Math.ceil(filteredDrivers.length / driversPerPage) }, (_, i) => (
                             <li key={i + 1} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-                                <a className="page-link" href="#" onClick={() => handlePageChange(i + 1)}>{i + 1}</a>
+                                <button className="page-link" onClick={() => handlePageChange(i + 1)}>{i + 1}</button>
                             </li>
                         ))}
-                        <li className="page-item"><a className="page-link" href="#" onClick={nextPage}>Next</a></li>
-                        <li className="page-item"><a className="page-link" href="#" onClick={() => handlePageChange(Math.ceil(filteredDrivers.length / driversPerPage))}>Last</a></li>
+                        <li className={`page-item ${currentPage === Math.ceil(filteredDrivers.length / driversPerPage) ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={nextPage}>Next</button>
+                        </li>
+                        <li className={`page-item ${currentPage === Math.ceil(filteredDrivers.length / driversPerPage) ? 'disabled' : ''}`}>
+                            <button className="page-link" onClick={() => handlePageChange(Math.ceil(filteredDrivers.length / driversPerPage))}>Last</button>
+                        </li>
                     </ul>
                 </nav>
             </div>

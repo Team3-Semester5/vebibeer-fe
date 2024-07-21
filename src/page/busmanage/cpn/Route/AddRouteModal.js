@@ -196,7 +196,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                             value={route.driver_id}
                             onChange={handleChange}
                         >
-                            <option value="">Select a Driver_iddriver_id</option>
+                            <option value="">Select a Driver</option>
                             {drivers.map((driver) => (
                                 <option key={driver.driver_id} value={driver.driver_id}>
                                     {driver.driver_name}

@@ -76,7 +76,7 @@ const UpdateRouteModal = ({ show, onHide, oldRoute, onUpdate }) => {
         // };
 
         try {
-            const response = await fetch(`${API_URL}/route/buscomapany/save/`, {
+            const response = await fetch(`${API_URL}/route/buscomapany/update/${oldRoute.route_id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

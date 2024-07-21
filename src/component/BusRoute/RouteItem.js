@@ -39,7 +39,7 @@ const RouteItem = ({ route }) => {
             month: '2-digit',
             year: 'numeric',
         };
-        return new Date(dateTimeString).toLocaleString('vi-VN', options);
+        return new Date(dateTimeString).toLocaleString('en-US', options);
     };
 
     const fetchRatingList = async () => {
@@ -185,22 +185,22 @@ const RouteItem = ({ route }) => {
                 return (
                     <div className="schedule-container">
                         <div className="notes">
-                            <strong>Lưu ý</strong>
-                            <p>Các mốc thời gian đón, trả bên dưới là thời gian dự kiến.</p>
-                            <p>Lịch này có thể thay đổi tùy tình hình thực tế.</p>
+                            <strong>Note</strong>
+                            <p>The pickup and drop-off times below are estimated.</p>
+                            <p>This schedule may change depending on the actual situation.</p>
                         </div>
                         <div className="schedule">
                             <div className="pickup">
-                                <h3>Điểm đón</h3>
+                                <h3>Pickup Points</h3>
                                 <ul>
-                                    <li><span>18:46</span> • Cổng trung chuyển Nội thành Thành phố Đà Nẵng</li>
-                                    <li><span>20:16</span> • VP Đà Nẵng</li>
+                                    <li><span>18:46</span> • Inner City Transfer Gate, Da Nang City</li>
+                                    <li><span>20:16</span> • Da Nang Office</li>
                                 </ul>
                             </div>
                             <div className="dropoff">
-                                <h3>Điểm trả</h3>
+                                <h3>Drop-off Points</h3>
                                 <ul>
-                                    <li><span>07:16</span> • Bến xe Nước Ngầm</li>
+                                    <li><span>07:16</span> • Nuoc Ngam Bus Station</li>
                                 </ul>
                             </div>
                         </div>
@@ -210,39 +210,39 @@ const RouteItem = ({ route }) => {
                 return (
                     <div className="container mt-4">
                         <div className="policy-container">
-                            <h1>Chính sách hủy đơn hàng</h1>
+                            <h1>Order Cancellation Policy</h1>
                             <div className="timeline-container">
                                 <div className="timeline">
                                     <div className="point point-start">
-                                        <span className="time">Hôm nay<br />20:16<br />15/06/2024</span>
-                                        <div className="fee">Phí hủy 20%</div>
+                                        <span className="time">Today<br />20:16<br />June 15, 2024</span>
+                                        <div className="fee">20% cancellation fee</div>
                                     </div>
                                     <div className="point point-end">
-                                        <span className="time">08:16<br />16/06/2024</span>
-                                        <div className="fee">Phí hủy 100%</div>
+                                        <span className="time">08:16<br />June 16, 2024</span>
+                                        <div className="fee">100% cancellation fee</div>
                                     </div>
                                 </div>
                             </div>
-                            <p className="note">Ghi Chú: Phí hủy sẽ được tính trên giá gốc, không giảm trừ khuyến mãi hoặc giảm giá; đồng thời không vượt quá số tiền quý khách đã thanh toán. Nhà xe không chấp nhận vận chuyển mèo dưới mọi hình thức.</p>
+                            <p className="note">Note: The cancellation fee will be calculated on the original price, without deducting promotions or discounts; and will not exceed the amount you paid. The bus company does not accept cats under any circumstances.</p>
                         </div>
                         <div className="mb-3">
-                            <h2>Chính sách nhà xe</h2>
+                            <h2>Bus Company Policy</h2>
                             <ul>
-                                <li>Cấm kị tất cả loại vật liệu dễ cháy như xăng, dầu.</li>
-                                <li>Khoảng cách an toàn, thời gian di chuyển.</li>
+                                <li>Prohibition of all flammable materials such as gasoline, oil.</li>
+                                <li>Safety distance, travel time.</li>
                             </ul>
                         </div>
                         <div className="mb-3">
-                            <h2>Hành lý xách tay</h2>
-                            <p>Không trọng lượng hạn hẹp không vượt quá 7 kg.</p>
+                            <h2>Hand Luggage</h2>
+                            <p>Hand luggage should not exceed 7 kg.</p>
                         </div>
                         <div className="mb-3">
-                            <h2>Điều kiện vận chuyển đặc biệt</h2>
-                            <p>Đối với hàng hóa đặc biệt, cần có giấy phép vận chuyển riêng.</p>
+                            <h2>Special Transportation Conditions</h2>
+                            <p>For special goods, separate transport permits are required.</p>
                         </div>
                         <div className="mb-3">
-                            <h2>Quy định về đổi trả</h2>
-                            <p>Khách hàng có thể đổi trả hàng trong vòng 24 giờ nếu sản phẩm còn nguyên đai, nguyên kiện.</p>
+                            <h2>Return Policy</h2>
+                            <p>Customers can return goods within 24 hours if the product is still in its original packaging.</p>
                         </div>
                     </div>
                 );
@@ -305,7 +305,7 @@ const RouteItem = ({ route }) => {
                     <div className="route-summary" onClick={toggleCollapse}>
                         <h3>{route.route_name}</h3>
                         <p>{route.busCompany.name}</p>
-                        <p>Giá: {lowestPrice}.000 - {highestPrice}.000 VNĐ</p>
+                        <p>Price: {lowestPrice}.000 - {highestPrice}.000 VND</p>
                     </div>
                     <p>{route.car.amount_seat} seats left</p>
                     <button onClick={handleBookNowClick} style={{ backgroundColor: '#4CAF50', color: 'white', padding: '10px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
@@ -318,12 +318,12 @@ const RouteItem = ({ route }) => {
                     <div className="container">
                         {activeTab !== 'seat' && (
                             <div className="tabs">
-                                <button className={`tab ${activeTab === 'discount' ? 'active' : ''}`} onClick={() => setActiveTab('discount')}>Giảm giá</button>
-                                <button className={`tab ${activeTab === 'images' ? 'active' : ''}`} onClick={() => setActiveTab('images')}>Hình ảnh</button>
-                                <button className={`tab ${activeTab === 'services' ? 'active' : ''}`} onClick={() => setActiveTab('services')}>Tiện ích</button>
-                                <button className={`tab ${activeTab === 'pickup' ? 'active' : ''}`} onClick={() => setActiveTab('pickup')}>Điểm đón, trả</button>
-                                <button className={`tab ${activeTab === 'direction' ? 'active' : ''}`} onClick={() => setActiveTab('direction')}>Chỉ dẫn</button>
-                                <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Đánh giá</button>
+                                <button className={`tab ${activeTab === 'discount' ? 'active' : ''}`} onClick={() => setActiveTab('discount')}>Discount</button>
+                                <button className={`tab ${activeTab === 'images' ? 'active' : ''}`} onClick={() => setActiveTab('images')}>Images</button>
+                                <button className={`tab ${activeTab === 'services' ? 'active' : ''}`} onClick={() => setActiveTab('services')}>Services</button>
+                                <button className={`tab ${activeTab === 'pickup' ? 'active' : ''}`} onClick={() => setActiveTab('pickup')}>Pickup & Drop-off Points</button>
+                                <button className={`tab ${activeTab === 'direction' ? 'active' : ''}`} onClick={() => setActiveTab('direction')}>Direction</button>
+                                <button className={`tab ${activeTab === 'rating' ? 'active' : ''}`} onClick={() => setActiveTab('rating')}>Rating</button>
                             </div>
                         )}
                         <div style={{ width: '100%' }}>

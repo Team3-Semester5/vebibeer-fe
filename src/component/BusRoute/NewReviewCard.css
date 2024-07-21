@@ -32,9 +32,9 @@
     font-weight: bold;
 }
 
-.review-rating {
+/* .review-rating {
     display: flex;
-}
+} */
 
 .star {
     font-size: 24px;
@@ -70,6 +70,7 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 4px;
 }
 
 .review-Unverified{

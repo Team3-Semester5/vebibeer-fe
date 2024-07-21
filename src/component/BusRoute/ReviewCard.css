@@ -1,12 +1,13 @@
 /* ReviewCard.css */
 .review-card {
-    font-family: Arial, sans-serif;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 20px;
-    margin: 20px;
-    width: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 25px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    background-color: white;
 }
 
 .review-header {
@@ -61,3 +62,21 @@
 .review-date {
     color: #999;
 }
+
+.review-content textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: none;
+}
+
+
+.review-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  .review-actions button:first-child {
+    margin-left: 4px;
+  }

@@ -32,7 +32,6 @@ const RouteList = () => {
   const [searchPickup, setSearchPickup] = useState('');
   const [searchDropoff, setSearchDropoff] = useState('');
 
-
   const fetchRouterList = async () => {
     try {
       const response = await fetch(`${API_URL}/route`);
@@ -52,8 +51,6 @@ const RouteList = () => {
   };
 
   useEffect(() => {
-
-
     const fetchBusOperators = async () => {
       try {
         const response = await fetch('http://localhost:8080/admin/buscompanies');
@@ -69,16 +66,12 @@ const RouteList = () => {
     };
 
     fetchBusOperators();
-    
   }, []);
 
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
         const url = new URL('http://localhost:8080/route/search');
-        // if (departure);;
-        // if (destination) ;
-        // if (date) ;;
         url.searchParams.append('startCity', departure || '');
         url.searchParams.append('endCity', destination || '');
         url.searchParams.append('date', date || '');
@@ -87,7 +80,6 @@ const RouteList = () => {
         
         if (!response.ok) {
           setError(`HTTP error! status: ${response.status}`);
-          
         }
         const data = await response.json();
         setRoutes(data);
@@ -100,16 +92,11 @@ const RouteList = () => {
       } catch (error) {
         setError(error.message);
         console.error('Error fetching routes:', error);
-        
       }
     };
 
     fetchRoutes();
   }, [departure, destination, date]);
-
-
-
-
 
   useEffect(() => {
     let sortedRoutes = [...routes];
@@ -223,33 +210,33 @@ const RouteList = () => {
           <div className='col-md-3'>
             <aside className="sidebar">
               <div className="section">
-                <h4 className="mb-3">Sắp xếp</h4>
+                <h4 className="mb-3">Sort</h4>
                 <div className="form-check">
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('default')} defaultChecked /> Mặc định
+                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('default')} defaultChecked /> Default
                   </label>
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('earliest')} /> Giờ đi sớm nhất
+                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('earliest')} /> Earliest departure
                   </label>
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('latest')} /> Giờ đi muộn nhất
+                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('latest')} /> Latest departure
                   </label>
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('highestRated')} /> Đánh giá cao nhất
+                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('highestRated')} /> Highest rating
                   </label>
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('priceLowToHigh')} /> Giá tăng dần
+                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('priceLowToHigh')} /> Price low to high
                   </label>
                   <label className="form-check-label">
-                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('priceHighToLow')} /> Giá giảm dần
+                    <input className="form-check-input" type="radio" name="sort" onChange={() => handleSortChange('priceHighToLow')} /> Price high to low
                   </label>
                 </div>
               </div>
               <div className="section">
-                <h4 className="mb-3">Lọc</h4>
-                <button className="btn btn-primary" onClick={clearFilters}>Xóa lọc</button>
+                <h4 className="mb-3">Filter</h4>
+                <button className="btn btn-primary" onClick={clearFilters}>Clear filters</button>
                 <details className="mt-3">
-                  <summary>Giờ đi</summary>
+                  <summary>Departure time</summary>
                   <ReactSlider
                     className="horizontal-slider"
                     thumbClassName="example-thumb"
@@ -262,20 +249,20 @@ const RouteList = () => {
                   />
                   <div className="time-range">
                     <div className="time-input">
-                      <label>Từ</label>
+                      <label>From</label>
                       <input type="text" readOnly value={formatMinutesToHHMM(timeRange[0])} />
                     </div>
                     <div className="time-input">
-                      <label>Đến</label>
+                      <label>To</label>
                       <input type="text" readOnly value={formatMinutesToHHMM(timeRange[1])} />
                     </div>
                   </div>
                 </details>
                 <details className="mt-3">
-                  <summary>Nhà xe</summary>
+                  <summary>Bus companies</summary>
                   <input
                     type="text"
-                    placeholder="Tìm trong danh sách"
+                    placeholder="Search in the list"
                     value={searchOperator}
                     onChange={(e) => setSearchOperator(e.target.value)}
                     className="form-control mb-2"
@@ -297,7 +284,7 @@ const RouteList = () => {
                     ))}
                 </details>
                 <details className="mt-3">
-                  <summary>Giá vé</summary>
+                  <summary>Ticket price</summary>
                   <ReactSlider
                     className="horizontal-slider"
                     thumbClassName="example-thumb"
@@ -316,10 +303,10 @@ const RouteList = () => {
                   </div>
                 </details>
                 <details className="mt-3">
-                  <summary>Điểm đón</summary>
+                  <summary>Pickup points</summary>
                   <input
                     type="text"
-                    placeholder="Tìm trong danh sách"
+                    placeholder="Search in the list"
                     value={searchPickup}
                     onChange={(e) => setSearchPickup(e.target.value)}
                     className="form-control mb-2"
@@ -341,10 +328,10 @@ const RouteList = () => {
                     ))}
                 </details>
                 <details className="mt-3">
-                  <summary>Điểm trả</summary>
+                  <summary>Dropoff points</summary>
                   <input
                     type="text"
-                    placeholder="Tìm trong danh sách"
+                    placeholder="Search in the list"
                     value={searchDropoff}
                     onChange={(e) => setSearchDropoff(e.target.value)}
                     className="form-control mb-2"
@@ -366,7 +353,7 @@ const RouteList = () => {
                     ))}
                 </details>
                 <details className="mt-3">
-                  <summary>Đánh giá</summary>
+                  <summary>Rating</summary>
                   <div className="rating-filter">
                     {[4, 3].map(rating => (
                       <div key={rating} className="form-check">
@@ -380,7 +367,7 @@ const RouteList = () => {
                           {[...Array(5)].map((_, index) => (
                             <span key={index} className={index < rating ? 'star filled' : 'star'}>★</span>
                           ))}
-                          trở lên
+                          and above
                         </label>
                       </div>
                     ))}

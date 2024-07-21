@@ -4,8 +4,8 @@ import AddCarModal from './AddCarModal';
 import UpdateCarModal from './UpdateCarModal';
 import DeleteCarModal from './DeleteCarModal';
 import '../../../../assets/css/Buscompany.css';
-import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
-
+import { API_URL } from '../../../../constaint/fetchApi';
+import { useNavigate } from "react-router-dom";
 const CarList = () => {
     const [cars, setCars] = useState([]);
     const [filteredCars, setFilteredCars] = useState([]);
@@ -18,16 +18,21 @@ const CarList = () => {
     const [selectedCar, setSelectedCar] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
+    const navigate = useNavigate();
+    const user = JSON.parse(sessionStorage.getItem("user"));
     useEffect(() => {
         const fetchCars = async () => {
+            if (user?.role_user != 'ROLE_BUSCOMPANY') {
+                navigate("/login");
+              }
             try {
-                const response = await fetch(`${API_URL}/buscompany/car/by-company/1`);
+                const response = await fetch(`${API_URL}/buscompany/car/by-company/${user.busCompany_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setCars(data);
-                setFilteredCars(data);
+                setCars(data.filter(car => !(car.description && car.description.toLowerCase().includes('ban'))));
+                setFilteredCars(data.filter(car => !(car.description && car.description.toLowerCase().includes('ban'))));
             } catch (error) {
                 setError(error.message);
                 console.error('Error fetching cars:', error);
@@ -52,14 +57,16 @@ const CarList = () => {
     }, [searchTerm, filterBy, cars]);
 
     const handleAddCar = (newCar) => {
-        setCars([...cars, newCar]);
-        setFilteredCars([...cars, newCar]);
+        if (!(newCar.description && newCar.description.toLowerCase().includes('ban'))) {
+            setCars([...cars, newCar]);
+            setFilteredCars([...cars, newCar]);
+        }
     };
 
     const handleUpdateCar = (updatedCar) => {
         const updatedCars = cars.map((car) =>
             car.car_id === updatedCar.car_id ? updatedCar : car
-        );
+        ).filter(car => !(car.description && car.description.toLowerCase().includes('ban')));
         setCars(updatedCars);
         setFilteredCars(updatedCars);
     };
@@ -79,13 +86,14 @@ const CarList = () => {
     const totalPages = Math.ceil(filteredCars.length / itemsPerPage);
 
     return (
-        <div className="container mt-4 buscompany" >
+        <div className="container mt-4 buscompany">
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <h1>Bus List</h1><button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+                <h1>Bus List</h1>
+                <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
                     + Add Car
                 </button>
             </div>
-            {/* Search and Filter Inputs */}
+
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="form-group">
                     <input
@@ -96,10 +104,19 @@ const CarList = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-
+                <div className="form-group">
+                    <select
+                        className="form-control"
+                        value={filterBy}
+                        onChange={(e) => setFilterBy(e.target.value)}
+                    >
+                        <option value="All">All Manufacturers</option>
+                        {/* Add other manufacturer options here */}
+                    </select>
+                </div>
             </div>
+
             {error && <p className="text-danger">Error: {error}</p>}
-            {/* Car Table */}
             <table className="table table-hover">
                 <thead>
                     <tr>
@@ -139,7 +156,8 @@ const CarList = () => {
                                     }}
                                 >
                                     Edit
-                                </button><button
+                                </button>
+                                <button
                                     className="btn btn-danger btn-sm"
                                     onClick={() => {
                                         setSelectedCar(car);
@@ -156,23 +174,24 @@ const CarList = () => {
             <nav style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <ul className="pagination">
                     <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(1); }}>First</a>
+                        <button className="page-link" onClick={(e) => { e.preventDefault(); paginate(1); }}>First</button>
                     </li>
                     <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(currentPage - 1); }}>Previous</a>
+                        <button className="page-link" onClick={(e) => { e.preventDefault(); paginate(currentPage - 1); }}>Previous</button>
                     </li>
-                    <li className="page-item active"><a className="page-link" href="#">{currentPage}</a></li>
+                    <li className="page-item active"><button className="page-link">{currentPage}</button></li>
                     <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(currentPage + 1); }}>Next</a>
+                        <button className="page-link" onClick={(e) => { e.preventDefault(); paginate(currentPage + 1); }}>Next</button>
                     </li>
                     <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                        <a className="page-link" href="#" onClick={(e) => { e.preventDefault(); paginate(totalPages); }}>Last</a>
+                        <button className="page-link" onClick={(e) => { e.preventDefault(); paginate(totalPages); }}>Last</button>
                     </li>
                 </ul>
             </nav>
             <div className="d-flex justify-content-end">
                 <span>{firstPageIndex + 1}-{lastPageIndex} of {filteredCars.length} results</span>
             </div>
+
             <AddCarModal
                 show={showAddModal}
                 onHide={() => setShowAddModal(false)}

@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
+import { Modal, Button, Spinner } from 'react-bootstrap';
+import { API_URL } from '../../../../constaint/fetchApi';
 
 const DeleteCarModal = ({ show, onHide, car, onDelete }) => {
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleDelete = async () => {
+        setLoading(true);
         try {
-            const response = await fetch(`${API_URL}/buscompany/car/delete/${car.car_id}`, {
-                method: 'DELETE',
+            const response = await fetch(`${API_URL}/buscompany/car/update/${car.car_id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ ...car, description: 'Ban' })
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            const updatedCar = await response.json();
             onDelete(car.car_id);
             onHide();
         } catch (error) {
             setError(error.message);
-            console.error('Error deleting car:', error);
+            console.error('Error updating car description:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -39,8 +45,8 @@ const DeleteCarModal = ({ show, onHide, car, onDelete }) => {
                 <Button variant="secondary" onClick={onHide}>
                     Close
                 </Button>
-                <Button variant="danger" onClick={handleDelete}>
-                    Delete Bus
+                <Button variant="danger" onClick={handleDelete} disabled={loading}>
+                    {loading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Delete Bus'}
                 </Button>
             </Modal.Footer>
         </Modal>

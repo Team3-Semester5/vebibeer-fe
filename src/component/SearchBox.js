@@ -60,7 +60,7 @@ const SearchBox = () => {
                     <div className="col-md">
                         <div className="input-group">
                             <select className="form-control" value={departure} onChange={(e) => setDeparture(e.target.value)}>
-                                <option value="">Chọn nơi xuất phát</option>
+                                <option value="">Choose location start</option>
                                 {pickupPoints.map(point => (
                                     <option key={point} value={point}>{point}</option>
                                 ))}
@@ -72,7 +72,7 @@ const SearchBox = () => {
                     </div>
                     <div className="col-md">
                         <select className="form-control" value={destination} onChange={(e) => setDestination(e.target.value)}>
-                            <option value="">Chọn nơi đến</option>
+                            <option value="">Choose location end</option>
                             {dropoffPoints.map(point => (
                                 <option key={point} value={point}>{point}</option>
                             ))}
@@ -83,7 +83,7 @@ const SearchBox = () => {
                         {/* <DatePicker className="form-control" minDate={date} value={date} onChange={(e) => setDate(e.target.value)}/> */}
                     </div>
                     <div className="col-md-auto">
-                        <button className="btn btn-primary" onClick={handleSearch}>Tìm kiếm</button>
+                        <button className="btn btn-primary" onClick={handleSearch}>Search</button>
                     </div>
                 </div>
             </div>

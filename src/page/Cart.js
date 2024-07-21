@@ -24,33 +24,33 @@ const PersonalInfoForm = ({ formData, setFormData, user }) => {
             <Row className="justify-content-md-center">
                 <Col md={9}>
                     <Form onSubmit={handleSubmit} style={{ marginTop: "30px" }}>
-                        <h2 style={{ paddingBottom: "15px", marginBottom: "20px " , fontWeight :"bold"}}>Thông tin liên hệ</h2>
+                        <h2 style={{ paddingBottom: "15px", marginBottom: "20px ", fontWeight: "bold" }}>Contact Info</h2>
                         <Form.Group className="mb-3">
                             {user?.username === '' && (
                                 <Alert variant='primary'>
-                                    Đăng nhập để tự động điền thông tin khách hàng
+                                    Log in to automatically fill in customer information
                                     <Button variant="primary" style={{ marginLeft: '10%' }} onClick={() => { navigate('/login') }}>
-                                        Đăng nhập
+                                        Log in
                                     </Button>
                                 </Alert>
                             )}
-                            <Form.Label style={{fontSize :"24px"}}>Tên người dùng <span style={{ color: 'red' }}>*</span></Form.Label>
-                            <Form.Control type="text" placeholder="Enter name" name="name" value={formData.name} onChange={handleChange} required style={{ marginBottom: "25px" ,fontSize :"19px"}} />
+                            <Form.Label style={{ fontSize: "24px" }}>User name <span style={{ color: 'red' }}>*</span></Form.Label>
+                            <Form.Control type="text" placeholder="Enter name" name="name" value={formData.name} onChange={handleChange} required style={{ marginBottom: "25px", fontSize: "19px" }} />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label style={{fontSize :"24px"}}>Số điện thoại <span style={{ color: 'red' }}>*</span></Form.Label>
-                            <Form.Control type="tel" placeholder="+84" name="phone" value={formData.phone} onChange={handleChange} required style={{ marginBottom: "25px" ,fontSize :"19px" }} />
+                            <Form.Label style={{ fontSize: "24px" }}> Phone number<span style={{ color: 'red' }}>*</span></Form.Label>
+                            <Form.Control type="tel" placeholder="+84" name="phone" value={formData.phone} onChange={handleChange} required style={{ marginBottom: "25px", fontSize: "19px" }} />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label style={{fontSize :"24px"}}>Email để nhận thông tin đặt chỗ <span style={{ color: 'red' }}>*</span></Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" name="email" value={formData.email} onChange={handleChange} required style={{ marginBottom: "25px",fontSize :"19px" }} />
+                            <Form.Label style={{ fontSize: "24px" }}>Email to receive booking information<span style={{ color: 'red' }}>*</span></Form.Label>
+                            <Form.Control type="email" placeholder="Enter email" name="email" value={formData.email} onChange={handleChange} required style={{ marginBottom: "25px", fontSize: "19px" }} />
                         </Form.Group>
-                        <Alert variant="success" className="mt-3" style={{ display: 'flex',fontSize :"24px", marginBottom: "25px" }}>
-<div style={{ fontSize: '20px', color: 'green', position: 'relative', display: 'inline-block', width: '30%', height: '50px' }}>
+                        <Alert variant="success" className="mt-3" style={{ display: 'flex', fontSize: "24px", marginBottom: "25px" }}>
+                            <div style={{ fontSize: '20px', color: 'green', position: 'relative', display: 'inline-block', width: '30%', height: '50px' }}>
                                 <FontAwesomeIcon icon={faShield} style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0 }} />
                                 <FontAwesomeIcon icon={faCheck} style={{ position: 'absolute', top: '25%', left: '40%', color: 'white' }} />
                             </div>
-                            Số điện thoại và email được sử dụng để gửi thông tin đơn hàng và liên hệ khi cần thiết.
+                            Phone number and email are used to send order information and contact when necessary.
                         </Alert>
                     </Form>
                 </Col>
@@ -59,10 +59,10 @@ const PersonalInfoForm = ({ formData, setFormData, user }) => {
     );
 };
 
-const TripDetails = ({tickets, totalMoney, setTotalMoney}) => {
-    
+const TripDetails = ({ tickets, totalMoney, setTotalMoney }) => {
+
     const [error, setError] = useState(null);
-    
+
     const [showDetails, setShowDetails] = useState(false);
     const [showChange, setShowChange] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
@@ -80,17 +80,19 @@ const TripDetails = ({tickets, totalMoney, setTotalMoney}) => {
     const handleCloseDetails = () => setShowDetails(false);
     const handleCloseChange = () => setShowChange(false);
 
-    
+
 
     // Handle updating total from VoucherPoints component
     const handleUpdateTotal = (total) => {
         setTotalMoney(total);
     };
-
+    function formatNumber(number) {
+        return new Intl.NumberFormat('vi-VN').format(number);
+      }
     return (
         <Container className="mt-4" style={{ marginTop: '60px' }}>
             <div className="card mb-3" style={{ marginBottom: '70px', width: "373px", fontSize: "20px" }}>
-                Tạm tính <span style={{ fontWeight: 'bold' }}>{totalMoney * 1000} VND</span>
+            Provisional <span style={{ fontWeight: 'bold' }}>{formatNumber(totalMoney * 1000) } VNĐ</span>
             </div>
             <VoucherPoints handleUpdateTotal={handleUpdateTotal} totalMoney={totalMoney} />
             {tickets.map(ticket => (
@@ -100,14 +102,14 @@ const TripDetails = ({tickets, totalMoney, setTotalMoney}) => {
                             <Col md={7} style={{ width: "190px", paddingLeft: "21px" }}>
                                 <div>
                                     <p className="mb-1">
-                                        <strong style={{ marginRight: "5px" }}>Date:</strong> {ticket.route ? ticket.route.route_startTime : 'No date available'}
+                                        <strong style={{ marginRight: "5px" }}>Date:</strong> {ticket.route ? formatDateTime(ticket.route.route_startTime) : 'No date available'}
                                     </p>
                                     <p><strong>Seat:</strong> {ticket.ticket_seat}</p>
                                 </div>
                             </Col>
                             <Col md={3} style={{ width: "140px", paddingLeft: "22px" }}>
                                 <Row>
-                                    <Button style={{ width: "88px", margin: "10px 0px 0px 20px", height: "46px", paddingRight: "10px" }} variant="primary" onClick={() => handleShowDetails(ticket)}>Chi tiết</Button>
+                                    <Button style={{ width: "88px", margin: "10px 0px 0px 20px", height: "46px", paddingRight: "10px" }} variant="primary" onClick={() => handleShowDetails(ticket)}>Detail</Button>
                                 </Row>
                                 <Row><p style={{ marginTop: "17px", width: "60px", height: "1px" }}></p></Row>
                             </Col>
@@ -125,7 +127,7 @@ const TripDetails = ({tickets, totalMoney, setTotalMoney}) => {
                                         {ticket.route ? ticket.route.busCompany.busCompany_location : 'No location'}
                                     </p>
                                 </Col>
-                                <Col md={4} style={{ paddingRight: "50px" }}><Button style={{ width: "90px", height: "46px" }} variant="success" onClick={() => handleShowChange(ticket)}>Thay đổi</Button></Col>
+                                <Col md={4} style={{ paddingRight: "50px" }}><Button style={{ width: "90px", height: "46px" }} variant="success" onClick={() => handleShowChange(ticket)}>Changes</Button></Col>
                             </Row>
                         </div>
                     </Card.Body>
@@ -134,7 +136,7 @@ const TripDetails = ({tickets, totalMoney, setTotalMoney}) => {
             {/* Offcanvas for Details */}
             <Offcanvas show={showDetails} onHide={handleCloseDetails}>
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>Chi tiết</Offcanvas.Title>
+                    <Offcanvas.Title>Show Detail</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     {selectedTicket && (
@@ -151,7 +153,7 @@ const TripDetails = ({tickets, totalMoney, setTotalMoney}) => {
             {/* Offcanvas for Change */}
             <Offcanvas show={showChange} onHide={handleCloseChange}>
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title style={{ fontSize: '20px' }}>Thay đổi</Offcanvas.Title>
+                    <Offcanvas.Title style={{ fontSize: '20px' }}>Change</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     {selectedTicket && (
@@ -193,26 +195,26 @@ const ContinueComponent = ({ formData, isCheckout, totalMoney }) => {
             <div className="text-center">
                 {isCheckout ? (
                     <Row>
-                        <Col md={2}  style={{ paddingTop: "20px", paddingLeft: "70px" }}>
-                            <Button variant="outline-secondary" style={{ width :"70%" ,height: '100%', backgroundColor: "#FFCC00", color: "black", fontWeight: "bold", paddingTop: "20px", paddingLeft: "70px" }} disabled={!isFormComplete} onClick={handleContinue}>Tiếp tục</Button>
-    
+                        <Col md={2} style={{ paddingTop: "20px", paddingLeft: "70px" }}>
+                            <Button variant="outline-secondary" style={{ width: "70%", height: '100%', backgroundColor: "#FFCC00", color: "black", fontWeight: "bold", paddingTop: "20px", paddingLeft: "70px" }} disabled={!isFormComplete} onClick={handleContinue}>Tiếp tục</Button>
+
                         </Col>
                         <Col md={2} style={{ paddingTop: "20px", paddingLeft: "80px" }}>
-                            Bằng việc nhấn nút Tiếp tục, bạn đồng ý với <a href="/privacy-policy">Chính sách bảo mật thanh toán</a> và <a href="/terms">Quy chế</a>
+                            By pressing the Continue button, you agree to the <a href="/privacy-policy">Payment Privacy Policy</a> and <a href="/terms">Regulations</a>
                         </Col>
                     </Row>
-                ) : (   
+                ) : (
                     <Row>
                         <Col md={5}>
-                            <Button variant="warning" style={{ width: '80%', marginTop :'10px' }} onClick={handleContinue}>Thanh toán</Button>
+                            <Button variant="warning" style={{ width: '80%', marginTop: '10px' }} onClick={handleContinue}>Thanh toán</Button>
                         </Col>
                         <Col md={6} style={{ paddingTop: "20px", }}>
-                            Bằng việc nhấn nút Tiếp tục, bạn đồng ý với <a href="/privacy-policy">Chính sách bảo mật thanh toán</a> và <a href="/terms">Quy chế</a>
+                            By pressing the Continue button, you agree to the <a href="/privacy-policy">Payment Privacy Policy</a> and <a href="/terms">Regulations</a>
                         </Col>
                     </Row>
                 )}
-                <div style={{ textAlign: "end", paddingRight: "50px" , marginTop :"10px"}}>
-                    Bạn sẽ sớm nhận được biên số xe, số điện thoại tài xế và dễ dàng thay đổi điểm đón trả sau khi đặt.
+                <div style={{ textAlign: "end", paddingRight: "50px", marginTop: "10px" }}>
+                    You will soon receive the vehicle registration number, driver's phone number and easily change the pick-up and drop-off location after booking.
                 </div>
             </div>
         </Container>
@@ -232,7 +234,7 @@ const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
     const user = JSON.parse(sessionStorage.getItem('user'));
     const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
 
-    const handleShowVoucherModal = () =>{ setShowVoucherModal(true); handleUpdateTotal(money)}
+    const handleShowVoucherModal = () => { setShowVoucherModal(true); handleUpdateTotal(money) }
     const handleCloseVoucherModal = () => setShowVoucherModal(false);
 
     // Fetching vouchers
@@ -259,7 +261,7 @@ const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
 
     const handleVoucherSelect = (voucher) => {
         setSelectedVoucher(voucher);
-        totalMoney = totalMoney - (totalMoney * voucher.saleUp)/100;
+        totalMoney = totalMoney - (totalMoney * voucher.saleUp) / 100;
         handleUpdateTotal(totalMoney);
         handleCloseVoucherModal();
     }
@@ -286,15 +288,15 @@ const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
                         <Card.Body style={{ padding: "10px" }}>
                             <Card.Title>Voucher</Card.Title>
                             <Card.Text style={{ fontSize: "20px" }}>{selectedVoucher ? `${selectedVoucher.voucher_code} - ${selectedVoucher.saleUp}%` : "No voucher selected"}</Card.Text>
-                            <Button variant="primary" onClick={handleShowVoucherModal} style={{ marginBottom: "10px" }}>Xem danh sách Voucher</Button>
+                            <Button variant="primary" onClick={handleShowVoucherModal} style={{ marginBottom: "10px" }}>Voucher list</Button>
                         </Card.Body>
                         <Card.Body style={{ padding: "10px" }}>
                             <Card.Title>Points</Card.Title>
-                            <Card.Text style={{ fontSize: "20px" }}>Bạn có {maxPoint || 0} điểm</Card.Text>
+                            <Card.Text style={{ fontSize: "20px" }}>You have {maxPoint || 0} points</Card.Text>
                             <Form.Group className="mb-3" style={{ marginBottom: "10px" }}>
-                                <Form.Label style={{ fontSize: "20px" }}>Nhập số điểm bạn muốn áp dụng</Form.Label>
-                                <Form.Control   
-                                    type="number" 
+                                <Form.Label style={{ fontSize: "20px" }}>Enter the number of points you want to apply</Form.Label>
+                                <Form.Control
+                                    type="number"
                                     placeholder="Enter points"
                                     onChange={handlePointsChange}
                                     max={points}
@@ -302,19 +304,19 @@ const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
                                 <Button variant="primary" onClick={updateTotalAfterPoint} style={{ marginBottom: "10px" }}>Apply Discount</Button>
                             </Form.Group>
                         </Card.Body>
-                        
+
                     </Card>
                 </Col>
             </Row>
             <Modal show={showVoucherModal} onHide={handleCloseVoucherModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Danh sách Voucher</Modal.Title>
+                    <Modal.Title>Voucher List</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <ListGroup>
                         {vouchers?.map(voucher => (
                             <ListGroup.Item key={voucher.voucher_code} onClick={() => handleVoucherSelect(voucher)}>
-                                {voucher.voucher_code}: Giảm giá {voucher.saleUp}%
+                                {voucher.voucher_code}: Discount {voucher.saleUp}%
                             </ListGroup.Item>
                         ))}
                     </ListGroup>
@@ -327,7 +329,16 @@ const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
     );
 };
 
-
+const formatDateTime = (dateTimeString) => {
+    const options = {
+        hour: '2-digit',
+        minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    };
+    return new Date(dateTimeString).toLocaleString('vi-VN', options);
+};
 
 
 const Cart = () => {
@@ -356,7 +367,7 @@ const Cart = () => {
                     <PersonalInfoForm formData={formData} setFormData={setFormData} user={user} />
                 </Col>
                 <Col md={4}>
-                    <TripDetails tickets={tickets} totalMoney = {totalMoney} setTotalMoney={setTotalMoney}/>
+                    <TripDetails tickets={tickets} totalMoney={totalMoney} setTotalMoney={setTotalMoney} />
                 </Col>
             </Row>
             <ContinueComponent formData={formData} totalMoney={totalMoney} />

@@ -49,7 +49,9 @@ function SeatMap({ route }) {
     };
 
 
-
+    function formatNumber(number) {
+        return new Intl.NumberFormat('vi-VN').format(number);
+      }
     useEffect(() => {
         const fetchSeatList = async () => {
             const response = await fetch(`${API_URL}/tickets/${route.route_id}`);
@@ -109,8 +111,8 @@ function SeatMap({ route }) {
             <Row>
                 <Col sm={12} md={4}>
                     <Card className="info-card">
-                        <Card.Body>
-                            <div>Chú thích</div>
+                        <Card.Body> 
+                            <div>Notice</div>
                             <div className="legend-item">
                                 <Button variant='secondary' disabled> A0 </Button>
                                 <span style={{ marginLeft: '5px' }}>  Sold</span>
@@ -135,8 +137,8 @@ function SeatMap({ route }) {
             </Row>
             <Row className="mt-3">
                 <Col className="text-right">
-                    <div className="total-price">Tổng cộng: {totalMoney * 1000} VND</div>
-                    <Button className="continue-button" onClick={handleContinue}>Tiếp tục</Button>
+                    <div className="total-price">Total: {formatNumber(totalMoney * 1000)} VNĐ</div>
+                    <Button className="continue-button" onClick={handleContinue}>Continue</Button>
                 </Col>
             </Row>
         </Container>

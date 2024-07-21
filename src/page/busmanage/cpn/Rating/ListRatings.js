@@ -76,10 +76,10 @@ function ListRatings() {
         return (
             <div>
                 {[...Array(amount_star)].map((_, index) => (
-                    <span key={index} className="star">★</span>
+                    <span key={index} className="star1">★</span>
                 ))}
                 {[...Array(5 - amount_star)].map((_, index) => (
-                    <span key={index} className="star" style={{ color: '#e4e5e9' }}>★</span>
+                    <span key={index} className="star1" style={{ color: '#e4e5e9' }}>★</span>
                 ))}
             </div>
         );

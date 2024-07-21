@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { Button, Modal, Form, Alert } from 'react-bootstrap';
 import Menu from '../component/Menu';
-import { API_URL, API_URL1 } from '../constaint/fetchApi';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({
@@ -33,11 +32,20 @@ export default function ProfilePage() {
   const [showPasswordSuccessMessage, setShowPasswordSuccessMessage] = useState(false);
   const userId = JSON.parse(sessionStorage.getItem("user")).customer_id;
 
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       console.log(userId);
       try {
-        const response = await fetch(`${API_URL}/customer/${userId}`);
+        const response = await fetch(`http://localhost:8080/customer/${userId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -72,7 +80,7 @@ export default function ProfilePage() {
       formData.append('file', e.target.files[0]);
 
       try {
-        const response = await fetch(`${API_URL}/customer/upload/${userId}`, {
+        const response = await fetch(`http://localhost:8080/customer/upload/${userId}`, {
           method: 'POST',
           body: formData,
         });
@@ -84,7 +92,7 @@ export default function ProfilePage() {
         const data = await response.json();
         setUserData({ ...userData, profilePicture: data.customer_img_ava });
         alert('Profile picture updated successfully');
-      } catch (error) {
+} catch (error) {
         setError('Error updating profile picture');
         console.error('Error updating profile picture:', error);
       }
@@ -117,7 +125,7 @@ export default function ProfilePage() {
     };
 
     try {
-      const response = await fetch(`${API_URL}/customer/changePassword/${userId}`, {
+      const response = await fetch(`http://localhost:8080/customer/changePassword/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -152,7 +160,7 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     try {
-      const response = await fetch(`${API_URL}/customer/updateProfile/${userId}`, {
+      const response = await fetch(`http://localhost:8080/customer/updateProfile/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -182,7 +190,7 @@ export default function ProfilePage() {
       setShowSuccessMessage(true);
       setTimeout(() => {
         setShowSuccessMessage(false);
-      }, 3000);
+}, 3000);
     } catch (error) {
       setError(`Error updating profile: ${error.message}`);
       console.error('Error updating profile:', error);
@@ -222,11 +230,11 @@ export default function ProfilePage() {
                   src={userData.profilePicture || "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"}
                   alt="avatar"
                   className="rounded-circle img-fluid"
-                  style={{ width: '180px', cursor: 'pointer' }}
+                  style={{ width: '180px', cursor: 'pointer', marginLeft : "34px", height :'160px',paddingTop :'3px' }}
                   onClick={handleImageClick}
                 />
-                <h5 className="my-3">Full Stack Developer</h5>
-                <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                <h5 className="my-3">{userData.fullName}</h5>
+                
                 <div className="d-flex justify-content-center mb-2">
                   <Button variant="primary" onClick={handleShowChangePassword} className='mr-2'>Change Password</Button>
                   <Button variant="primary" onClick={handleShowEditProfile} style={{marginLeft: 5}}>Edit Profile</Button>
@@ -242,20 +250,20 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="col-lg-8">
-            <div className="card mb-4">
-              <div className="card-body">
+            <div className="card mb-7">
+              <div className="card-body" style={{width : "650px" , paddingLeft :"35px"}}>
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">Full Name</p>
+                    <p className="mb-3">Full Name</p>
                   </div>
                   <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData.fullName}</p>
                   </div>
-                </div>
+</div>
                 <hr />
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">Email</p>
+                    <p className="mb-3">Email</p>
                   </div>
                   <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData.email}</p>
@@ -264,7 +272,7 @@ export default function ProfilePage() {
                 <hr />
                 <div className="row">
                   <div className="col-sm-4">
-                    <p className="mb-0">Gender</p>
+                    <p className="mb-3">Gender</p>
                   </div>
                   <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData.gender}</p>
@@ -272,28 +280,28 @@ export default function ProfilePage() {
                 </div>
                 <hr />
                 <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Nationality</p>
+                  <div className="col-sm-4">
+                    <p className="mb-3">Nationality</p>
                   </div>
-                  <div className="col-sm-9">
+                  <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData.nationality}</p>
                   </div>
                 </div>
                 <hr />
                 <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">DOB</p>
+                  <div className="col-sm-4">
+                    <p className="mb-3">DOB</p>
                   </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{userData.dob}</p>
+                  <div className="col-sm-8">
+                    <p className="text-muted mb-0">{formatDate(userData.dob)}</p>
                   </div>
                 </div>
                 <hr />
                 <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Point</p>
+                  <div className="col-sm-4">
+                    <p className="mb-3">Point</p>
                   </div>
-                  <div className="col-sm-9">
+                  <div className="col-sm-8">
                     <p className="text-muted mb-0">{userData.point} <FontAwesomeIcon icon={faCoins} /></p>
                   </div>
                 </div>
@@ -335,7 +343,7 @@ export default function ProfilePage() {
                 onChange={handleEditProfileChange}
               />
             </Form.Group>
-            <Form.Group controlId="formGender">
+<Form.Group controlId="formGender">
               <Form.Label>Gender</Form.Label>
               <Form.Control 
                 type="text" 
@@ -418,7 +426,7 @@ export default function ProfilePage() {
               />
             </Form.Group>
             <Form.Group controlId="formConfirmPassword">
-              <Form.Label>Confirm Password</Form.Label>
+<Form.Label>Confirm Password</Form.Label>
               <Form.Control 
                 type="password" 
                 placeholder="Confirm new password" 

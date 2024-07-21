@@ -132,7 +132,7 @@ customer: {
             </div>
             <div className="review-footer">
                 <span className="review-date">{new Date().toLocaleDateString()}</span>
-                <button onClick={handleSubmit} className="submit-review-button">Gửi đánh giá</button>
+                <button onClick={handleSubmit} className="submit-review-button">Submit a review</button>
             </div>
             {error && <div className="error-message">{error}</div>}
         </div>
