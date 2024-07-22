@@ -7,7 +7,7 @@ import TripList from "./TripList.js";
 import BusProfile from "./BusProfile.js";
 import EditBus from "./EditBus.js";
 import ProfileDriver from "./ProfileDriver.js";
-import Location from "./Location.js";
+
 import Service from "./Service.js";
 import CompanyCustomers from "./BusReviewCus.js";
 import EditRoute from "./EditRoute.js";
@@ -31,7 +31,7 @@ const BusLayout = () => {
             <Route path="busProfile" element={<BusProfile />} />
             <Route path="editBus" element={<EditBus />} />
             <Route path="profileDriver" element={<ProfileDriver />} />
-            <Route path="location" element={<Location />} />
+           
             <Route path="service" element={<Service />} />
             <Route path="route" element={<EditRoute/>} />
             <Route path="reviewRating" element={<EditRating/>} />

@@ -14,7 +14,7 @@ function ListRatings() {
     useEffect(() => {
         const fetchRatings = async () => {
             try {
-                const response = await fetch('http://localhost:8080/rating/');
+                const response = await fetch(`http://localhost:8080/rating/`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

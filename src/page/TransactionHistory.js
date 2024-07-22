@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Container, Modal } from 'react-bootstrap';
-// import TransactionDetail from './TransactionDetail';
-import logo from '../assets/images/namepage.png';
+import { Table, Button, Container, Modal, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import Menu from '../component/Menu';
 
@@ -36,6 +34,7 @@ const TransactionDetail = ({ transaction, onHide }) => {
 const TransactionList = () => {
   const [transactions, setTransactions] = useState([]);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [searchDate, setSearchDate] = useState('');
   const user = JSON.parse(sessionStorage.getItem('user'));
   const userId = user ? user.customer_id : null;
   const navigate = useNavigate();
@@ -43,7 +42,7 @@ const TransactionList = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/transaction/customer/`+userId); // Thay `userId` bằng customerId thực tế
+        const response = await fetch(`http://localhost:8080/transaction/customer/` + userId);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -71,14 +70,16 @@ const TransactionList = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(transaction)
+        },
+        body: JSON.stringify(transaction)
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
       console.log(data);
+      alert('Chờ bus company xác nhận');
+      window.location.reload();
     } catch (error) {
       console.error('Fetch error:', error);
     }
@@ -95,11 +96,28 @@ const TransactionList = () => {
     return transactionDateObj > currentDate;
   };
 
+  const handleSearchDateChange = (event) => {
+    setSearchDate(event.target.value);
+  };
+
+  const filteredTransactions = transactions.filter(transaction => {
+    const transactionDate = new Date(transaction.routeStartTime).toISOString().split('T')[0];
+    return transactionDate.includes(searchDate);
+  });
+
   return (
     <div>
-      <Menu/>
+      <Menu />
       <Container style={{ margin: 100 }}>
         <h2>Transactions</h2>
+        <Form.Group controlId="searchDate">
+          <Form.Label>Search by Date</Form.Label>
+          <Form.Control
+            type="date"
+            value={searchDate}
+            onChange={handleSearchDateChange}
+          />
+        </Form.Group>
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -107,16 +125,18 @@ const TransactionList = () => {
               <th>End Location</th>
               <th>Total Price</th>
               <th>Amount</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction) => (
+            {filteredTransactions.map((transaction) => (
               <tr key={transaction.transaction_id}>
                 <td>{transaction.startLocation}</td>
                 <td>{transaction.endLocation}</td>
                 <td>{transaction.totalTicketPrice}</td>
                 <td>{transaction.totalTickets}</td>
+                <td>{transaction.transactionStatus}</td>
                 <td>
                   <Button variant="primary" onClick={() => handleTransactionClick(transaction)}>
                     View Details

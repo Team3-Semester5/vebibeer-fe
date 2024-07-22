@@ -37,9 +37,7 @@ const Navbar = () => {
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="profileDriver">Profile Driver</Link>
         </li>
-        <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
-          <Link to="location">Location</Link>
-        </li>
+       
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="service">Service</Link>
         </li>

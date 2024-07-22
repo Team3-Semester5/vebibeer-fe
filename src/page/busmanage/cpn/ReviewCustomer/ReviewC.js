@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { useNavigate } from "react-router-dom";
 import ShowMore from './ShowMore';
 import { Modal, Button } from 'react-bootstrap';
@@ -27,7 +26,6 @@ const ReviewC = () => {
             navigate("/login");
         }
         const fetchData = async () => {
-
             try {
                 const response = await fetch(`http://localhost:8080/transaction/buscompany/${user.busCompany_id}`);
                 const data = await response.json();
@@ -42,7 +40,8 @@ const ReviewC = () => {
             }
         };
         fetchData();
-    }, [user?.busCompany_id, navigate, user?.role_user])
+    }, [user?.busCompany_id, navigate, user?.role_user]);
+
     useEffect(() => {
         if (user?.role_user != 'ROLE_BUSCOMPANY') {
             navigate("/login");
@@ -62,7 +61,7 @@ const ReviewC = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [user?.busCompany_id, navigate, user?.role_user]);
 
     // Handle page change
     const handlePageChange = (page) => {
@@ -89,9 +88,11 @@ const ReviewC = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(transaction)
-        })
+        });
         const data = await response.json();
         console.log(data);
+        // Reload the page after accepting
+        window.location.reload(); // Thêm dòng này để tải lại trang sau khi chấp nhận
     };
 
     const handleReject = async (transaction) => {
@@ -115,12 +116,11 @@ const ReviewC = () => {
 
     const handleCloseRejectModal = () => {
         setShowRejectModal(false);
-
     };
 
     const ActionModal = ({ show, onHide, transaction, onConfirm, title }) => {
         // Việt hóa tiêu đề dựa theo hành động
-        const vietnameseTitle = title === 'Accept' ? 'Accept' : 'Reject';
+        const vietnameseTitle = title === 'Accept' ? 'Accept' : 'reject';
 
         return (
             <Modal show={show} onHide={onHide} centered>
@@ -143,7 +143,7 @@ const ReviewC = () => {
     };
 
     const filterTransaction = transactions.filter(transaction => transaction.transactionStatus === 'Pending');
-   customers.filter(customer => customer.transactionStatus === 'OrderSuccess');
+
     const formatDateTime = (dateTimeString) => {
         const options = {
             hour: '2-digit',
@@ -154,19 +154,20 @@ const ReviewC = () => {
         };
         return new Date(dateTimeString).toLocaleString('vi-VN', options);
     };
+
     const formatDateTime1 = (dateTimeString) => {
         const options = {
-           
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
         };
         return new Date(dateTimeString).toLocaleString('vi-VN', options);
     };
+
     return (
         <div className="container mt-4">
             <h1>Customer List</h1>
-            <div className="mb-3 mt-5">
+            <div className="mb-3">
                 <input
                     type="text"
                     className="form-control"
@@ -174,9 +175,6 @@ const ReviewC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                {/* <button className="btn btn-primary" onClick={sortCustomers}>
-                    Sort by Start Date {sortOrder === 'asc' ? '🔼' : '🔽'}
-                </button> */}
             </div>
             <table className="table table-hover">
                 <thead>
@@ -212,8 +210,6 @@ const ReviewC = () => {
                         </tr>
                     ))}
                 </tbody>
-
-
             </table>
 
             <div className="d-flex justify-content-between align-items-center">
@@ -243,7 +239,6 @@ const ReviewC = () => {
 
             <>
                 <div>
-
                     <h2>Transaction</h2>
                     <table className="table table-hover">
                         <thead>
@@ -309,7 +304,6 @@ const ReviewC = () => {
                 }}
                 title="Reject"
             />
-
         </div>
     );
 };

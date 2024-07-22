@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const AddRouteModal = ({ show, onHide, onAdd }) => {
+    const navigate = useNavigate();
     const [route, setRoute] = useState({
         busCompany_id: 1,
         startLocation_id: '',
@@ -90,6 +92,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
             setError(error.message);
             console.error('Error adding route:', error);
         }
+        navigate(`/bus/route`);
     };
 
     const getFormattedDateTime = (dateString) => {

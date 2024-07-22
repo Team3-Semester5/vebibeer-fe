@@ -9,7 +9,7 @@ import BusCompanyList from "../busmanage/cpn/BusCompany/BusCompany.js";
 import RouteList from "../busmanage/cpn/Route/RouteList.js";
 import EditRoute from "../busmanage/EditRoute.js";
 import EditRating from "./EditRating.js";
-
+import Location from "../../page/busmanage/Location.js";
 
 
 const AdLayout = () => {
@@ -23,7 +23,7 @@ const AdLayout = () => {
             <Route path="/" element={<DataTable />} />
             <Route path="dataTable" element={<DataTable />} />
             <Route path="triplist" element={<EditRoute/>} />
-            
+            <Route path="location" element={<Location />} />
             <Route path="reviewRating" element={<EditRating/>} />
             <Route path="busCompany" element={<BusCompanyList/>} />
           </Routes>

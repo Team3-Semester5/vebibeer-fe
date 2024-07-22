@@ -11,10 +11,11 @@ import Blog from '../component/Blog';
 import Subscribe from '../component/Subscribe';
 import Footer from '../component/Footer';
 import Menu from "../component/Menu";
-
+import ChatWidget from '../component/chat_Widget/ChatWidget';
 const Home = () => {
   return (
     <div>
+      <ChatWidget/>
       <Menu/>
       <AboutUs/>
       <Features/>

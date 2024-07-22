@@ -16,7 +16,9 @@ const Navbarad = () => {
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="triplist">Trip List</Link>
         </li>
-     
+        <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
+          <Link to="location">Location</Link>
+        </li>
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="reviewrating">Review Rating</Link>
         </li>
@@ -39,7 +41,7 @@ const Navbarad = () => {
               border: "none", // Bỏ viền
               borderRadius: "5px", // Bo góc
             }}
-            onClick={() => {}}
+            onClick={() => { }}
           >
             Logout
           </button>
