@@ -42,7 +42,7 @@ const Navbar = () => {
           <Link to="service">Service</Link>
         </li>
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
-          <Link to="reviewrating">Review Rating</Link>
+          <Link to="reviewrating">View Rating</Link>
         </li>
         <li style={{ marginLeft: "1rem", marginTop: "20px" }}>
           <Link to="reviewCustomer">Customer</Link>

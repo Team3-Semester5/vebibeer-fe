@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import DeleteRatingModal from './DeleteRatingModal';
 import './ListRating.css';
 
-function ListRatings() {
+function ListRatings({ busCompanyId }) {  // Thêm busCompanyId như một prop
     const [ratings, setRatings] = useState([]);
     const [filteredRatings, setFilteredRatings] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,7 +14,7 @@ function ListRatings() {
     useEffect(() => {
         const fetchRatings = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/rating/`);
+                const response = await fetch(`http://localhost:8080/rating/byBusCompany/${busCompanyId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -28,7 +28,7 @@ function ListRatings() {
         };
 
         fetchRatings();
-    }, []);
+    }, [busCompanyId]);
 
     useEffect(() => {
         filterRatings(ratings);
@@ -55,7 +55,7 @@ function ListRatings() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const updatedRatings = ratings.map(rating => 
+            const updatedRatings = ratings.map(rating =>
                 rating.rating_id === ratingId ? { ...rating, rating_content: 'Ban', amount_star: 0 } : rating
             );
             setRatings(updatedRatings);
@@ -86,7 +86,7 @@ function ListRatings() {
     };
 
     return (
-        <div style={{marginTop: "120px"}}>
+        <div style={{ marginTop: "120px" }}>
             <div className="container mt-4">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h1>Ratings List</h1>
@@ -106,7 +106,10 @@ function ListRatings() {
                             <th>Rating ID</th>
                             <th>Stars</th>
                             <th>Content</th>
-                           
+                            <th>Customer</th>
+                            <th>Car Code</th>
+
+                            <th>Driver Name</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,12 +118,14 @@ function ListRatings() {
                                 <td>{rating.rating_id}</td>
                                 <td>{renderStars(rating.amount_star)}</td>
                                 <td>{rating.rating_content}</td>
-                              
+                                <td>{rating.customerFullname}</td>
+                                <td>{rating.carCode}</td>
+                                
+                                <td>{rating.driverName}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-               
             </div>
         </div>
     );

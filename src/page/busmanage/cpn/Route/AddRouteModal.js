@@ -15,7 +15,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
         route_description: '',
         car_id: '',
         driver_id: '',
-        priceTicket:'',
+        priceTicket: '',
         daily: false
     });
     // const [busCompanies, setBusCompanies] = useState([]);
@@ -24,15 +24,15 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
     const [error, setError] = useState(null);
     const [locations, setLocations] = useState([]);
 
-    
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // const busCompanyRes = await fetch(`${API_URL}/admin/buscompanies/`);
-                const predefinedLocations =  await fetch(`${API_URL}/api/locations/`)
+                const predefinedLocations = await fetch(`${API_URL}/api/locations/`)
                 const carRes = await fetch(`${API_URL}/buscompany/car/by-company/1`);
                 const driver_idRes = await fetch(`${API_URL}/buscompany/driver/by-company/1`);
-                if ( !carRes.ok || !driver_idRes.ok) {
+                if (!carRes.ok || !driver_idRes.ok) {
                     throw new Error('Failed to fetch data');
                 }
                 // const busCompanies = await busCompanyRes.json();
@@ -55,7 +55,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
     const handleChange = (e) => {
         const { name, value, type } = e.target;
         if (type === 'checkbox') {
-            setRoute({...route, daily: value === 'on' ? true : false})
+            setRoute({ ...route, daily: value === 'on' ? true : false })
             return;
         }
         setRoute({ ...route, [name]: value });
@@ -80,7 +80,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                 },
                 body: JSON.stringify(route)
             });
-            console.log(JSON.stringify(route))
+            console.log(JSON.stringify(route));
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`HTTP error! status: ${response.status} - ${errorData.message}`);
@@ -89,11 +89,13 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
             onAdd(newRoute);
             onHide();
         } catch (error) {
-            setError(error.message);
+            // Sử dụng alert để thông báo lỗi
+            alert(`Error: ${error.message}`);
             console.error('Error adding route:', error);
         }
         navigate(`/bus/route`);
     };
+
 
     const getFormattedDateTime = (dateString) => {
         if (!dateString) return ''; // Return empty string if dateString is empty
@@ -215,7 +217,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                             value={route.priceTicket}
                             onChange={handleChange}
                         />
-                            
+
                     </Form.Group>
                     ---- CREATE AUTO DAILY ----
                     <Form.Group controlId="daily">
@@ -227,7 +229,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                             // checked={route.isDaily}
                             onChange={handleChange}
                         />
-                            
+
                     </Form.Group>
                 </Form>
                 {error && <p className="text-danger">Error: {error}</p>}
