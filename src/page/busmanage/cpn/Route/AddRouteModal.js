@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { API_URL, API_URL1 } from '../../../../constaint/fetchApi';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { API_URL } from '../../../../constaint/fetchApi';
+import { useNavigate } from 'react-router-dom';
 
 const AddRouteModal = ({ show, onHide, onAdd }) => {
     const navigate = useNavigate();
@@ -18,29 +18,25 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
         priceTicket: '',
         daily: false
     });
-    // const [busCompanies, setBusCompanies] = useState([]);
     const [cars, setCars] = useState([]);
     const [drivers, setDrivers] = useState([]);
     const [error, setError] = useState(null);
+    const [timeError, setTimeError] = useState(null);
     const [locations, setLocations] = useState([]);
-
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // const busCompanyRes = await fetch(`${API_URL}/admin/buscompanies/`);
-                const predefinedLocations = await fetch(`${API_URL}/api/locations/`)
+                const predefinedLocations = await fetch(`${API_URL}/api/locations/`);
                 const carRes = await fetch(`${API_URL}/buscompany/car/by-company/1`);
                 const driver_idRes = await fetch(`${API_URL}/buscompany/driver/by-company/1`);
                 if (!carRes.ok || !driver_idRes.ok) {
                     throw new Error('Failed to fetch data');
                 }
-                // const busCompanies = await busCompanyRes.json();
                 const locations = await predefinedLocations.json();
                 const cars = await carRes.json();
                 const drivers = await driver_idRes.json();
 
-                // setBusCompanies(busCompanies);
                 setLocations(locations);
                 setCars(cars);
                 setDrivers(drivers);
@@ -55,25 +51,39 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
     const handleChange = (e) => {
         const { name, value, type } = e.target;
         if (type === 'checkbox') {
-            setRoute({ ...route, daily: value === 'on' ? true : false })
+            setRoute({ ...route, daily: value === 'on' });
             return;
         }
         setRoute({ ...route, [name]: value });
+
+        if (name === 'route_startTime' || name === 'route_endTime') {
+            validateTimes(name === 'route_startTime' ? value : route.route_startTime, name === 'route_endTime' ? value : route.route_endTime);
+        }
     };
 
-    const handleCarChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        setRoute({ ...route, car_id: selectedOptions });
+    const validateTimes = (startTime, endTime) => {
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+        if (start >= end) {
+            setTimeError('Start Time must be earlier than End Time.');
+        } else {
+            setTimeError(null);
+        }
     };
 
     const handleSubmit = async () => {
-        if (!route.busCompany_id || !route.startLocation_id || !route.endLocation_id || !route.route_startTime || !route.endLocation_id || !route.driver_id) {
+        if (!route.busCompany_id || !route.startLocation_id || !route.endLocation_id || !route.route_startTime || !route.route_endTime || !route.driver_id) {
             setError('All fields are required.');
             return;
         }
 
+        if (timeError) {
+            setError(timeError);
+            return;
+        }
+
         try {
-            const response = await fetch(`${API_URL}/route/buscomapany/save/`, {
+            const response = await fetch(`${API_URL}/route/buscompany/save/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,24 +93,27 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
             console.log(JSON.stringify(route));
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`HTTP error! status: ${response.status} - ${errorData.message}`);
+                throw new Error(`${errorData.message}`);
             }
             const newRoute = await response.json();
             onAdd(newRoute);
             onHide();
         } catch (error) {
-            // Sử dụng alert để thông báo lỗi
             alert(`Error: ${error.message}`);
             console.error('Error adding route:', error);
         }
         navigate(`/bus/route`);
     };
 
-
     const getFormattedDateTime = (dateString) => {
-        if (!dateString) return ''; // Return empty string if dateString is empty
+        if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toISOString().slice(0, 16); // format as yyyy-MM-ddThh:mm
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const hours = ('0' + date.getHours()).slice(-2);
+        const minutes = ('0' + date.getMinutes()).slice(-2);
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
     };
 
     return (
@@ -147,7 +160,7 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                         <Form.Control
                             type="datetime-local"
                             name="route_startTime"
-                            value={getFormattedDateTime(route.route_startTime)}
+                            value={route.route_startTime}
                             onChange={handleChange}
                         />
                     </Form.Group>
@@ -156,10 +169,11 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                         <Form.Control
                             type="datetime-local"
                             name="route_endTime"
-                            value={getFormattedDateTime(route.route_endTime)}
+                            value={route.route_endTime}
                             onChange={handleChange}
                         />
                     </Form.Group>
+                    {timeError && <p className="text-danger">{timeError}</p>}
                     <Form.Group controlId="formRoutePolicy">
                         <Form.Label>Route Policy</Form.Label>
                         <Form.Control
@@ -217,19 +231,15 @@ const AddRouteModal = ({ show, onHide, onAdd }) => {
                             value={route.priceTicket}
                             onChange={handleChange}
                         />
-
                     </Form.Group>
-                    ---- CREATE AUTO DAILY ----
                     <Form.Group controlId="daily">
                         <Form.Label>Do you want to auto create</Form.Label>
                         <Form.Check
                             type="checkbox"
                             name="daily"
                             label="YES..."
-                            // checked={route.isDaily}
                             onChange={handleChange}
                         />
-
                     </Form.Group>
                 </Form>
                 {error && <p className="text-danger">Error: {error}</p>}

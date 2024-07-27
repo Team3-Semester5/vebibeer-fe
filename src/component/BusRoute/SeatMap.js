@@ -27,12 +27,12 @@ function SeatMap({ route, customerName }) {
 
     const lockSeat = async (seatId) => {
         try {
-            const response = await fetch(`${API_URL}/tickets/lock?ticketSeat=${seatId}&customerName=${customerName}`, {
+            const response = await fetch(`${API_URL}/tickets/lock?ticketSeat=${seatId}&routeId=${route.route_id}&customerName=${customerName}`, {
                 method: 'POST',
             });
 
             if (response.ok) {
-                const lockTime = 300000; // 5 minutes
+                const lockTime = 20000; // 5 minutes
                 setLockedSeats(prevState => ({
                     ...prevState,
                     [seatId]: Date.now() + lockTime
@@ -113,29 +113,29 @@ function SeatMap({ route, customerName }) {
         setTotalMoney(money);
     }, [route.route_id]);
 
-    const handleBooking = async (seatId) => {
-        setLoading(true);
-        try {
-            const response = await fetch(`${API_URL}/tickets/book?ticketSeat=${seatId}&customerName=${customerName}`, {
-                method: 'POST',
-            });
+    // const handleBooking = async (seatId) => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await fetch(`${API_URL}/tickets/book?ticketSeat=${seatId}&routeId=${route.route_id}&customerName=${customerName}`, {
+    //             method: 'POST',
+    //         });
 
-            if (response.ok) {
-                alert('Seat booked successfully');
-                fetchSeats(); // Refresh seats
-            } else if (response.status === 409) {
-                // alert('Seat is already booked. Please select another seat.');
-                fetchSeats(); // Refresh seats
-            } else {
-                alert('Failed to book seat. Please try again.');
-            }
-        } catch (error) {
-            alert('Failed to book seat. Please try again.');
-            console.error('Booking error:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         if (response.ok) {
+    //             alert('Seat booked successfully');
+    //             fetchSeats(); // Refresh seats
+    //         } else if (response.status === 409) {
+    //             alert('Seat is already booked. Please select another seat.');
+    //             fetchSeats(); // Refresh seats
+    //         } else {
+    //             alert('Failed to book seat. Please try again.');
+    //         }
+    //     } catch (error) {
+    //         alert('Failed to book seat. Please try again.');
+    //         console.error('Booking error:', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const renderDeck = (deckName, isLowerDeck) => {
         const deckSeats = seats.filter(seat => seat.ticket_seat.startsWith(deckName));
@@ -153,7 +153,7 @@ function SeatMap({ route, customerName }) {
                                         className="seat-button"
                                         onClick={() => {
                                             toggleSeatSelection(seat.ticket_seat);
-                                            handleBooking(seat.ticket_seat);
+                                            // handleBooking(seat.ticket_seat);
                                         }}
                                     >
                                         {seat.ticket_seat}

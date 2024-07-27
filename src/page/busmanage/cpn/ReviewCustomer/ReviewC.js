@@ -163,7 +163,9 @@ const ReviewC = () => {
         };
         return new Date(dateTimeString).toLocaleString('vi-VN', options);
     };
-
+    function formatNumber(number) {
+        return new Intl.NumberFormat('vi-VN').format(number);
+    }
     return (
         <div className="container mt-4">
             <h1>Customer List</h1>
@@ -261,7 +263,7 @@ const ReviewC = () => {
                                     <td>{formatDateTime(transactions.transactionTimeEdit)}</td>
                                     <td>{transactions.customerFullName}</td>
                                     <td>{transactions.paymentMethodName}</td>
-                                    <td>{transactions.ticketPrice}</td>
+                                    <td>{formatNumber(transactions.ticketPrice)}</td>
                                     <td>{transactions.ticketSeat}</td>
                                     <td>{transactions.carName}</td>
                                     <td>

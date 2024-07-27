@@ -88,11 +88,11 @@ const TripDetails = ({ tickets, totalMoney, setTotalMoney }) => {
     };
     function formatNumber(number) {
         return new Intl.NumberFormat('vi-VN').format(number);
-      }
+    }
     return (
         <Container className="mt-4" style={{ marginTop: '60px' }}>
             <div className="card mb-3" style={{ marginBottom: '70px', width: "373px", fontSize: "20px" }}>
-            Provisional <span style={{ fontWeight: 'bold' }}>{formatNumber(totalMoney * 1000) } VNĐ</span>
+                Provisional <span style={{ fontWeight: 'bold' }}>{formatNumber(totalMoney * 1000)} VNĐ</span>
             </div>
             <VoucherPoints handleUpdateTotal={handleUpdateTotal} totalMoney={totalMoney} />
             {tickets.map(ticket => (
@@ -224,20 +224,26 @@ const ContinueComponent = ({ formData, isCheckout, totalMoney }) => {
 // xữ lí list voucher ra bằng id bus company
 const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
     const [selectedVoucher, setSelectedVoucher] = useState(null);
-    const [points, setPoints] = useState(0); // Initialize with 0 and set later from API
-    const [maxPoint, setMaxPoint] = useState(0); // Initialize with 0 and set later from API
-    const [enteredPoints, setEnteredPoints] = useState(0);
+    const [points, setPoints] = useState(0); // Số điểm người dùng muốn sử dụng
+    const [maxPoint, setMaxPoint] = useState(0); // Điểm tối đa mà người dùng có
     const [showVoucherModal, setShowVoucherModal] = useState(false);
     const [vouchers, setVouchers] = useState([]);
     const [informationUser, setInformationUser] = useState({});
+    const [pointsApplied, setPointsApplied] = useState(false); // Trạng thái kiểm tra xem điểm đã được áp dụng hay chưa
+    const [errorMessage, setErrorMessage] = useState(''); // Thông báo lỗi nếu có
+
     const busCompany_id = JSON.parse(sessionStorage.getItem('bus_company_id'));
     const user = JSON.parse(sessionStorage.getItem('user'));
     const money = parseInt(sessionStorage.getItem("totalMoney") || '0');
 
-    const handleShowVoucherModal = () => { setShowVoucherModal(true); handleUpdateTotal(money) }
+    const handleShowVoucherModal = () => {
+        setShowVoucherModal(true);
+        handleUpdateTotal(money);
+    };
+
     const handleCloseVoucherModal = () => setShowVoucherModal(false);
 
-    // Fetching vouchers
+    // Lấy danh sách voucher
     useEffect(() => {
         fetch(`http://localhost:8080/buscompany/voucher/bus/${busCompany_id}`)
             .then(response => response.json())
@@ -245,40 +251,64 @@ const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
             .catch(error => console.error('Error fetching vouchers:', error));
     }, [busCompany_id]);
 
-    // Fetching user information
+    // Lấy thông tin người dùng
     useEffect(() => {
         if (user == null) {
             return;
         }
-        fetch(`http://localhost:8080/customer/get-cus/?username=${user.username}`)
+        fetch(`http://localhost:8080/customer/get-cus?username=${user.username}`)
             .then(res => res.json())
             .then(data => {
                 setInformationUser(data);
-                setMaxPoint(data.point); // Assuming 'points' is the field containing the user's points
+                setMaxPoint(data.point); // Giả định rằng 'point' là trường chứa điểm của người dùng
+                // Kiểm tra trạng thái điểm trong session storage
+                const storedPoints = parseInt(sessionStorage.getItem('appliedPoints') || '0');
+                if (storedPoints > 0) {
+                    setPoints(storedPoints);
+                    setPointsApplied(true); // Đánh dấu điểm đã được áp dụng
+                }
             })
             .catch(error => console.error('Error fetching user information:', error));
-    }, []);
+    }, [user]);
 
     const handleVoucherSelect = (voucher) => {
         setSelectedVoucher(voucher);
-        totalMoney = totalMoney - (totalMoney * voucher.saleUp) / 100;
-        handleUpdateTotal(totalMoney);
+        const discountedTotal = totalMoney - (totalMoney * voucher.saleUp) / 100;
+        handleUpdateTotal(discountedTotal);
         handleCloseVoucherModal();
-    }
+    };
 
     const updateTotalAfterPoint = () => {
-        if (points > maxPoint) {
-            alert('Your point is not enough!');
+        if (pointsApplied) {
+            alert('You can only apply points once.');
             return;
         }
+
+        if (points > maxPoint) {
+            alert('Your point balance is not sufficient.');
+            return;
+        }
+
+        console.log("Saving applied points:", points);
+        sessionStorage.setItem('appliedPoints', points.toString());
+
         setMaxPoint(maxPoint - points);
-        totalMoney = totalMoney - points;
-        handleUpdateTotal(totalMoney);
-    }
+        const newTotal = totalMoney - points;
+        handleUpdateTotal(newTotal);
+        setPointsApplied(true);
+    };
 
     const handlePointsChange = (e) => {
-        setPoints(e.target.value);
-    }
+        const value = parseInt(e.target.value);
+        if (isNaN(value) || value < 0) {
+            setErrorMessage('Please enter a positive number.');
+        } else if (value > maxPoint) {
+            setErrorMessage(`The maximum number of points you can apply is ${maxPoint}.`);
+        } else {
+            setErrorMessage('');
+            setPoints(value);
+        }
+    };
 
     return (
         <Container>
@@ -299,12 +329,20 @@ const VoucherPoints = ({ handleUpdateTotal, totalMoney }) => {
                                     type="number"
                                     placeholder="Enter points"
                                     onChange={handlePointsChange}
-                                    max={points}
+                                    min={0}
+                                    max={maxPoint}
                                 />
-                                <Button variant="primary" onClick={updateTotalAfterPoint} style={{ marginBottom: "10px" }}>Apply Discount</Button>
+                                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                                <Button
+                                    variant="primary"
+                                    onClick={updateTotalAfterPoint}
+                                    style={{ marginBottom: "10px" }}
+                                    disabled={pointsApplied || errorMessage !== ''} // Disable button if points are applied or error exists
+                                >
+                                    Apply Discount
+                                </Button>
                             </Form.Group>
                         </Card.Body>
-
                     </Card>
                 </Col>
             </Row>

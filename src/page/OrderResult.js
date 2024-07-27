@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './OrderResult.css';
 import { useNavigate } from 'react-router-dom';
+import './OrderResult.css';
 
 const OrderResult = () => {
     const [status, setStatus] = useState('');
@@ -8,6 +8,9 @@ const OrderResult = () => {
     const [tickets, setTickets] = useState([]);
     const [totalMoney, setTotalMoney] = useState(0);
     const navigate = useNavigate();
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const appliedPoints = parseInt(sessionStorage.getItem('appliedPoints') || '0');
+    const userId = user?.customer_id;
 
     useEffect(() => {
         try {
@@ -15,26 +18,55 @@ const OrderResult = () => {
             const status = url.searchParams.get('status');
             if (status === 'OrderSuccess') {
                 setIsSuccess(true);
+                updateCustomerPoints(); // Cập nhật điểm khi đơn hàng thành công
             }
-            setStatus(status); // Set the status state with the fetched status
+            setStatus(status);
             const savedSeats = JSON.parse(sessionStorage.getItem('cart') || '[]');
             setTickets(savedSeats);
-            console.log(tickets.toString());
             setTotalMoney(parseInt(sessionStorage.getItem("newTotalMoney")));
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-
-
     }, []);
 
-    const backToHome = () => {
+    const updateCustomerPoints = async () => {
+        try {
+            // Fetch customer's current points (assuming API returns customer information)
+            const response = await fetch(`http://localhost:8080/customer/get-cus?username=${user.username}`);
+            const data = await response.json();
+            const currentPoints = data.point;
+
+            // Subtract applied points from the current points
+            const updatedPoints = currentPoints - appliedPoints;
+
+            // Update customer's points in the backend
+            const updateResponse = await fetch(`http://localhost:8080/customer/updateProfile/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ point: updatedPoints }), // Update points
+            });
+
+            if (!updateResponse.ok) {
+                const errorText = await updateResponse.text();
+                console.error(`HTTP error! status: ${updateResponse.status}, message: ${errorText}`);
+            } else {
+                console.log("Customer points updated successfully");
+                sessionStorage.removeItem('appliedPoints'); // Clear applied points from session storage
+            }
+        } catch (error) {
+            console.error('Error updating customer points:', error);
+        }
+    };
+
+    const handleNavigation = (destination) => {
         if (status === 'OrderSuccess') {
             sessionStorage.removeItem('cart');
             sessionStorage.setItem('totalMoney', 0);
         }
-
-    }
+        navigate(destination);
+    };
 
     return (
         isSuccess ? (
@@ -56,21 +88,20 @@ const OrderResult = () => {
                     <p>We've received your order and it will ship in 5-7 business days.<br />Your order number is #B6CT3</p>
                     <div className="order-summary">
                         <h2>Order Summary</h2>
-                        {tickets.map((ticket) => {
+                        {tickets.map((ticket) => (
                             <div className="item" key={ticket.ticket_id}>
-                                <img src={ticket.route.car.car_imgUrl1} alt="Womens Scarfs" />
+                                <img src={ticket.route.car.car_imgUrl1} alt="Ticket Image" />
                                 <p>{ticket.ticket_seat}</p>
                                 <span>{ticket.ticket_price}.000 VND</span>
                             </div>
-                        })}
-
+                        ))}
                         <div className="total">
                             <strong>Total: </strong>
                             <strong>{totalMoney}.000 VND</strong>
                         </div>
                     </div>
-                    <button className="home-button" onClick={backToHome()}>.</button>
-                    <button className="home-button" onClick={() => navigate('/')}>Back To Menu</button>
+                    <button className="home-button" onClick={() => handleNavigation('/')}>Back to Home</button>
+                    <button className="home-button" onClick={() => handleNavigation('/')}>Back To Menu</button>
                 </div>
             </div>
         ) : (
@@ -90,11 +121,10 @@ const OrderResult = () => {
                     </div>
                     <h1>Order Failed</h1>
                     <p>Unfortunately, your order could not be processed at this time.<br />Please try again later or contact support if the issue persists.</p>
-                    <button className="home-button danger" onClick={() => navigate('/')}>Back To Menu</button>
+                    <button className="home-button danger" onClick={() => handleNavigation('/')}>Back To Menu</button>
                 </div>
             </div>
         )
-
     );
 }
 

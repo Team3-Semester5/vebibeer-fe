@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import DeleteRatingModal from './DeleteRatingModal';
 import './ListRating.css';
 
-function ListRatings({ busCompanyId }) {  // Thêm busCompanyId như một prop
+function ListRatings({ busCompanyId }) {  // Adding busCompanyId as a prop
     const [ratings, setRatings] = useState([]);
     const [filteredRatings, setFilteredRatings] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,7 +14,7 @@ function ListRatings({ busCompanyId }) {  // Thêm busCompanyId như một prop
     useEffect(() => {
         const fetchRatings = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/rating/byBusCompany/${busCompanyId}`);
+                const response = await fetch(`http://localhost:8080/rating/busCompany/1`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -41,7 +41,16 @@ function ListRatings({ busCompanyId }) {  // Thêm busCompanyId như một prop
         );
         setFilteredRatings(filtered);
     };
-
+    const formatDateTime = (dateTimeString) => {
+        const options = {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        };
+        return new Date(dateTimeString).toLocaleString('vi-VN', options);
+    };
     const handleDeleteRating = async (ratingId) => {
         try {
             const response = await fetch(`http://localhost:8080/rating/update/${ratingId}`, {
@@ -108,8 +117,8 @@ function ListRatings({ busCompanyId }) {  // Thêm busCompanyId như một prop
                             <th>Content</th>
                             <th>Customer</th>
                             <th>Car Code</th>
-
                             <th>Driver Name</th>
+                            <th>Time</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -120,8 +129,8 @@ function ListRatings({ busCompanyId }) {  // Thêm busCompanyId như một prop
                                 <td>{rating.rating_content}</td>
                                 <td>{rating.customerFullname}</td>
                                 <td>{rating.carCode}</td>
-                                
                                 <td>{rating.driverName}</td>
+                                <td>{formatDateTime(rating.rating_editTime)}</td>
                             </tr>
                         ))}
                     </tbody>
