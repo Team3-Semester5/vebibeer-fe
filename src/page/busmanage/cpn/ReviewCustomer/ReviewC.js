@@ -80,7 +80,53 @@ const ReviewC = () => {
         setShowModal(true);
     };
 
+
+    // Calculate the refund rate based on the time difference
+    const calculateRefund = (transactionTimeEdit, route_start_time) => {
+        // Parse the dates
+        const transactionTime = new Date(transactionTimeEdit);
+        const startTime = new Date(route_start_time);
+        
+        // Log the parsed dates
+        console.log('transactionTime:', transactionTime);
+        console.log('startTime:', startTime);
+    
+        // Check if the dates are valid
+        if (isNaN(transactionTime.getTime()) || isNaN(startTime.getTime())) {
+            console.error('Invalid date(s) provided:', { transactionTimeEdit, route_start_time });
+            return 0; // Consider an appropriate action for invalid dates
+        }
+    
+        // Calculate the difference in hours
+        const differenceInHours = Math.abs((startTime - transactionTime) / (1000 * 60 * 60));
+        console.log('differenceInHours:', differenceInHours);
+    
+        if (differenceInHours <= 48 && differenceInHours > 24) {
+            return 0.90; // 90% refund
+        } else if (differenceInHours <= 24 && differenceInHours > 2) {
+            return 0.65; // 65% refund
+        } else if (differenceInHours <= 2 && differenceInHours > 0) {
+            return 0.30; // 30% refund
+        } else if (transactionTime > startTime) {
+            return 0; // No refund
+        } else {
+            return 1.00; // 100% refund (catch-all for edge cases)
+        }
+    };
+    
+
     const handleAccept = async (transaction) => {
+        // Calculate the refund rate and the pointRefund based on the ticket price
+        console.log(transaction.transactionTimeEdit)
+        console.log(transaction.route_start_time)
+        const refundRate = calculateRefund(transaction.transactionTimeEdit, transaction.route_start_time);
+        console.log(transaction.ticketPrice)
+        transaction.pointRefund = Math.round(transaction.ticketPrice * refundRate);
+
+        console.log('Accepting transaction:', transaction); // Log the transaction being accepted
+        console.log('Refund rate:', refundRate); // Log the refund rate
+        console.log('Point refund:', transaction.pointRefund); // Log the calculated point refund
+
         console.log('Accept', JSON.stringify(transaction));
         const response = await fetch("http://localhost:8080/transaction/customer/confirm", {
             method: 'PUT',
@@ -91,8 +137,7 @@ const ReviewC = () => {
         });
         const data = await response.json();
         console.log(data);
-        // Reload the page after accepting
-        window.location.reload(); // Thêm dòng này để tải lại trang sau khi chấp nhận
+        // window.location.reload(); // Reload the page after accepting
     };
 
     const handleReject = async (transaction) => {

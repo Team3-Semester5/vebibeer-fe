@@ -40,7 +40,7 @@ const OrderResult = () => {
             const updatedPoints = currentPoints - appliedPoints;
 
             // Update customer's points in the backend
-            const updateResponse = await fetch(`http://localhost:8080/customer/updateProfile/${userId}`, {
+            const updateResponse = await fetch(`http://localhost:8080/customer/updateProfile-point/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
