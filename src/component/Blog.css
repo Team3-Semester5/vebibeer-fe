@@ -1,0 +1,25 @@
+.blog{
+    background: #ffffff;
+        padding: 115px 0 92px;
+}
+
+/*blog-content*/
+.blog-content {
+    margin-top: 36px;
+    
+}
+
+
+.columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Add space between columns */
+}
+
+.column {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
